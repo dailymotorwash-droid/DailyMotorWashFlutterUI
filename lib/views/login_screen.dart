@@ -1,0 +1,174 @@
+import 'package:car_wash/ApiResponse/Response.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import 'package:pinput/pinput.dart';
+
+import 'package:car_wash/utils/custom_button_styles.dart';
+import 'package:car_wash/utils/custom_colors.dart';
+import 'package:car_wash/utils/custom_text_styles.dart';
+import 'package:car_wash/views/otp_verification_screen.dart';
+import 'package:car_wash/widgets/custom_rich_text.dart';
+import 'package:car_wash/widgets/outlined_text_field.dart';
+
+import '../ApiResponse/LoginResponse.dart';
+import '../Apis/RestServiceImp.dart';
+import '../utils/common_utils.dart';
+
+
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+
+  final TextEditingController _mobileController = TextEditingController();
+  bool isTermsAccepted = false;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void setState(VoidCallback fn) {
+    if (mounted) {
+      super.setState(fn);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+      backgroundColor: AppColors.darkBackground,
+      bottomNavigationBar: IntrinsicHeight(
+        child: Container(
+          padding: const EdgeInsets.only(bottom: 20),
+          alignment: Alignment.bottomCenter,
+          child: const CustomRichText(
+            arrayLength: 3,
+            textsInOrder: ['Made with ', 'L❤️ove ', 'for Bharat'],
+            textStylesInOrder: [
+              AppTextStyles.orangeFont16Regular,
+              AppTextStyles.whiteFont16Regular,
+              AppTextStyles.greenFont16Regular
+            ],
+            callBacksInOrder: [null, null, null],
+          ),
+        ),
+      ),
+      body: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        width: double.infinity,
+        height: double.infinity,
+        child: Column(
+          children: [
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset('assets/images/ToyCar.png',height: 120, width: 120),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'SIGNUP / SIGNIN',
+                    style: AppTextStyles.whiteFont20Regular,
+                  ),
+                  const SizedBox(height: 32),
+                  OutlinedTextField(
+                    hintText: 'Mobile Number',
+                    prefixIcon: const Icon(Icons.phone),
+                    keyboardType: TextInputType.phone,
+                    controller: _mobileController,
+                    inputFormatters: [
+                      LengthLimitingTextInputFormatter(10),
+                      FilteringTextInputFormatter.digitsOnly
+                    ],
+                    onChanged: (value) => null,
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Checkbox(
+                        semanticLabel: 'Check For Terms and Conditions',
+                        activeColor: AppColors.white,
+                        checkColor: AppColors.black,
+                        fillColor: WidgetStateProperty.all(AppColors.white),
+                        overlayColor: WidgetStateProperty.all(AppColors.white),
+                        value: isTermsAccepted,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            isTermsAccepted = !isTermsAccepted;
+                          });
+                        }
+                      ),
+                      const CustomRichText(
+                        arrayLength: 4, 
+                        textsInOrder: [
+                          'By continuing, you agree to honc\'s\n',
+                          'terms of use',
+                          ' and ',
+                          'privacy policy'
+                        ], 
+                        textStylesInOrder: [
+                          AppTextStyles.whiteFont12Regular,
+                          AppTextStyles.whiteUnderlinedFont12Bold,
+                          AppTextStyles.whiteFont12Regular,
+                          AppTextStyles.whiteUnderlinedFont12Bold
+                        ], 
+                        callBacksInOrder: [null, _handleTermsOFUseClick, null, _handlePrivacyPolicyClick],
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  ElevatedButton(
+                    onPressed: _handleLoginSubmit, 
+                    style: AppButtonStyles.primaryButtonStyle,
+                    child: const Text('Submit', style: AppTextStyles.whiteFont16Bold,)
+                  )
+                ],
+              ),
+            ),
+          ],
+        )
+      ),
+    );
+  }
+
+  Future<void> _handleLoginSubmit() async {
+    debugPrint(_mobileController.text);
+    String phone = _mobileController.text;
+    if (isTermsAccepted && phone.length == 10) {
+      Response logInResponse = await RestServiceImp.otpSend(phone);
+      print(logInResponse.isSuccess);
+      if(logInResponse.isSuccess) {
+        Navigator.push(
+            context, MaterialPageRoute(
+            builder: (context) => OtpVerificationScreen(mobileNumber: phone)));
+      }else{
+        CommonUtils.toastMessage("Something went wrong");
+
+      }
+    } else {
+      debugPrint('Please Accept Terms and Policy and Enter 10 digits Mobile Number');
+      CommonUtils.toastMessage("Please Accept Terms and Policy and Enter 10 digits Mobile Number");
+
+      // ScaffoldMessenger.of(context)
+      //     .showSnackBar(const SnackBar(content: Text("Please Accept Terms and Policy and Enter 10 digits Mobile Number")));
+    }
+  }
+
+  static void _handleTermsOFUseClick() {
+    debugPrint('Terms of Use CLicked');
+  }
+ 
+
+  static void _handlePrivacyPolicyClick() {
+    debugPrint("Privacy Policy Clicked");
+  }
+}

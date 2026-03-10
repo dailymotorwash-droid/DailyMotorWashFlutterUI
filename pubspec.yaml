@@ -1,0 +1,41 @@
+name: car_wash
+description: "A new Flutter project."
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  curved_navigation_bar: ^1.0.6
+  dotted_border: ^2.1.0
+  flutter:
+    sdk: flutter
+  logger: ^2.3.0
+  paged_vertical_calendar: ^1.1.8
+  pinput: ^5.0.0
+  provider: ^6.1.2
+  fluttertoast: ^8.2.8
+  shared_preferences: ^2.2.3
+  syncfusion_flutter_calendar: ^28.1.33
+  http: ^1.2.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+
+  fonts:
+    - family: Rubik
+      fonts: 
+        - asset: assets/fonts/Rubik/Rubik-Regular.ttf
+        - asset: assets/fonts/Rubik/Rubik-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Rubik/Rubik-Italic.ttf
+          style: italic
