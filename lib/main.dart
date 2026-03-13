@@ -2,6 +2,7 @@ import 'package:car_wash/providers/address_provider.dart';
 import 'package:car_wash/providers/brand_provider.dart';
 import 'package:car_wash/providers/search_address_provider.dart';
 import 'package:car_wash/providers/service_provider.dart';
+import 'package:car_wash/providers/subscription_provider.dart';
 import 'package:car_wash/providers/user_provider.dart';
 import 'package:car_wash/providers/vehicle_color_provider.dart';
 import 'package:car_wash/providers/vehicle_model_provider.dart';
@@ -24,6 +25,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => VehicleColorProvider()),
         ChangeNotifierProvider(create: (_) => SearchAddressProvider()),
         ChangeNotifierProvider(create: (_) => AddressProvider()),
+        ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
       ],
       child: const MainApp(), 
     )

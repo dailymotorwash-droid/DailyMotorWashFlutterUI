@@ -11,5 +11,6 @@ class SlugUrl {
   static String searchAddress= "master/address";
   static String addVehicle= "vehicle/add";
   static String addVehicleAndAddress= "vehicle/address/add";
+  static String subscribe= "subscription/add";
 
 }

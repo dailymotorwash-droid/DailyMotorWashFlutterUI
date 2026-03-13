@@ -4,6 +4,8 @@ import 'package:car_wash/utils/custom_text_styles.dart';
 import 'package:car_wash/widgets/custom_divider_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/common_utils.dart';
+
 class PlanBannerWidget extends StatefulWidget {
 
   final Plan plan;
@@ -56,7 +58,7 @@ class _PlanBannerWidgetState extends State<PlanBannerWidget> {
               children: [
                 Row(
                   children: [
-                    Text(enumToString(widget.plan.cycle), style: AppTextStyles.primaryFont16Bold),
+                    Text(CommonUtils.cycle(widget.plan.cycle), style: AppTextStyles.primaryFont16Bold),
                     const Spacer(),
                     Chip(
                       label: Text(widget.isPlanSelected ? 'Selected' : 'Select'),
@@ -115,23 +117,7 @@ class _PlanBannerWidgetState extends State<PlanBannerWidget> {
     );
   }
 
-  String enumToString(String cycle){
 
-    switch(cycle){
-      case 'MONTHLY':
-          return 'Monthly';
-      case 'QUARTERLY':
-        return 'Quartely';
-
-      case 'YEARLY':
-        return 'Yearly';
-
-      default:
-        return 'One Time';
-    }
-
-
-  }
 
   void _handlePlanSelection() {
 

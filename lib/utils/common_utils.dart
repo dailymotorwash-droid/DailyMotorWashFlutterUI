@@ -1,16 +1,18 @@
 
 
+import 'package:car_wash/widgets/loader_transparent.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CommonUtils{
 
   static Widget loader(){
-    return const Center(
-      child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
-      ),
-    );
+    return const LoaderTransparent();
+    // return const Center(
+    //   child: CircularProgressIndicator(
+    //     valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+    //   ),
+    // );
   }
 
   static String weightConverter(String weight){
@@ -36,6 +38,30 @@ class CommonUtils{
     );
   }
 
+  static String cycle(String cycle){
+
+    switch(cycle){
+      case 'MONTHLY':
+        return 'Monthly';
+      case 'QUARTERLY':
+        return 'Quartely';
+
+      case 'YEARLY':
+        return 'Yearly';
+
+      default:
+        return 'One Time';
+    }
+
+
+  }
+  static String vehicleType(String type){
+
+    if(type=='CAR'){
+      return 'Car';
+    }
+    return 'Two Wheeler';
+  }
   static String vehicleSize(String size){
 
     switch(size){

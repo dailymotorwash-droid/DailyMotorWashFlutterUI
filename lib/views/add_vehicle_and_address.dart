@@ -161,7 +161,7 @@ class _AddVehicleAndAddressScreenState
         Address add = Address(
             firstName: firstName,
             lastName: lastName,
-            addressLine1: address?.societyName,
+            addressLine1: '${_flatNumberController.text.toString()} ${address?.societyName}' ,
             addressLine2: address?.societyLine1,
             pinCode: address?.pinCode,
             district: address?.district,
@@ -304,7 +304,8 @@ class _AddVehicleAndAddressScreenState
                               items: modelWatch.models
                                   .map((e) => DropdownMenuItem<Model>(
                                         value: e,
-                                        child: Text(e.name),
+                                        child: Text(e.name,overflow: TextOverflow.ellipsis,maxLines: 1,
+                                        ),
                                       ))
                                   .toList(),
                               onChanged: (v) {

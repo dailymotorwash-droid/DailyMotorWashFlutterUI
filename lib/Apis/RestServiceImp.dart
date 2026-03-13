@@ -911,11 +911,13 @@ import 'package:car_wash/ApiResponse/address_response.dart';
 import 'package:car_wash/ApiResponse/brand_response.dart';
 import 'package:car_wash/ApiResponse/plan_response.dart';
 import 'package:car_wash/ApiResponse/search_address_response.dart';
+import 'package:car_wash/ApiResponse/subscription_response.dart';
 import 'package:car_wash/ApiResponse/user_profile_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_color_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_model_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_response.dart';
 import 'package:car_wash/Apis/SlugUrl.dart';
+import 'package:car_wash/models/subscription.dart';
 import 'package:car_wash/models/vehicle.dart';
 import 'package:car_wash/models/vehicle_and_address.dart';
 import 'package:car_wash/utils/local_storage.dart';
@@ -1299,6 +1301,27 @@ class RestServiceImp {
     throw Exception('Failed to LogIn');
   }
 
+  // Add Vehicle and address
+  static Future<SubscriptionResponse> subscribe(
+      Subscription subscription) async {
+    var storage = await LocalStorage.getInstance();
+    String url = '${Constraints.baseUrl}${SlugUrl.subscribe}';
+    final response = await http.post(Uri.parse(url),
+        headers: {'Content-Type': 'application/json','Authorization': '${storage.getToken()}'
+        },
+        body: jsonEncode(subscription.toJson()));
+    if (kDebugMode) {
+      print("OTPVerification : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $url");
+    }
+
+    if (response.statusCode == 200) {
+      return SubscriptionResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    throw Exception('Failed to LogIn');
+  }
 // static Future<EditProfileResponse> EditProfile(
   //     String DOB,
   //     String email,
