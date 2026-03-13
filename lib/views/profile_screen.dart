@@ -11,7 +11,11 @@ import 'package:provider/provider.dart';
 
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final User user;
+  const ProfileScreen({
+    super.key,
+    required this.user
+  });
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -28,10 +32,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   String? _selectedGender;
+  late User user;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    user = widget.user;
+    _firstNameController.text = user.firstName!;
+    _lastNameController.text = user.lastName!;
+    _emailController.text = user.email!;
+
+
+
+  }
   @override
   Widget build(BuildContext context) {
     userProvider = Provider.of<UserProvider>(context);
-
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
@@ -123,7 +140,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             UnderlinedTextField(
               isFieldEnabled: false,
               labelText: 'Mobile Number',
-              controller: TextEditingController(text: userProvider.user?.phoneNumber),
+              controller: TextEditingController(text: user.phone),
               prefixIcon: const Icon(Icons.phone),
               onChanged: (value) => null,
             ),
@@ -183,7 +200,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _handleProfileSubmit() {
     User newuser = User(
-      phoneNumber: userProvider.user!.phoneNumber,
+      phone: userProvider.user!.phone,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
       gender: _selectedGender,

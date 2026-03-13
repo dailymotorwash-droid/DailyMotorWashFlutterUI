@@ -1,0 +1,25 @@
+import 'package:car_wash/models/model.dart';
+import 'package:car_wash/models/vehicle_color.dart';
+import 'package:flutter/cupertino.dart';
+
+class VehicleColorProvider extends ChangeNotifier{
+
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+  List<VehicleColor> _colors = [];
+
+  List<VehicleColor> get colors => _colors;
+
+
+  void setColors(List<VehicleColor> colors) {
+    _colors= colors;
+    notifyListeners();
+  }
+
+  void setIsLoading(bool isLoading){
+    _isLoading = isLoading;
+    notifyListeners();
+  }
+}

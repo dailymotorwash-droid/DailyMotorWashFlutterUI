@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:car_wash/models/user.dart';
 import 'package:flutter/material.dart';
 
@@ -6,6 +8,10 @@ class UserProvider extends ChangeNotifier {
 
   User? get user => _user;
   bool get isLoggedIn => _user != null;
+
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
 
   void updateUser(User updatedUser) {
     _user = updatedUser;
@@ -19,6 +25,11 @@ class UserProvider extends ChangeNotifier {
 
   void logout() {
     _user = null;
+    notifyListeners();
+  }
+
+  void setIsLoading(bool isLoading){
+    _isLoading = isLoading;
     notifyListeners();
   }
 }

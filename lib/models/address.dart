@@ -1,19 +1,60 @@
 
 
 class Address {
-
-  final String? addressId;
+  final String? id;
+  final String? firstName;
+  final String? lastName;
   final String? addressLine1;
   final String? addressLine2;
-  final String? pincode;
-  final String? landmark;
+  final String? city;
+  final String? district;
+  final String? pinCode;
+  final String? state;
+  final int? userId;
+  final String? type;
 
 
-  const Address({
-    this.addressId,
+  const Address( {
+    this.id,
     this.addressLine1,
     this.addressLine2,
-    this.pincode,
-    this.landmark,
-  }); 
+    this.city,
+    this.pinCode,
+    this.state,
+    this.district,
+    this.userId,
+    this.type,
+    this.firstName,
+    this.lastName,
+  });
+
+  factory Address.fromJson(Map<String, dynamic> json) {
+    return Address(
+      id: json['id'],
+      addressLine1: json['addressLine1'],
+      addressLine2: json['addressLine2'],
+      city: json['city'],
+      pinCode:json['pinCode'].toString(),
+      district:json['district'],
+      userId:json['userId'],
+      type:json['type'],
+      state:json['state'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      "id": id,
+      "firstName": firstName,
+      "lastName": lastName,
+      "addressLine1": addressLine1,
+      "addressLine2": addressLine2,
+      "city": city,
+      "pinCode": pinCode,
+      "district": district,
+      "userId": userId,
+      "state": state,
+      "type": type,
+    };
+  }
 }

@@ -8,7 +8,7 @@ class User {
   final int? age;
   final String? email;
   final String? state;
-  final String phoneNumber;
+  final String phone;
   final String? gender;
   final String? token;
   final String? status;
@@ -27,7 +27,7 @@ class User {
     this.gender,
     this.token,
     this.status,
-    required this.phoneNumber,
+    required this.phone,
   });
 
 
@@ -37,9 +37,9 @@ class User {
       firstName: json['firstName'],
       lastName: json['lastName'],
       email: json['email'],
-      phoneNumber:json['phone'],
+      phone:json['phone'].toString(),
       token:json['token'],
-        status:json['status'],
+      status:json['status'].toString(),
     );
   }
 
@@ -49,7 +49,7 @@ class User {
       "firstName": firstName,
       "lastName": lastName,
       "email": email,
-      "phoneNumber": phoneNumber,
+      "phone": phone,
       "gender": gender,
       "token": token,
       "status": status,

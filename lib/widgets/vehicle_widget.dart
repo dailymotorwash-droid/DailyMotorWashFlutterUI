@@ -1,4 +1,5 @@
 import 'package:car_wash/models/vehicle.dart';
+import 'package:car_wash/utils/common_utils.dart';
 import 'package:car_wash/utils/custom_colors.dart';
 import 'package:car_wash/utils/custom_enums.dart';
 import 'package:car_wash/utils/custom_text_styles.dart';
@@ -51,15 +52,15 @@ class _VehicleWidgetState extends State<VehicleWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.vehicle.brand.toString(), 
+                    widget.vehicle.brand!=null?widget.vehicle.brand.toString():CommonUtils.vehicleSize(widget.vehicle.size.toString()),
                     style: widget.colorTheme == ColorTheme.light ? AppTextStyles.blackFont16Bold : AppTextStyles.whiteFont16Bold,
                   ),
                   Text(
-                    widget.vehicle.model.toString(), 
+                    widget.vehicle.model!=null?widget.vehicle.model.toString():'',
                     style: widget.colorTheme == ColorTheme.light ? AppTextStyles.blackFont12Regular : AppTextStyles.whiteFont12Regular,
                   ),
                   Text(
-                    widget.vehicle.registrationNumber.toString(), 
+                    widget.vehicle.registrationNumber !=null?widget.vehicle.registrationNumber.toString():'' ,
                     style: widget.colorTheme == ColorTheme.light ? AppTextStyles.blackFont16Regular : AppTextStyles.whiteFont16Regular,
                   ),
                 ],

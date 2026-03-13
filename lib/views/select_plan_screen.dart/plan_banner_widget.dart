@@ -66,7 +66,7 @@ class _PlanBannerWidgetState extends State<PlanBannerWidget> {
                     )
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 10),
                 IntrinsicHeight(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,

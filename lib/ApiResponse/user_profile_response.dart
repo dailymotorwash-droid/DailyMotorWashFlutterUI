@@ -3,9 +3,11 @@ import 'Response.dart';
 
 class UserProfileResponse extends Response{
 
-  late User userProfile;
+  late User data;
 
   UserProfileResponse.fromJson(Map<String,dynamic> json): super.fromJson(json){
-    userProfile = User.fromJson(json);
+    if (json['data'] != null){
+      data = User.fromJson(json['data']);
+    }
   }
 }

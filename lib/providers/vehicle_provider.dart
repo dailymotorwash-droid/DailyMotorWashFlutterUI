@@ -11,6 +11,10 @@ class VehicleProvider extends ChangeNotifier {
 
   Vehicle? get selectedVehicle => _selectedVehicle;
 
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
+
+
   // Set vehicles from API
   void setVehicles(List<Vehicle> vehicles) {
     _vehicles = vehicles;
@@ -39,6 +43,11 @@ class VehicleProvider extends ChangeNotifier {
   void clearVehicles() {
     _vehicles.clear();
     _selectedVehicle = null;
+    notifyListeners();
+  }
+
+  void setIsLoading(bool isLoading){
+    _isLoading = isLoading;
     notifyListeners();
   }
 }

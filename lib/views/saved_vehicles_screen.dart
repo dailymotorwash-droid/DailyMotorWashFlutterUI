@@ -2,6 +2,7 @@ import 'package:car_wash/ApiResponse/vehicle_response.dart';
 import 'package:car_wash/Apis/RestServiceImp.dart';
 import 'package:car_wash/models/vehicle.dart';
 import 'package:car_wash/providers/vehicle_provider.dart';
+import 'package:car_wash/utils/common_utils.dart';
 import 'package:car_wash/utils/custom_colors.dart';
 import 'package:car_wash/utils/custom_enums.dart';
 import 'package:car_wash/utils/custom_text_styles.dart';
@@ -11,7 +12,9 @@ import 'package:car_wash/widgets/vehicle_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../ApiResponse/user_profile_response.dart';
 import '../widgets/default_vehicle.dart';
+import 'add_vehicle_and_address.dart';
 
 class SavedVehiclesScreen extends StatefulWidget {
 
@@ -53,6 +56,7 @@ class _SavedVehiclesScreenState extends State<SavedVehiclesScreen> {
     _vehicleType = widget.vehicleType!;
     read = context.read<VehicleProvider>();
     Future.microtask(() {
+      read.setIsLoading(true);
         loadVehicles();
     });
 
@@ -69,9 +73,10 @@ class _SavedVehiclesScreenState extends State<SavedVehiclesScreen> {
         centerTitle: true,
         title: const Text('Select Your Vehicle', style: AppTextStyles.whiteFont20Regular),
       ),
-      body: SingleChildScrollView(
+      body: watch.isLoading?CommonUtils.loader():SingleChildScrollView(
         padding: const EdgeInsets.all(16),
-        child:  watch.vehicles.isEmpty?defaultVehicles():vehicles(watch.vehicles)
+        // child:  watch.vehicles.isEmpty?/*defaultVehicles()*/const Center(child: Text("Please Add Address")):vehicles(watch.vehicles)
+        child: vehicles(watch.vehicles)
       )
     );
   }
@@ -81,6 +86,7 @@ class _SavedVehiclesScreenState extends State<SavedVehiclesScreen> {
     VehicleResponse response =  await RestServiceImp.getUserVehicles(storage.getToken(),_vehicleType.label);
     if (response.isSuccess) {
       read.setVehicles(response.data);
+      read.setIsLoading(false);
     }
   }
 
@@ -90,7 +96,10 @@ class _SavedVehiclesScreenState extends State<SavedVehiclesScreen> {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.pushNamed(context, AppRoutes.addVehicleScreen);
+            // Navigator.pushNamed(context, AppRoutes.addVehicleScreen);
+            Navigator.push(
+                          context, MaterialPageRoute(builder:
+                          (context) => AddVehicleAndAddressScreen(vehicleType:_vehicleType)));
           },
           child: const Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -102,11 +111,13 @@ class _SavedVehiclesScreenState extends State<SavedVehiclesScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        const Text('Saved Vehicles', style: AppTextStyles.whiteFont16Regular,),
+        Text(vehicles.isEmpty?'':'Saved Vehicles', style: AppTextStyles.whiteFont16Regular,),
         const SizedBox(height: 4),
         ...List.generate(2*vehicles.length, (index) {
           if(index.isOdd) return const SizedBox(height: 16);
-          return VehicleWidget(
+          return vehicles.isEmpty?const Center(child: Text("Please Add Vehicle",style:TextStyle(
+            color: AppColors.white
+          ) ,)):VehicleWidget(
             vehicle: vehicles[index~/2],
             colorTheme: ColorTheme.dark,
           );
@@ -132,4 +143,28 @@ class _SavedVehiclesScreenState extends State<SavedVehiclesScreen> {
       ],
     );
   }
+
+  // Future<void> validate() async {
+  //   // userRead.setIsLoading(true);
+  //   var storage = await LocalStorage.getInstance();
+  //   UserProfileResponse user = await RestServiceImp.getProfile(storage.getToken()!);
+  //   // userRead.setIsLoading(false);
+  //   if(user.isSuccess){
+  //     print(user.data.status==ProfileStatus.pending.label);
+  //     print('${user.data.status!}:${ProfileStatus.pending.label}:');
+  //     if(user.data.status==ProfileStatus.pending.label){
+  //       Navigator.push(
+  //           context, MaterialPageRoute(builder:
+  //           (context) => ProfileScreen(user: user.data,)));
+  //     }else{
+  //       AddressResponse addRes = await RestServiceImp.getUserAddresses(storage.getToken());
+  //       if(addRes.isSuccess){
+  //         if(addRes.data.isEmpty){
+  //
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
 }

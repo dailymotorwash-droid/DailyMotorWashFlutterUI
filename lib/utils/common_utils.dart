@@ -36,6 +36,26 @@ class CommonUtils{
     );
   }
 
+  static String vehicleSize(String size){
+
+    switch(size){
+
+      case 'HATCHBACK':
+        return 'Hatch Back';
+
+      case 'SEDAN':
+        return 'Sedan';
+      case 'COMPACT_SUV':
+        return 'Compact SUV';
+      case 'HYBRID':
+        return 'Hybrid';
+
+      default:
+        return size;
+    }
+  }
+
+
   
 
 }

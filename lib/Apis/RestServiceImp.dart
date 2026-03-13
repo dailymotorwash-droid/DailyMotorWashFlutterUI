@@ -907,15 +907,25 @@
 // }
 import 'dart:convert';
 
+import 'package:car_wash/ApiResponse/address_response.dart';
+import 'package:car_wash/ApiResponse/brand_response.dart';
 import 'package:car_wash/ApiResponse/plan_response.dart';
+import 'package:car_wash/ApiResponse/search_address_response.dart';
+import 'package:car_wash/ApiResponse/user_profile_response.dart';
+import 'package:car_wash/ApiResponse/vehicle_color_response.dart';
+import 'package:car_wash/ApiResponse/vehicle_model_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_response.dart';
 import 'package:car_wash/Apis/SlugUrl.dart';
+import 'package:car_wash/models/vehicle.dart';
+import 'package:car_wash/models/vehicle_and_address.dart';
+import 'package:car_wash/utils/local_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../ApiResponse/LoginResponse.dart';
 import '../ApiResponse/Response.dart';
 import '../ApiResponse/VerifyOTPResponse.dart';
+import '../ApiResponse/add_vehicle_and_address_response.dart';
 import 'Constraints.dart';
 
 class RestServiceImp {
@@ -940,7 +950,7 @@ class RestServiceImp {
   }
 
   static Future<LogInResponse> auth(String phoneNumber,String otp) async {
-    String url = '${Constraints.baseUrl}}${SlugUrl.login}';
+    String url = '${Constraints.baseUrl}${SlugUrl.login}';
     final response = await http.post(Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'phone': phoneNumber,'otp':otp}));
@@ -981,11 +991,12 @@ class RestServiceImp {
     throw Exception('Failed to LogIn');
   }
 
-  static Future<VerifyOTPResponse> getProfile(String authToken) async {
-    String url = '${Constraints.baseUrl}api/auth/verifyOtp';
+  static Future<UserProfileResponse> getProfile(String authToken) async {
+    String url = '${Constraints.baseUrl}${SlugUrl.profile}';
+
     final response = await http.get(
       Uri.parse(url),
-      headers: {'Content-Type': 'application/json'},
+      headers: {'Content-Type': 'application/json','Authorization':authToken},
     );
     if (kDebugMode) {
       print("getProfile : ${response.body}");
@@ -994,7 +1005,7 @@ class RestServiceImp {
     }
 
     if (response.statusCode == 200) {
-      return VerifyOTPResponse.fromJson(
+      return UserProfileResponse.fromJson(
           jsonDecode(response.body) as Map<String, dynamic>);
     }
     throw Exception('Failed to LogIn');
@@ -1102,7 +1113,193 @@ class RestServiceImp {
 
   }
 
-  // static Future<EditProfileResponse> EditProfile(
+  ////Get Address
+  static Future<AddressResponse> getUserAddresses(String? token) async {
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getAddresses}';
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '$token', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return AddressResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+
+  ////Get Brands
+  static Future<BrandResponse> getBrands(String? token) async {
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getBrands}';
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '$token', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return BrandResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+
+  ///Get Models
+  static Future<VehicleModelResponse> getModels(String? token,int brandId,String vehicleType) async {
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getModels.replaceAll("{brandId}", '$brandId')}?vehicleType=$vehicleType';
+    debugPrint(token);
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '$token', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return VehicleModelResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+
+  ///Get Colors
+  static Future<VehicleColorResponse> getColors(String? token,int modelId) async {
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getColors.replaceAll("{modelId}", '$modelId')}';
+    debugPrint(token);
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '$token', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return VehicleColorResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+
+  ///Search Address
+  static Future<SearchAddressResponse> searchAddress(String? token,String q) async {
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.searchAddress}?q=$q';
+    debugPrint(token);
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '$token', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return SearchAddressResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+  // Add Vehicle
+  static Future<VehicleResponse> addVehicle(
+      Vehicle vehicle) async {
+    var storage = await LocalStorage.getInstance();
+    String url = '${Constraints.baseUrl}${SlugUrl.addVehicle}';
+    final response = await http.post(Uri.parse(url),
+        headers: {'Content-Type': 'application/json','Authorization': '${storage.getToken()}'
+        },
+        body: jsonEncode(vehicle.toJson()));
+    if (kDebugMode) {
+      print("OTPVerification : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $url");
+    }
+
+    if (response.statusCode == 200) {
+      return VehicleResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    throw Exception('Failed to LogIn');
+  }
+
+  // Add Vehicle and address
+  static Future<AddVehicleAndAddressResponse> addVehicleAndAddress(
+      VehicleAndAddress vehicle) async {
+    var storage = await LocalStorage.getInstance();
+    String url = '${Constraints.baseUrl}${SlugUrl.addVehicleAndAddress}';
+    final response = await http.post(Uri.parse(url),
+        headers: {'Content-Type': 'application/json','Authorization': '${storage.getToken()}'
+        },
+        body: jsonEncode(vehicle.toJson()));
+    if (kDebugMode) {
+      print("OTPVerification : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $url");
+    }
+
+    if (response.statusCode == 200) {
+      return AddVehicleAndAddressResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    throw Exception('Failed to LogIn');
+  }
+
+// static Future<EditProfileResponse> EditProfile(
   //     String DOB,
   //     String email,
   //     String firstName,

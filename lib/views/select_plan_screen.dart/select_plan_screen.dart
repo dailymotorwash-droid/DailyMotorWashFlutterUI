@@ -1,16 +1,28 @@
+import 'dart:ui';
+
+import 'package:car_wash/ApiResponse/address_response.dart';
 import 'package:car_wash/ApiResponse/plan_response.dart';
+import 'package:car_wash/ApiResponse/user_profile_response.dart';
 import 'package:car_wash/Apis/RestServiceImp.dart';
+import 'package:car_wash/models/plan.dart';
 import 'package:car_wash/models/vehicle.dart';
 import 'package:car_wash/providers/service_provider.dart';
+import 'package:car_wash/providers/user_provider.dart';
+import 'package:car_wash/providers/vehicle_provider.dart';
 import 'package:car_wash/utils/common_utils.dart';
 import 'package:car_wash/utils/custom_button_styles.dart';
 import 'package:car_wash/utils/custom_colors.dart';
+import 'package:car_wash/utils/custom_enums.dart';
 import 'package:car_wash/utils/custom_text_styles.dart';
 import 'package:car_wash/utils/local_storage.dart';
+import 'package:car_wash/views/profile_screen.dart';
 import 'package:car_wash/views/select_plan_screen.dart/plan_banner_widget.dart';
+import 'package:car_wash/widgets/price_row_widget.dart';
 import 'package:car_wash/widgets/vehicle_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import '../../models/user.dart';
 
 class SelectPlanScreen extends StatefulWidget {
 
@@ -28,6 +40,8 @@ class SelectPlanScreen extends StatefulWidget {
 class _SelectPlanScreenState extends State<SelectPlanScreen> {
 
   late ServiceProvider read,watch;
+  late UserProvider userRead,userWatch;
+  late VehicleProvider vehicleRead,vehicleWatch;
   // late List<Plan> plansList = [
   //   Plan(vehicleType: 'Monthly', amount: 500, discount: 0),
   //   Plan(vehicleType: 'Quartely', amount: 1500, discount: 60),
@@ -44,8 +58,11 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     // TODO: implement initState
     _vehicle = widget.vehicle;
     read = context.read<ServiceProvider>();
+    userRead = context.read<UserProvider>();
+    vehicleRead = context.read<VehicleProvider>();
     Future.microtask(() {
       read.setIsLoading(true);
+      vehicleRead.selectVehicle(_vehicle);
       loadServices();
     });
     super.initState();
@@ -54,6 +71,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   @override
   Widget build(BuildContext context) {
     watch = context.watch<ServiceProvider>();
+    vehicleWatch = context.watch<VehicleProvider>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -74,9 +92,9 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
         ),
         padding: const EdgeInsets.all(16),
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: ()=> proceed(watch.planes[selectPlanIndex]),
           style: AppButtonStyles.secondaryButtonStyle,
-          child: Row(
+          child: watch.planes.isEmpty?null:Row(
             children: [
               Text(
                 '₹${watch.planes[selectPlanIndex].rate - watch.planes[selectPlanIndex].discount} +taxes',
@@ -88,11 +106,11 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
           ),
         ),
       ),
-      body: watch.isLoading?CommonUtils.loader():watch.planes.isEmpty?null:SingleChildScrollView(
+      body: watch.isLoading?CommonUtils.loader():watch.planes.isEmpty?const Center(child: Text("No Plans Found")):SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            VehicleWidget(vehicle: widget.vehicle, isClickable: false),
+            VehicleWidget(vehicle: vehicleWatch.selectedVehicle!, isClickable: false),
             const SizedBox(height: 16),
             ...List.generate(2*watch.planes.length-1, (index) {
               int actualIndex = index~/2;
@@ -131,4 +149,204 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
       read.setIsLoading(false);
     }
   }
+
+  void proceed(Plan plan) {
+    final screenHeight = MediaQuery.of(context).size.height;
+    final screenWidth = MediaQuery.of(context).size.width;
+    double sheetHeight = screenHeight * 0.55;
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.4),
+      builder: (context) {
+        return Stack(
+          alignment: Alignment.topCenter,
+          children: [
+
+            /// BLUR BACKGROUND
+            BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+              child: Container(color: Colors.transparent),
+            ),
+
+            /// DRAGGABLE SHEET
+            DraggableScrollableSheet(
+              initialChildSize: 0.55,
+              minChildSize: 0.45,
+              maxChildSize: 0.85,
+              builder: (context, controller) {
+                return Container(
+                  padding: EdgeInsets.all(screenWidth * 0.05),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.96),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(28),
+                    ),
+                  ),
+                  child: ListView(
+                    controller: controller,
+                    children: [
+
+                      /// DRAG HANDLE
+                      Center(
+                        child: Container(
+                          width: screenWidth * 0.12,
+                          height: 5,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade400,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.025),
+
+                      /// HEADER
+                      Row(
+                        children: [
+                          Icon(Icons.arrow_back, size: screenWidth * 0.06),
+                          SizedBox(width: screenWidth * 0.03),
+
+                          Text(
+                            "Payment",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.045,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+
+                          const Spacer(),
+
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: screenWidth * 0.03,
+                              vertical: screenHeight * 0.004,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.red),
+                            ),
+                            child: Text(
+                              "₹0",
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: screenWidth * 0.035,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+
+                      SizedBox(height: screenHeight * 0.025),
+
+                      /// VEHICLE BOX
+                      Container(
+                        padding: EdgeInsets.all(screenWidth * 0.04),
+                        decoration: BoxDecoration(
+                          color: const Color(0xffE8F0F6),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+
+                            Text('${_vehicle.brand} ${_vehicle.model} (${_vehicle.registrationNumber})',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.04,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+
+                            SizedBox(height: screenHeight * 0.005),
+
+                            Text(
+                              '${_vehicle.color}',
+                              style: TextStyle(
+                                fontSize: screenWidth * 0.035,
+                              ),
+                            ),
+
+                            const Divider(),
+
+                            PriceRowWidget(title: '${plan.cycle} Car wash',value: '${plan.rate}',),
+                            PriceRowWidget(title: 'discount',value: '${plan.discount}',),
+                            PriceRowWidget(title: 'Amount',value: '${plan.rate-plan.discount}',),
+                            // PriceRowWidget(title: 'Taxes',value: '₹ 205',),
+
+                            const Divider(),
+                            PriceRowWidget(title: 'Total',value: '₹ ${plan.rate-plan.discount}',isBold: true),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.03),
+
+                      /// BUTTON
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            padding: EdgeInsets.symmetric(
+                              vertical: screenHeight * 0.018,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          onPressed: (){},
+                          child: Text(
+                            "Recharge pocket to continue",
+                            style: TextStyle(
+                              fontSize: screenWidth * 0.04,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.01),
+
+                      Center(
+                        child: Text(
+                          "Low Balance!",
+                          style: TextStyle(
+                            color: Colors.red,
+                            fontSize: screenWidth * 0.035,
+                          ),
+                        ),
+                      ),
+
+                      SizedBox(height: screenHeight * 0.03),
+                    ],
+                  ),
+                );
+              },
+            ),
+
+            /// FLOATING CLOSE BUTTON
+            Positioned(
+              bottom: sheetHeight + 25,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: EdgeInsets.all(screenWidth * 0.025),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Colors.black,
+                  ),
+                  child: Icon(
+                    Icons.close,
+                    color: Colors.white,
+                    size: screenWidth * 0.05,
+                  ),
+                ),
+              ),
+            )
+          ],
+        );
+      },
+    );
+  }
+
 }
