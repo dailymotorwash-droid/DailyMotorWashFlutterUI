@@ -19,6 +19,7 @@ dependencies:
   shared_preferences: ^2.2.3
   syncfusion_flutter_calendar: ^28.1.33
   http: ^1.2.2
+  intl: ^0.18.1
 
 dev_dependencies:
   flutter_test:

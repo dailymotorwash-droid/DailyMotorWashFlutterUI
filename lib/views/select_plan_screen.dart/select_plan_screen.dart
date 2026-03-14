@@ -1,9 +1,7 @@
 import 'dart:ui';
 
-import 'package:car_wash/ApiResponse/address_response.dart';
 import 'package:car_wash/ApiResponse/plan_response.dart';
 import 'package:car_wash/ApiResponse/subscription_response.dart';
-import 'package:car_wash/ApiResponse/user_profile_response.dart';
 import 'package:car_wash/Apis/RestServiceImp.dart';
 import 'package:car_wash/models/plan.dart';
 import 'package:car_wash/models/subscription.dart';
@@ -14,18 +12,14 @@ import 'package:car_wash/providers/vehicle_provider.dart';
 import 'package:car_wash/utils/common_utils.dart';
 import 'package:car_wash/utils/custom_button_styles.dart';
 import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_enums.dart';
 import 'package:car_wash/utils/custom_text_styles.dart';
 import 'package:car_wash/utils/local_storage.dart';
-import 'package:car_wash/views/home_screen/home_screen.dart';
-import 'package:car_wash/views/profile_screen.dart';
 import 'package:car_wash/views/select_plan_screen.dart/plan_banner_widget.dart';
 import 'package:car_wash/widgets/price_row_widget.dart';
 import 'package:car_wash/widgets/vehicle_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/user.dart';
 import '../../utils/page_routes.dart';
 
 class SelectPlanScreen extends StatefulWidget {

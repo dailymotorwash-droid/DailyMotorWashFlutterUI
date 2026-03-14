@@ -270,11 +270,12 @@ class _AddVehicleAndAddressScreenState
                         },
                       ),
                       const SizedBox(height: 30),
-                      Row(
-                        children: [
+                      // Row(
+                      //   children: [
                           /// BRAND DROPDOWN
-                          Expanded(
-                            child: DropdownUnderlinedField<Brand>(
+                          // Expanded(
+                          //   child:
+                            DropdownUnderlinedField<Brand>(
                               colorTheme: ColorTheme.dark,
                               labelText: "Brand",
                               value: selectedBrand,
@@ -291,13 +292,14 @@ class _AddVehicleAndAddressScreenState
                                 });
                               },
                             ),
-                          ),
+                          // ),
 
-                          const SizedBox(width: 16),
+                          const SizedBox(height: 16),
 
                           /// MODEL DROPDOWN
-                          Expanded(
-                            child: DropdownUnderlinedField<Model>(
+                          // Expanded(
+                          //   child:
+                            DropdownUnderlinedField<Model>(
                               colorTheme: ColorTheme.dark,
                               labelText: "Model",
                               value: selectedModel,
@@ -315,9 +317,9 @@ class _AddVehicleAndAddressScreenState
                                 });
                               },
                             ),
-                          ),
-                        ],
-                      ),
+                          // ),
+                      //   ],
+                      // ),
                       const SizedBox(height: 30),
                       DropdownUnderlinedField<VehicleColor>(
                         colorTheme: ColorTheme.dark,
@@ -333,6 +335,8 @@ class _AddVehicleAndAddressScreenState
                           setState(() => selectedColor = v);
                         },
                       ),
+                      const SizedBox(height: 30),
+
                       UnderlinedTextField(
                         colorTheme: ColorTheme.dark,
                         hintText: "Vehicle Name (optional)",
@@ -456,7 +460,7 @@ class _AddVehicleAndAddressScreenState
                             if (profileStatus == ProfileStatus.pending.label)
                               Row(
                                 children: [
-                                  /// BRAND DROPDOWN
+                                  /// FIRST NAME DROPDOWN
                                   Expanded(
                                       child: UnderlinedTextField(
                                     colorTheme: ColorTheme.dark,
@@ -467,7 +471,7 @@ class _AddVehicleAndAddressScreenState
 
                                   const SizedBox(width: 16),
 
-                                  /// MODEL DROPDOWN
+                                  /// LAST NAME DROPDOWN
                                   Expanded(
                                     child: UnderlinedTextField(
                                       colorTheme: ColorTheme.dark,

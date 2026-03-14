@@ -912,6 +912,7 @@ import 'package:car_wash/ApiResponse/brand_response.dart';
 import 'package:car_wash/ApiResponse/plan_response.dart';
 import 'package:car_wash/ApiResponse/search_address_response.dart';
 import 'package:car_wash/ApiResponse/subscription_response.dart';
+import 'package:car_wash/ApiResponse/subscription_vehicle_response.dart';
 import 'package:car_wash/ApiResponse/user_profile_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_color_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_model_response.dart';
@@ -1321,6 +1322,36 @@ class RestServiceImp {
           jsonDecode(response.body) as Map<String, dynamic>);
     }
     throw Exception('Failed to LogIn');
+  }
+
+  ///Subscriptions
+  static Future<SubscriptionVehicleResponse> getSubscriptionWithVehicles() async {
+    var storage = await LocalStorage.getInstance();
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.subscriptionWithVehicle}';
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return SubscriptionVehicleResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
   }
 // static Future<EditProfileResponse> EditProfile(
   //     String DOB,

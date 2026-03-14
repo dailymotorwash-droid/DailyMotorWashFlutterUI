@@ -3,6 +3,8 @@
 import 'package:car_wash/widgets/loader_transparent.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 
 class CommonUtils{
 
@@ -81,7 +83,11 @@ class CommonUtils{
     }
   }
 
+  static String  ddMmYy(DateTime date){
 
-  
+    return  DateFormat('dd MMM yyyy').format(date);
+  }
+
+
 
 }

@@ -5,6 +5,8 @@ import 'package:car_wash/utils/local_storage.dart';
 import 'package:car_wash/views/home_screen/current_offer_widget.dart';
 import 'package:car_wash/views/home_screen/doorstep_wash_widget.dart';
 import 'package:car_wash/views/home_screen/refer_friend_widget.dart';
+import 'package:car_wash/views/home_screen/subscribed_widget.dart';
+import 'package:car_wash/widgets/drawer_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -30,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     userProvider = Provider.of<UserProvider>(context);
 
     return Scaffold(
+      drawer: const DrawerWidget(),
       backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
         // shape: RoundedRectangleBorder( borderRadius: BorderRadius.circular(8)),
@@ -37,7 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
         //   preferredSize: const Size(double.infinity, 16),
         //   child: SizedBox(),
         // ),
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         backgroundColor: AppColors.darkBackground,
         foregroundColor: AppColors.white,
         title: Row(
@@ -64,6 +67,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Text("Hi ${LocalStorage.getFirstName()}", style: AppTextStyles.blackFont20Bold),
             const SizedBox(height: 12),
             const CurrentOfferWidget(),
+            const SubscribedWidget(),
             const SizedBox(height: 20),
             const DoorstepWashWidget(),
             const SizedBox(height: 20),

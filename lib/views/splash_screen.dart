@@ -73,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
         case 'registered_user':
           Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.landingScreen, (Route<dynamic> route) => false);
+              context, AppRoutes.homeScreen, (Route<dynamic> route) => false);
 
         default:
           Navigator.pushNamedAndRemoveUntil(
