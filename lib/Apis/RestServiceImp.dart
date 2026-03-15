@@ -994,13 +994,15 @@ class RestServiceImp {
     throw Exception('Failed to LogIn');
   }
 
-  static Future<UserProfileResponse> getProfile(String authToken) async {
+  static Future<UserProfileResponse> getProfile() async {
     String url = '${Constraints.baseUrl}${SlugUrl.profile}';
-
+    var storage = await LocalStorage.getInstance();
     final response = await http.get(
       Uri.parse(url),
-      headers: {'Content-Type': 'application/json','Authorization':authToken},
-    );
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': '${storage.getToken()}'
+      });
     if (kDebugMode) {
       print("getProfile : ${response.body}");
       print("statusCode: ${response.statusCode}");

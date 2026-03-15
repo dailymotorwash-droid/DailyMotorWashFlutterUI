@@ -5,9 +5,13 @@ class Subscription {
   final double rate;
   final double discount;
   final String paymentMethod;
+  final bool? isPointsAvail;
+  final int? referredBy;
 
   const Subscription({
     this.id,
+    this.isPointsAvail,
+    this.referredBy,
     required this.vehicleId,
     required this.rateId,
     required this.rate,
@@ -34,6 +38,8 @@ class Subscription {
       "discount":discount,
       "paymentMethod":paymentMethod,
       "rate":rate,
+      "referredBy":referredBy,
+      "isPointsAvail":isPointsAvail,
     };
   }
 }

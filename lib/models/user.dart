@@ -12,6 +12,8 @@ class User {
   final String? gender;
   final String? token;
   final String? status;
+  final int? referredBy;
+  final int? points;
   final List<Vehicle>? vehicleList;
   final List<Address>? addressList;
 
@@ -27,6 +29,8 @@ class User {
     this.gender,
     this.token,
     this.status,
+    this.referredBy,
+    this.points,
     required this.phone,
   });
 
@@ -39,7 +43,9 @@ class User {
       email: json['email'],
       phone:json['phone'].toString(),
       token:json['token'],
-      status:json['status'].toString(),
+      status:json['status'],
+      referredBy:json['referredBy'],
+      points:json['points'],
     );
   }
 
@@ -53,6 +59,7 @@ class User {
       "gender": gender,
       "token": token,
       "status": status,
+      "referredBy": referredBy,
     };
   }
 }

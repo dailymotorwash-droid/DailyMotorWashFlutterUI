@@ -175,6 +175,8 @@ class _AddVehicleAndAddressScreenState
             await RestServiceImp.addVehicleAndAddress(vehicleAndAddress);
         if (res.isSuccess) {
           LocalStorage.setStatus(ProfileStatus.completed.label);
+          LocalStorage.setFirstName(firstName!);
+          LocalStorage.setLastName(lastName!);
           vehicleRead.addVehicle(res.data.vehicle!);
           Navigator.pop(context);
         }

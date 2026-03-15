@@ -80,5 +80,10 @@ class LocalStorage{
     // final prefs = await SharedPreferences.getInstance();
     return _preferences.getString('phone');
   }
+  Future<void> clearSharedPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+    print("All shared preferences cleared.");
+  }
 
 }

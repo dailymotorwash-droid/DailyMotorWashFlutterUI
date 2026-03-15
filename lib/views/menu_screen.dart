@@ -39,7 +39,13 @@ class _MenuScreenState extends State<MenuScreen> {
             ...List.generate(menuOptions.length, (index) {
               return InkWell(
                 onTap: () {
-                  if(index != menuOptions.length - 1) {
+                  if(index != menuOptions.length) {
+                    debugPrint(menuOptions[index].route);
+                    if(AppRoutes.loginScreen==menuOptions[index].route){
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, AppRoutes.loginScreen, (Route<dynamic> route) => false);
+                     return;
+                    }
                     Navigator.pushNamed(context, menuOptions[index].route);
                   } 
                 },

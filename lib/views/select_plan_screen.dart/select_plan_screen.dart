@@ -2,9 +2,11 @@ import 'dart:ui';
 
 import 'package:car_wash/ApiResponse/plan_response.dart';
 import 'package:car_wash/ApiResponse/subscription_response.dart';
+import 'package:car_wash/ApiResponse/user_profile_response.dart';
 import 'package:car_wash/Apis/RestServiceImp.dart';
 import 'package:car_wash/models/plan.dart';
 import 'package:car_wash/models/subscription.dart';
+import 'package:car_wash/models/user.dart';
 import 'package:car_wash/models/vehicle.dart';
 import 'package:car_wash/providers/service_provider.dart';
 import 'package:car_wash/providers/user_provider.dart';
@@ -38,7 +40,6 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   late ServiceProvider read, watch;
   late UserProvider userRead, userWatch;
   late VehicleProvider vehicleRead, vehicleWatch;
-
   // late List<Plan> plansList = [
   //   Plan(vehicleType: 'Monthly', amount: 500, discount: 0),
   //   Plan(vehicleType: 'Quartely', amount: 1500, discount: 60),
@@ -55,7 +56,9 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
 
   int selectPlanIndex = 0;
   late Vehicle _vehicle;
-
+  late int referredBy;
+  late bool isPointsAvail;
+  late int points;
   @override
   void initState() {
     // TODO: implement initState
@@ -67,6 +70,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
       read.setIsLoading(true);
       vehicleRead.selectVehicle(_vehicle);
       loadServices();
+      loadUserDetails();
     });
     super.initState();
   }
@@ -75,6 +79,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   Widget build(BuildContext context) {
     watch = context.watch<ServiceProvider>();
     vehicleWatch = context.watch<VehicleProvider>();
+    userWatch = context.watch<UserProvider>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -219,8 +224,8 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                       /// HEADER
                       Row(
                         children: [
-                          Icon(Icons.arrow_back, size: screenWidth * 0.06),
-                          SizedBox(width: screenWidth * 0.03),
+                          // Icon(Icons.arrow_back, size: screenWidth * 0.06),
+                          // SizedBox(width: screenWidth * 0.03),
                           Text(
                             "Payment",
                             style: TextStyle(
@@ -229,23 +234,23 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                             ),
                           ),
                           const Spacer(),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: screenWidth * 0.03,
-                              vertical: screenHeight * 0.004,
-                            ),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.red),
-                            ),
-                            child: Text(
-                              "₹0",
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: screenWidth * 0.035,
-                              ),
-                            ),
-                          )
+                          // Container(
+                          //   padding: EdgeInsets.symmetric(
+                          //     horizontal: screenWidth * 0.03,
+                          //     vertical: screenHeight * 0.004,
+                          //   ),
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(20),
+                          //     border: Border.all(color: Colors.red),
+                          //   ),
+                          //   child: Text(
+                          //     "₹0",
+                          //     style: TextStyle(
+                          //       color: Colors.red,
+                          //       fontSize: screenWidth * 0.035,
+                          //     ),
+                          //   ),
+                          // )
                         ],
                       ),
 
@@ -290,15 +295,19 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                               value: '${plan.discount}',
                             ),
                             PriceRowWidget(
-                              title: 'Amount',
-                              value: '${plan.rate - plan.discount}',
+                              title: 'points',
+                              value: '${userWatch.user!.points!}',
                             ),
+                            // PriceRowWidget(
+                            //   title: 'Amount',
+                            //   value: '${plan.rate - plan.discount-userWatch.user!.points!}',
+                            // ),
                             // PriceRowWidget(title: 'Taxes',value: '₹ 205',),
 
                             const Divider(),
                             PriceRowWidget(
                                 title: 'Total',
-                                value: '₹ ${plan.rate - plan.discount}',
+                                value: '₹ ${plan.rate - plan.discount-userWatch.user!.points!}',
                                 isBold: true),
                           ],
                         ),
@@ -379,7 +388,11 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
         rateId: plan.id,
         rate: plan.rate,
         discount: plan.discount,
-        paymentMethod: 'UPI');
+        paymentMethod: 'UPI',
+        referredBy: userWatch.user?.referredBy,
+        isPointsAvail:userWatch.user?.points!=0?true:false
+
+    );
     print(subscription.toJson());
     SubscriptionResponse response = await RestServiceImp.subscribe(subscription);
     if(response.isSuccess){
@@ -394,5 +407,16 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     }
     vehicleRead.setIsLoading(false);
     CommonUtils.toastMessage(response.message);
+  }
+
+  Future<void> loadUserDetails() async{
+
+    UserProfileResponse userProfileResponse = await RestServiceImp.getProfile();
+    if(userProfileResponse.isSuccess){
+     userRead.login(userProfileResponse.data);
+     // isPointsAvail = userProfileResponse.data.points!=0?true:false;
+     // referredBy = userProfileResponse.data.referredBy!;
+     // points = userProfileResponse.data.points!;
+    }
   }
 }
