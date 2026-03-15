@@ -46,6 +46,7 @@ class User {
       status:json['status'],
       referredBy:json['referredBy'],
       points:json['points'],
+      gender:json['gender'],
     );
   }
 
@@ -55,10 +56,7 @@ class User {
       "firstName": firstName,
       "lastName": lastName,
       "email": email,
-      "phone": phone,
       "gender": gender,
-      "token": token,
-      "status": status,
       "referredBy": referredBy,
     };
   }

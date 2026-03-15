@@ -919,6 +919,7 @@ import 'package:car_wash/ApiResponse/vehicle_model_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_response.dart';
 import 'package:car_wash/Apis/SlugUrl.dart';
 import 'package:car_wash/models/subscription.dart';
+import 'package:car_wash/models/user.dart';
 import 'package:car_wash/models/vehicle.dart';
 import 'package:car_wash/models/vehicle_and_address.dart';
 import 'package:car_wash/utils/local_storage.dart';
@@ -1355,43 +1356,27 @@ class RestServiceImp {
     throw Exception('Failed to Fetch Vehicles');
 
   }
-// static Future<EditProfileResponse> EditProfile(
-  //     String DOB,
-  //     String email,
-  //     String firstName,
-  //     String lastName,
-  //     String gender,
-  //     String income,
-  //     String phoneNumber,
-  //     String token) async {
-  //   String url = '${Constraints.baseUrl}${SlugUrl.auth}update/me';
-  //   print("dob-->>>>>>>>>>>>>>$DOB>>");
-  //   final response = await http.put(Uri.parse(url),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': '$token'
-  //       },
-  //       body: jsonEncode({
-  //         "dateOfBirth": DOB,
-  //         "email": email,
-  //         "firstName": firstName,
-  //         "gender": gender,
-  //         "incomeGroup": income,
-  //         "lastName": lastName,
-  //         "phoneNumber": phoneNumber
-  //       }));
-  //
-  //   if (kDebugMode) {
-  //     print("EditProfile : ${response.body}");
-  //     print("statusCode: ${response.statusCode}");
-  //     print("Url: $url");
-  //   }
-  //   if (response.statusCode == 200) {
-  //     return EditProfileResponse.fromJson(
-  //         jsonDecode(response.body) as Map<String, dynamic>);
-  //   }
-  //   throw Exception('Failed to edit profile.');
-  // }
+static Future<UserProfileResponse> editProfile(User user) async {
+    String url = '${Constraints.baseUrl}${SlugUrl.updateUser}';
+    var storage = await LocalStorage.getInstance();
+    final response = await http.put(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': '${storage.getToken()}'
+        },
+        body: jsonEncode(user.toJson()));
+
+    if (kDebugMode) {
+      print("EditProfile : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $url");
+    }
+    if (response.statusCode == 200) {
+      return UserProfileResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    throw Exception('Failed to edit profile.');
+  }
 
   ////////get Profile Information
 

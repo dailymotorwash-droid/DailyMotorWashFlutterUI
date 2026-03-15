@@ -36,8 +36,8 @@ class RouteGenerator {
       case AppRoutes.loginScreen:
         return buildRoute(const LoginScreen(), settings: settings);
 
-      // case AppRoutes.profileScreen:
-      //   return buildRoute(const ProfileScreen(), settings: settings);
+      case AppRoutes.profileScreen:
+        return buildRoute(const ProfileScreen(), settings: settings);
 
       case AppRoutes.addressScreen:
         return buildRoute(const AddressScreen(), settings: settings);
