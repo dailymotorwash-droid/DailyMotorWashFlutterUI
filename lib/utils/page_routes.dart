@@ -1,4 +1,5 @@
 import 'package:car_wash/views/add_vehicle_screen.dart';
+import 'package:car_wash/views/all_saved_vehicles.dart';
 import 'package:car_wash/views/error_route_scrren.dart';
 import 'package:car_wash/views/address_screen.dart';
 import 'package:car_wash/views/help_screen.dart';
@@ -26,6 +27,7 @@ class AppRoutes {
   static const savedAddressScreen = "/saved_address_screen";
   static const savedVehiclesScreen = "/saved_vehicles_screen";
   static const helpScreen = "/help_screen";
+  static const allSavedVehicles = "/allSavedVehicles";
   static const transactionsScreen = "/transactions_screen";
 }
 
@@ -36,11 +38,14 @@ class RouteGenerator {
       case AppRoutes.loginScreen:
         return buildRoute(const LoginScreen(), settings: settings);
 
+      case AppRoutes.allSavedVehicles:
+        return buildRoute(const AllSavedVehicles(), settings: settings);
+
       case AppRoutes.profileScreen:
         return buildRoute(const ProfileScreen(), settings: settings);
 
-      case AppRoutes.addressScreen:
-        return buildRoute(const AddressScreen(), settings: settings);
+      // case AppRoutes.addressScreen:
+      //   return buildRoute(const AddressScreen(), settings: settings);
 
       case AppRoutes.splashScreen:
         return buildRoute(const SplashScreen(), settings: settings);

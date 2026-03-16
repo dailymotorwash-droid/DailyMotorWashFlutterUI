@@ -2,8 +2,12 @@ import 'package:car_wash/utils/custom_colors.dart';
 import 'package:car_wash/utils/custom_map_classes.dart';
 import 'package:car_wash/utils/custom_text_styles.dart';
 import 'package:car_wash/utils/page_routes.dart';
+import 'package:car_wash/views/all_saved_vehicles.dart';
 import 'package:car_wash/views/profile_screen.dart';
+import 'package:car_wash/views/saved_vehicles_screen.dart';
 import 'package:flutter/material.dart';
+
+import '../utils/custom_enums.dart';
 
 class MenuScreen extends StatefulWidget {
   
@@ -17,7 +21,7 @@ class _MenuScreenState extends State<MenuScreen> {
 
   final List<MenuOption> menuOptions = const [
     MenuOption(icon: Icons.person, label: 'Edit Profile', route: AppRoutes.profileScreen),
-    MenuOption(icon: Icons.car_crash, label: 'Manage Vechicles', route: AppRoutes.savedVehiclesScreen),
+    MenuOption(icon: Icons.car_crash, label: 'Manage Vehicles', route: AppRoutes.allSavedVehicles),
     MenuOption(icon: Icons.home, label: 'Manage Addresses', route: AppRoutes.savedAddressScreen),
     MenuOption(icon: Icons.notifications, label: 'Notifications', route: AppRoutes.notificationScreen),
     MenuOption(icon: Icons.payment, label: 'Transactions', route: AppRoutes.transactionsScreen),

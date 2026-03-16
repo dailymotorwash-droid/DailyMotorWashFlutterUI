@@ -6,12 +6,17 @@ class Address {
   final String? lastName;
   final String? addressLine1;
   final String? addressLine2;
+  final String? addressLine3;
+  final String? addressLine4;
   final String? city;
   final String? district;
   final String? pinCode;
   final String? state;
   final int? userId;
   final String? type;
+  final String? vehicleId;
+  final String? houseNo;
+  final int? masterAddressId;
 
 
   const Address( {
@@ -26,6 +31,11 @@ class Address {
     this.type,
     this.firstName,
     this.lastName,
+    this.addressLine3,
+    this.addressLine4,
+    this.vehicleId,
+    this.houseNo,
+    this.masterAddressId,
   });
 
   factory Address.fromJson(Map<String, dynamic> json) {
@@ -39,6 +49,11 @@ class Address {
       userId:json['userId'],
       type:json['type'],
       state:json['state'],
+      addressLine3:json['addressLine3'],
+      addressLine4:json['addressLine4'],
+      vehicleId:json['vehicleId'],
+      houseNo:json['houseNo'],
+      masterAddressId:json['masterAddressId'],
     );
   }
 
@@ -54,7 +69,11 @@ class Address {
       "district": district,
       "userId": userId,
       "state": state,
+      "addressLine3": addressLine3,
+      "addressLine4": addressLine4,
+      "houseNo": houseNo,
       "type": type,
+      "masterAddressId": masterAddressId,
     };
   }
 }

@@ -120,6 +120,7 @@ class _SavedVehiclesScreenState extends State<SavedVehiclesScreen> {
           ) ,)):VehicleWidget(
             vehicle: vehicles[index~/2],
             colorTheme: ColorTheme.dark,
+            isEditable: false,
           );
         }),
       ],

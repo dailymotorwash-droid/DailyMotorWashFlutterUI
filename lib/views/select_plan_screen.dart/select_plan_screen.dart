@@ -26,10 +26,11 @@ import '../../utils/page_routes.dart';
 
 class SelectPlanScreen extends StatefulWidget {
   final Vehicle vehicle;
-
+  final int addressId;
   const SelectPlanScreen({
     super.key,
     required this.vehicle,
+    required this.addressId,
   });
 
   @override
@@ -59,10 +60,12 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   late int referredBy;
   late bool isPointsAvail;
   late int points;
+  late int _addressId;
   @override
   void initState() {
     // TODO: implement initState
     _vehicle = widget.vehicle;
+    _addressId = widget.addressId;
     read = context.read<ServiceProvider>();
     userRead = context.read<UserProvider>();
     vehicleRead = context.read<VehicleProvider>();
@@ -126,7 +129,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                     children: [
                       VehicleWidget(
                           vehicle: vehicleWatch.selectedVehicle!,
-                          isClickable: false),
+                          isClickable: false,isEditable: false,),
                       const SizedBox(height: 16),
                       ...List.generate(2 * watch.planes.length - 1, (index) {
                         int actualIndex = index ~/ 2;
@@ -164,7 +167,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   Future<void> loadServices() async {
     var storage = await LocalStorage.getInstance();
     PlanResponse response = await RestServiceImp.getUserServices(
-        storage.getToken(), _vehicle.vehicleType!, _vehicle.size!);
+        storage.getToken(), _vehicle.vehicleType!, _vehicle.size!,_addressId);
     if (response.isSuccess) {
       read.setPlans(response.data);
       read.setIsLoading(false);

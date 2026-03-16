@@ -38,7 +38,15 @@ class AddressProvider extends ChangeNotifier {
     _addresses.removeWhere((v) => v.id == vehicleId);
     notifyListeners();
   }
+  void updateVehicle(Address updatedAddress) {
 
+    int index = addresses.indexWhere((v) => v.id == updatedAddress.id);
+
+    if (index != -1) {
+      addresses[index] = updatedAddress;
+      notifyListeners();
+    }
+  }
   // Clear vehicles on logout
   void clearVehicles() {
     _addresses.clear();

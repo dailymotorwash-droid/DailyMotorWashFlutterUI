@@ -126,8 +126,8 @@ class _SubscribedVehicleWidget extends State<SubscribedVehicleWidget> {
         size: sub.size,
         id: sub.vehicleId);
 
-    Navigator.push(
-        context, MaterialPageRoute(builder:
-        (context) => SelectPlanScreen(vehicle: veh)));
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder:
+    //     (context) => SelectPlanScreen(vehicle: veh,addressId: ,)));
   }
 }

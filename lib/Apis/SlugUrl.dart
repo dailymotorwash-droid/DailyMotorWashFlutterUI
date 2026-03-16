@@ -3,8 +3,9 @@ class SlugUrl {
   static String login = "user/login";
   static String profile = "user/profile";
   static String getVehicles = "vehicle/{vehicleType}/get";
-  static String getServices = "service/{vehicleType}/get";
+  static String getServices = "service/{vehicleType}/{addressId}/get";
   static String getAddresses = "address/get";
+  static String getAddressesByVehicleId = "address/{VehicleId}/get";
   static String getBrands = "master/brands/get";
   static String getModels = "master/models/{brandId}/get";
   static String getColors= "master/colors/{modelId}/get";
@@ -14,5 +15,11 @@ class SlugUrl {
   static String subscribe= "subscription/add";
   static String subscriptionWithVehicle= "subscription/vehicle";
   static String updateUser= "user/update";
+  static String getAllVehicles= "vehicle/getAll";
+  static String updateVehicle= "vehicle/update";
+  static String getBrandByName= "master/brand/{brand}/get";
+  static String getModelByName= "master/model/get";
+  static String getColorByName= "master/color/get";
+  static String addAddress= "address/add";
 
 }

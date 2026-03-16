@@ -918,6 +918,7 @@ import 'package:car_wash/ApiResponse/vehicle_color_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_model_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_response.dart';
 import 'package:car_wash/Apis/SlugUrl.dart';
+import 'package:car_wash/models/address.dart';
 import 'package:car_wash/models/subscription.dart';
 import 'package:car_wash/models/user.dart';
 import 'package:car_wash/models/vehicle.dart';
@@ -1091,8 +1092,8 @@ class RestServiceImp {
   }
 
   //////User Services
-  static Future<PlanResponse> getUserServices(String? token,String vehicleType,String vehicleSize) async {
-    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getServices.replaceAll("{vehicleType}", vehicleType)}?vehicleSize=$vehicleSize';
+  static Future<PlanResponse> getUserServices(String? token,String vehicleType,String vehicleSize,int addressId) async {
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getServices.replaceAll("{vehicleType}", vehicleType).replaceAll("{addressId}", '$addressId')}?vehicleSize=$vehicleSize';
     debugPrint(token);
     // Prepare headers
     Map<String, String> headers = {
@@ -1120,12 +1121,13 @@ class RestServiceImp {
   }
 
   ////Get Address
-  static Future<AddressResponse> getUserAddresses(String? token) async {
+  static Future<AddressResponse> getUserAddresses() async {
+    var storage = await LocalStorage.getInstance();
     final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getAddresses}';
     // Prepare headers
     Map<String, String> headers = {
       'Content-Type': 'application/json',
-      'Authorization': '$token', // Adding Authorization Token
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
     };
 
     final response = await http.get(
@@ -1378,32 +1380,211 @@ static Future<UserProfileResponse> editProfile(User user) async {
     throw Exception('Failed to edit profile.');
   }
 
-  ////////get Profile Information
 
-  // static Future<ProfileInfoResponse> getProfileInfo(String token) async {
-  //   String url = '${Constraints.baseUrl}${SlugUrl.auth}me';
-  //
-  //   print(
-  //       "-------------------------------->>>>Inside the getProfileInfo<<<<<<<<<<-----------------------");
-  //   final response = await http.get(
-  //     Uri.parse(url),
-  //     headers: {'Content-Type': 'application/json', 'Authorization': '$token'},
-  //   );
-  //
-  //   if (kDebugMode) {
-  //     print("getProfileInfo : ${response.body}");
-  //     print("statusCode: ${response.statusCode}");
-  //     print("Url: $url");
-  //     print('Token :$token');
-  //   }
-  //   if (response.statusCode == 200) {
-  //     return ProfileInfoResponse.fromJson(
-  //         jsonDecode(response.body) as Map<String, dynamic>);
-  //   }
-  //
-  //   throw Exception('Failed to get profile.');
-  // }
-  /////Add Address////
+  ///Get All Vehicles
+  static Future<VehicleResponse> getAllVehicles() async {
+    var storage = await LocalStorage.getInstance();
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getAllVehicles}';
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return VehicleResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+
+  ///Update Vehicle
+  static Future<VehicleResponse> updateVehicle(Vehicle vehicle) async {
+    var storage = await LocalStorage.getInstance();
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.updateVehicle}';
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.put(
+      Uri.parse(apiUrl),
+      headers: headers,
+        body: jsonEncode(vehicle.toJson())
+
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return VehicleResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+
+
+  ///Get Brand By Name
+  static Future<BrandResponse> getBrandByName(String name) async {
+    var storage = await LocalStorage.getInstance();
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getBrandByName.replaceAll("{brand}", name)}';
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return BrandResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+
+  ///Get Model By Name
+  static Future<VehicleModelResponse> getModelByName(String name) async {
+    var storage = await LocalStorage.getInstance();
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getModelByName}?model=$name';
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return VehicleModelResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+
+  ///Get Color By Name
+  static Future<VehicleColorResponse> getColorByName(String name) async {
+    var storage = await LocalStorage.getInstance();
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getColorByName}?color=$name';
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return VehicleColorResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+
+  static Future<AddressResponse> getUserAddressesByVehicleId(String vehicleId) async {
+    var storage = await LocalStorage.getInstance();
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getAddressesByVehicleId.replaceAll("{VehicleId}", vehicleId)}';
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return AddressResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+  }
+
+  static Future<AddressResponse> addUserAddress(Address add) async {
+
+    String url = '${Constraints.baseUrl}${SlugUrl.addAddress}';
+    var storage = await LocalStorage.getInstance();
+    final response = await http.post(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': '${storage.getToken()}'
+        },
+        body: jsonEncode(add.toJson()));
+
+    if (kDebugMode) {
+      print("Add Address : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $url");
+    }
+    if (response.statusCode == 200) {
+      return AddressResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    throw Exception('Failed to edit profile.');
+
+  }
+/////Add Address////
 
   // static Future<AddressResponse> AddAddressService(
   //     String area,

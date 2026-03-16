@@ -45,7 +45,15 @@ class VehicleProvider extends ChangeNotifier {
     _selectedVehicle = null;
     notifyListeners();
   }
+  void updateVehicle(Vehicle updatedVehicle) {
 
+    int index = vehicles.indexWhere((v) => v.id == updatedVehicle.id);
+
+    if (index != -1) {
+      vehicles[index] = updatedVehicle;
+      notifyListeners();
+    }
+  }
   void setIsLoading(bool isLoading){
     _isLoading = isLoading;
     notifyListeners();

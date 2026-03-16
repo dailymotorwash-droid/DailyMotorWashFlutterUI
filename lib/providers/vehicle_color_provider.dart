@@ -8,6 +8,9 @@ class VehicleColorProvider extends ChangeNotifier{
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  VehicleColor? _selectedColor;
+  VehicleColor? get selectedColor => _selectedColor;
+
   List<VehicleColor> _colors = [];
 
   List<VehicleColor> get colors => _colors;
@@ -20,6 +23,11 @@ class VehicleColorProvider extends ChangeNotifier{
 
   void setIsLoading(bool isLoading){
     _isLoading = isLoading;
+    notifyListeners();
+  }
+
+  void setSelectedColor(VehicleColor color) {
+    _selectedColor = color;
     notifyListeners();
   }
 }

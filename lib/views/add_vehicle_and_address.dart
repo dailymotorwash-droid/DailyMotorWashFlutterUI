@@ -95,7 +95,7 @@ class _AddVehicleAndAddressScreenState
     addressRead = context.read<AddressProvider>();
     vehicleRead = context.read<VehicleProvider>();
     vehicleType = widget.vehicleType;
-
+    searchAddressRead.clearSelectedAddress();
     Future.microtask(() {
       addressRead.setIsLoading(true);
       loadAddresses();
@@ -147,6 +147,7 @@ class _AddVehicleAndAddressScreenState
       CommonUtils.toastMessage(res.message);
       return;
     }
+    bool isFistNameUpdated = false;
     if (profileStatus == ProfileStatus.pending.label) {
       if (_firstNameController.text.isEmpty) {
         CommonUtils.toastMessage("First Name mandatory(*) ");
@@ -154,6 +155,7 @@ class _AddVehicleAndAddressScreenState
       }
       firstName = _firstNameController.text.toString();
       lastName = _lastNameController.text.toString();
+      isFistNameUpdated = true;
     }
     if (_flatNumberController.text.isNotEmpty) {
       if (searchAddressWatch.selectedAddress != null) {
@@ -161,11 +163,15 @@ class _AddVehicleAndAddressScreenState
         Address add = Address(
             firstName: firstName,
             lastName: lastName,
-            addressLine1: '${_flatNumberController.text.toString()} ${address?.societyName}' ,
+            houseNo: _flatNumberController.text,
+            addressLine1: '${address?.societyName}' ,
             addressLine2: address?.societyLine1,
+            addressLine3: address?.societyLine2,
+            addressLine4: address?.societyLine3,
             pinCode: address?.pinCode,
             district: address?.district,
             city: address?.city,
+            masterAddressId: searchAddressWatch.selectedAddress?.id,
             state: address?.state);
 
         VehicleAndAddress vehicleAndAddress =
@@ -175,8 +181,10 @@ class _AddVehicleAndAddressScreenState
             await RestServiceImp.addVehicleAndAddress(vehicleAndAddress);
         if (res.isSuccess) {
           LocalStorage.setStatus(ProfileStatus.completed.label);
-          LocalStorage.setFirstName(firstName!);
-          LocalStorage.setLastName(lastName!);
+          if(isFistNameUpdated) {
+            LocalStorage.setFirstName(firstName!);
+            LocalStorage.setLastName(lastName!);
+          }
           vehicleRead.addVehicle(res.data.vehicle!);
           Navigator.pop(context);
         }
@@ -209,6 +217,10 @@ class _AddVehicleAndAddressScreenState
     colorWatch = context.watch<VehicleColorProvider>();
     searchAddressWatch = context.watch<SearchAddressProvider>();
     addressWatch = context.watch<AddressProvider>();
+      if (addressWatch.addresses.isEmpty) {
+        selectedAddressIndex = -1;
+      }
+
     double itemHeight = 50;
     double maxHeight = 200;
     double dropdownHeight =
@@ -368,7 +380,7 @@ class _AddVehicleAndAddressScreenState
                         child: addressWatch.isLoading
                             ? CommonUtils.loader()
                             : addressWatch.addresses.isEmpty
-                                ? null
+                                ? Container()
                                 : Row(
                                     children: List.generate(
                                         addressWatch.addresses.length, (index) {
@@ -440,7 +452,7 @@ class _AddVehicleAndAddressScreenState
                       ),
 
                       /// ADD NEW ADDRESS OPTION
-                      RadioListTile<int>(
+                      addressWatch.addresses.isEmpty?Container():RadioListTile<int>(
                         value: -1,
                         groupValue: selectedAddressIndex,
                         title: const Text(
@@ -449,14 +461,15 @@ class _AddVehicleAndAddressScreenState
                         ),
                         onChanged: (value) {
                           setState(() {
-                            selectedAddressIndex = value!;
+                            print(value);
+                            selectedAddressIndex = -1;
                             showNewAddressForm = true;
                           });
                         },
                       ),
 
                       /// ADDRESS FORM
-                      if (showNewAddressForm)
+                      if (showNewAddressForm||addressWatch.addresses.isEmpty)
                         Column(
                           children: [
                             if (profileStatus == ProfileStatus.pending.label)
@@ -720,7 +733,7 @@ class _AddVehicleAndAddressScreenState
     var storage = await LocalStorage.getInstance();
     profileStatus = storage.getStatus();
     AddressResponse res =
-        await RestServiceImp.getUserAddresses(storage.getToken());
+        await RestServiceImp.getUserAddresses();
     if (res.isSuccess) {
       addressRead.setAddresses(res.data);
     }

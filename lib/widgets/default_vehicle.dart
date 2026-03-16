@@ -72,8 +72,8 @@ class _VehicleWidgetState extends State<DefaultVehicleWidget> {
   }
 
   void _handleClickToSeePlans() {
-    Navigator.push(
-        context, MaterialPageRoute(builder:
-        (context) => SelectPlanScreen(vehicle: widget.vehicle)));
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder:
+    //     (context) => SelectPlanScreen(vehicle: widget.vehicle)));
   }
 }

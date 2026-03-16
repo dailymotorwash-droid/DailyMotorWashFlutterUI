@@ -4,6 +4,7 @@ import 'package:car_wash/models/vehicle_color.dart';
 class VehicleColorResponse extends Response{
 
   late List<VehicleColor> data;
+  late VehicleColor color;
 
   VehicleColorResponse.fromJson(Map<String,dynamic> json) : super.fromJson(json){
 
@@ -11,8 +12,8 @@ class VehicleColorResponse extends Response{
       data = (json['data'] as List)
           .map((e) => VehicleColor.fromJson(e))
           .toList();
-    }else {
-      // data = Vehicle.fromJson(json['data']);
+    }else if (json['data'] != null){
+      color = VehicleColor.fromJson(json['data']);
     }
   }
 
