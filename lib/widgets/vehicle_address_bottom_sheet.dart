@@ -89,7 +89,7 @@ class _VehicleAddressBottomSheet extends State<VehicleAddressBottomSheet> {
                 onTap: (){
                   Navigator.push(
                         context, MaterialPageRoute(builder:
-                          (context) => SelectPlanScreen(vehicle: _vehicle,addressId:addresses.masterAddressId!)));
+                          (context) => SelectPlanScreen(vehicle: _vehicle,address:addresses)));
                 },
                   child: address(addresses));
 
@@ -146,7 +146,7 @@ class _VehicleAddressBottomSheet extends State<VehicleAddressBottomSheet> {
                 onPressed: () {
                   Navigator.push(
                       context, MaterialPageRoute(builder:
-                      (context) =>  AddressScreen(vehicleId:_vehicle.id!)));
+                      (context) =>  AddressScreen(vehicleId:_vehicle.id!,from: "ADD",)));
                 },
                 style: AppButtonStyles.primaryButtonStyle,
                 child: const Text("Add New Address",style: AppTextStyles.whiteFont16Bold,),

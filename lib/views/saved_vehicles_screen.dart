@@ -113,16 +113,19 @@ class _SavedVehiclesScreenState extends State<SavedVehiclesScreen> {
         const SizedBox(height: 20),
         Text(vehicles.isEmpty?'':'Saved Vehicles', style: AppTextStyles.whiteFont16Regular,),
         const SizedBox(height: 4),
-        ...List.generate(2*vehicles.length, (index) {
-          if(index.isOdd) return const SizedBox(height: 16);
-          return vehicles.isEmpty?const Center(child: Text("Please Add Vehicle",style:TextStyle(
-            color: AppColors.white
-          ) ,)):VehicleWidget(
-            vehicle: vehicles[index~/2],
-            colorTheme: ColorTheme.dark,
-            isEditable: false,
-          );
-        }),
+        if(vehicles.isNotEmpty)
+          ...List.generate(2*vehicles.length, (index) {
+            if(index.isOdd) return const SizedBox(height: 16);
+            return VehicleWidget(
+              vehicle: vehicles[index~/2],
+              colorTheme: ColorTheme.dark,
+              isEditable: false,
+            );
+          }),
+        if(vehicles.isEmpty)
+         const Center(child: Text("Please Add Vehicle",style:TextStyle(
+              color: AppColors.white
+          ) ,))
       ],
     );
   }

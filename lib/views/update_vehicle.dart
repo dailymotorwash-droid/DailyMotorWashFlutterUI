@@ -275,21 +275,24 @@ class _UpdateVehicle extends State<UpdateVehicle>{
           size: selectedModel?.vehicleSize,
           registrationNumber: vehicleNumberController.text.toString(),
           nickName: vehicleNameController.text.toString(),
+          vehicleType: selectedModel?.vehicleType
+
           );
 
       print(vehicle.toJson());
       VehicleResponse res = await RestServiceImp.updateVehicle(vehicle);
-      if(res.isSuccess){
-        vehicleRead.updateVehicle(res.vehicle);
-        Navigator.pop(context);
-        // Navigator.pushReplacement(
-        //   context,
-        //   MaterialPageRoute(builder: (_) => const AllSavedVehicles()),
-        // );
-        return;
-      }
-
       CommonUtils.toastMessage(res.message);
+      Navigator.pop(context);
+      // if(res.isSuccess){
+      //   vehicleRead.updateVehicle(res.vehicle);
+      //   Navigator.pop(context);
+      //   // Navigator.pushReplacement(
+      //   //   context,
+      //   //   MaterialPageRoute(builder: (_) => const AllSavedVehicles()),
+      //   // );
+      //   return;
+      // }
+
 
 
     }

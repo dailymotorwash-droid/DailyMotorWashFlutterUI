@@ -21,7 +21,9 @@ import '../utils/local_storage.dart';
 
 class AddressScreen extends StatefulWidget {
   final String vehicleId;
-  const AddressScreen({super.key,required this.vehicleId});
+  final Address? address;
+  final String from;
+  const AddressScreen({super.key,required this.vehicleId,required this.from,this.address,});
 
   @override
   State<AddressScreen> createState() => _AddressScreenState();
@@ -44,14 +46,24 @@ class _AddressScreenState extends State<AddressScreen> {
   late SearchAddressProvider searchAddressRead, searchAddressWatch;
   late AddressProvider addressRead, addressWatch;
   late String _vehicleId;
+  late Address _address;
+  late String _from;
   @override
   void initState() {
     // TODO: implement initState
     searchAddressRead = context.read<SearchAddressProvider>();
     addressRead = context.read<AddressProvider>();
-    searchAddressRead.clearSelectedAddress();
-    _vehicleId = widget.vehicleId;
-    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      searchAddressRead.clearSelectedAddress();
+
+    });    _vehicleId = widget.vehicleId;
+    _from = widget.from;
+    if(_from=="UPDATE"){
+      _address = widget.address!;
+      _flatNumberController.text = _address.houseNo!;
+    }
+
+      super.initState();
   }
 
   @override
@@ -208,7 +220,11 @@ class _AddressScreenState extends State<AddressScreen> {
                 style: AppButtonStyles.primaryButtonStyle,
                 onPressed: () {
                   // Save action
-                  addAddress();
+                  if(_from=="UPDATE"){
+                    requestToUpdate();
+                  }else {
+                    addAddress();
+                  }
                 },
                 child: const Text("Save",style: AppTextStyles.whiteFont16Bold,),
               ),
@@ -381,6 +397,44 @@ class _AddressScreenState extends State<AddressScreen> {
     } else {
       CommonUtils.toastMessage("Please Fill Flat No./H.No.");
     }
+
+  }
+
+  Future<void> requestToUpdate() async{
+
+    if (_flatNumberController.text.isNotEmpty) {
+      if (searchAddressWatch.selectedAddress != null) {
+        MasterAddress? address = searchAddressWatch.selectedAddress;
+        if(_address.masterAddressId == address?.id){
+          CommonUtils.toastMessage("You have selected previous address");
+          return;
+        }
+        Address add = Address(
+            id: _address.id,
+            houseNo: _flatNumberController.text,
+            addressLine1: '${address?.societyName}' ,
+            addressLine2: address?.societyLine1,
+            addressLine3: address?.societyLine2,
+            addressLine4: address?.societyLine3,
+            pinCode: address?.pinCode,
+            district: address?.district,
+            city: address?.city,
+            masterAddressId: searchAddressWatch.selectedAddress?.id,
+            state: address?.state,
+            vehicleId: _vehicleId
+        );
+        AddressResponse res =
+        await RestServiceImp.updateUserAddress(add);
+
+        CommonUtils.toastMessage(res.message);
+        Navigator.pop(context);
+      } else {
+        CommonUtils.toastMessage("Please Select Society");
+      }
+    } else {
+      CommonUtils.toastMessage("Please Fill Flat No./H.No.");
+    }
+
 
   }
 }

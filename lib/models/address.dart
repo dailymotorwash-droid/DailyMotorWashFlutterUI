@@ -74,6 +74,7 @@ class Address {
       "houseNo": houseNo,
       "type": type,
       "masterAddressId": masterAddressId,
+      "vehicleId": vehicleId,
     };
   }
 }

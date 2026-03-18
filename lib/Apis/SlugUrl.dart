@@ -14,6 +14,7 @@ class SlugUrl {
   static String addVehicleAndAddress= "vehicle/address/add";
   static String subscribe= "subscription/add";
   static String subscriptionWithVehicle= "subscription/vehicle";
+  static String getTransactions= "subscription/transactions";
   static String updateUser= "user/update";
   static String getAllVehicles= "vehicle/getAll";
   static String updateVehicle= "vehicle/update";
@@ -21,5 +22,6 @@ class SlugUrl {
   static String getModelByName= "master/model/get";
   static String getColorByName= "master/color/get";
   static String addAddress= "address/add";
+  static String updateAddress= "address/update";
 
 }

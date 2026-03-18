@@ -2,12 +2,12 @@ import 'package:car_wash/ApiResponse/address_response.dart';
 import 'package:car_wash/Apis/RestServiceImp.dart';
 import 'package:car_wash/models/address.dart';
 import 'package:car_wash/providers/address_provider.dart';
+import 'package:car_wash/views/address_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/common_utils.dart';
 import '../utils/custom_colors.dart';
-import '../utils/custom_enums.dart';
 import '../utils/custom_text_styles.dart';
 
 class SavedAddressScreen extends StatefulWidget {
@@ -126,6 +126,10 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                 color: Colors.white,
                 onPressed: () {
                   // Navigate to edit address
+                  Navigator.push(
+                      context, MaterialPageRoute(builder:
+                      (context) =>
+                      AddressScreen(address:address,vehicleId:address.vehicleId!,from: "UPDATE", )));
                 },
               ),
             )

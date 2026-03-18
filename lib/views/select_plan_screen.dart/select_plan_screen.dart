@@ -4,6 +4,7 @@ import 'package:car_wash/ApiResponse/plan_response.dart';
 import 'package:car_wash/ApiResponse/subscription_response.dart';
 import 'package:car_wash/ApiResponse/user_profile_response.dart';
 import 'package:car_wash/Apis/RestServiceImp.dart';
+import 'package:car_wash/models/address.dart';
 import 'package:car_wash/models/plan.dart';
 import 'package:car_wash/models/subscription.dart';
 import 'package:car_wash/models/user.dart';
@@ -26,11 +27,11 @@ import '../../utils/page_routes.dart';
 
 class SelectPlanScreen extends StatefulWidget {
   final Vehicle vehicle;
-  final int addressId;
+  final Address address;
   const SelectPlanScreen({
     super.key,
     required this.vehicle,
-    required this.addressId,
+    required this.address,
   });
 
   @override
@@ -60,12 +61,12 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   late int referredBy;
   late bool isPointsAvail;
   late int points;
-  late int _addressId;
+  late Address _address;
   @override
   void initState() {
     // TODO: implement initState
     _vehicle = widget.vehicle;
-    _addressId = widget.addressId;
+    _address = widget.address;
     read = context.read<ServiceProvider>();
     userRead = context.read<UserProvider>();
     vehicleRead = context.read<VehicleProvider>();
@@ -167,7 +168,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   Future<void> loadServices() async {
     var storage = await LocalStorage.getInstance();
     PlanResponse response = await RestServiceImp.getUserServices(
-        storage.getToken(), _vehicle.vehicleType!, _vehicle.size!,_addressId);
+        storage.getToken(), _vehicle.vehicleType!, _vehicle.size!,_address.masterAddressId!);
     if (response.isSuccess) {
       read.setPlans(response.data);
       read.setIsLoading(false);
@@ -393,6 +394,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
         discount: plan.discount,
         paymentMethod: 'UPI',
         referredBy: userWatch.user?.referredBy,
+        addressId: _address.id,
         isPointsAvail:userWatch.user?.points!=0?true:false
 
     );

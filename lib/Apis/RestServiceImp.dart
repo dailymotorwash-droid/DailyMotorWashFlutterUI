@@ -913,6 +913,7 @@ import 'package:car_wash/ApiResponse/plan_response.dart';
 import 'package:car_wash/ApiResponse/search_address_response.dart';
 import 'package:car_wash/ApiResponse/subscription_response.dart';
 import 'package:car_wash/ApiResponse/subscription_vehicle_response.dart';
+import 'package:car_wash/ApiResponse/transactions_response.dart';
 import 'package:car_wash/ApiResponse/user_profile_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_color_response.dart';
 import 'package:car_wash/ApiResponse/vehicle_model_response.dart';
@@ -1582,6 +1583,60 @@ static Future<UserProfileResponse> editProfile(User user) async {
           jsonDecode(response.body) as Map<String, dynamic>);
     }
     throw Exception('Failed to edit profile.');
+
+  }
+
+  static Future<AddressResponse> updateUserAddress(Address add) async {
+
+    String url = '${Constraints.baseUrl}${SlugUrl.updateAddress}';
+    var storage = await LocalStorage.getInstance();
+    final response = await http.put(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': '${storage.getToken()}'
+        },
+        body: jsonEncode(add.toJson()));
+
+    if (kDebugMode) {
+      print("Add Address : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $url");
+    }
+    if (response.statusCode == 200) {
+      return AddressResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    throw Exception('Failed to edit profile.');
+
+  }
+
+  ///Transactions
+  static Future<TransactionsResponse> getTransactions() async {
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getTransactions}';
+    var storage = await LocalStorage.getInstance();
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return TransactionsResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
 
   }
 /////Add Address////

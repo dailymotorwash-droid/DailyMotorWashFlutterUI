@@ -7,6 +7,7 @@ class Subscription {
   final String paymentMethod;
   final bool? isPointsAvail;
   final int? referredBy;
+  final String? addressId;
 
   const Subscription({
     this.id,
@@ -17,6 +18,7 @@ class Subscription {
     required this.rate,
     required this.discount,
     required this.paymentMethod,
+    this.addressId,
   });
 
   factory Subscription.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class Subscription {
       "rate":rate,
       "referredBy":referredBy,
       "isPointsAvail":isPointsAvail,
+      "addressId":addressId,
     };
   }
 }

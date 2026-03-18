@@ -95,7 +95,10 @@ class _AddVehicleAndAddressScreenState
     addressRead = context.read<AddressProvider>();
     vehicleRead = context.read<VehicleProvider>();
     vehicleType = widget.vehicleType;
-    searchAddressRead.clearSelectedAddress();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      searchAddressRead.clearSelectedAddress();
+
+    });
     Future.microtask(() {
       addressRead.setIsLoading(true);
       loadAddresses();
