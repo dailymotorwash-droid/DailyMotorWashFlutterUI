@@ -955,11 +955,11 @@ class RestServiceImp {
     throw Exception('Failed to LogIn');
   }
 
-  static Future<LogInResponse> auth(String phoneNumber,String otp) async {
+  static Future<LogInResponse> auth(String phoneNumber,String otp,String? code) async {
     String url = '${Constraints.baseUrl}${SlugUrl.login}';
     final response = await http.post(Uri.parse(url),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'phone': phoneNumber,'otp':otp}));
+        body: jsonEncode({'phone': phoneNumber,'otp':otp,"referralCode":code}));
     if (kDebugMode) {
       print("auth : ${response.body}");
       print("statusCode: ${response.statusCode}");
@@ -1638,6 +1638,34 @@ static Future<UserProfileResponse> editProfile(User user) async {
     }
     throw Exception('Failed to Fetch Vehicles');
 
+  }
+
+
+  static Future<SubscriptionResponse> checkFirstOrExpireSubscription(String addressId,String vehicleId) async {
+    var storage = await LocalStorage.getInstance();
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.checkFirstOrExpireSubscription.replaceAll("{addressId}", addressId).replaceAll("{vehicleId}", vehicleId)}';
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return SubscriptionResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
   }
 /////Add Address////
 

@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:car_wash/ApiResponse/plan_response.dart';
@@ -10,6 +11,7 @@ import 'package:car_wash/models/subscription.dart';
 import 'package:car_wash/models/user.dart';
 import 'package:car_wash/models/vehicle.dart';
 import 'package:car_wash/providers/service_provider.dart';
+import 'package:car_wash/providers/subscription_vehicle_provider.dart';
 import 'package:car_wash/providers/user_provider.dart';
 import 'package:car_wash/providers/vehicle_provider.dart';
 import 'package:car_wash/utils/common_utils.dart';
@@ -20,9 +22,12 @@ import 'package:car_wash/utils/local_storage.dart';
 import 'package:car_wash/views/select_plan_screen.dart/plan_banner_widget.dart';
 import 'package:car_wash/widgets/price_row_widget.dart';
 import 'package:car_wash/widgets/vehicle_widget.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
+import '../../providers/subscription_provider.dart';
 import '../../utils/page_routes.dart';
 
 class SelectPlanScreen extends StatefulWidget {
@@ -42,12 +47,14 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   late ServiceProvider read, watch;
   late UserProvider userRead, userWatch;
   late VehicleProvider vehicleRead, vehicleWatch;
+  late SubscriptionProvider subscriptionRead,subscriptionWatch;
   // late List<Plan> plansList = [
   //   Plan(vehicleType: 'Monthly', amount: 500, discount: 0),
   //   Plan(vehicleType: 'Quartely', amount: 1500, discount: 60),
   //   Plan(vehicleType: 'Half-Yearly', amount: 3000, discount: 240),
   //   Plan(vehicleType: 'Yearly', amount: 6000, discount: 600),
   // ];
+   DateTime? selectedDate ;
 
   late List<String> planLabels = [
     'Standard',
@@ -70,11 +77,17 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     read = context.read<ServiceProvider>();
     userRead = context.read<UserProvider>();
     vehicleRead = context.read<VehicleProvider>();
+    subscriptionRead = context.read<SubscriptionProvider>();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      subscriptionRead.clearStartDate();
+
+    });
     Future.microtask(() {
       read.setIsLoading(true);
       vehicleRead.selectVehicle(_vehicle);
       loadServices();
       loadUserDetails();
+      checkFirstOrExpireSubscription();
     });
     super.initState();
   }
@@ -84,6 +97,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     watch = context.watch<ServiceProvider>();
     vehicleWatch = context.watch<VehicleProvider>();
     userWatch = context.watch<UserProvider>();
+    subscriptionWatch = context.watch<SubscriptionProvider>();
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -176,6 +190,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   }
 
   void proceed(Plan plan) {
+    // selectedDate = null;
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     double sheetHeight = screenHeight * 0.55;
@@ -223,6 +238,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                         ),
                       ),
 
+
                       SizedBox(height: screenHeight * 0.025),
 
                       /// HEADER
@@ -258,8 +274,45 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                         ],
                       ),
 
-                      SizedBox(height: screenHeight * 0.025),
 
+                      /// Date
+
+                      subscriptionWatch.selectedSubscription!=null?Container():SizedBox(height: screenHeight * 0.025),
+
+                      Consumer<SubscriptionProvider>(
+                        builder: (context, subscriptionWatch, child) {
+                          return subscriptionWatch.selectedSubscription != null
+                              ? Container()
+                              : GestureDetector(
+                            onTap: () async {
+                              DateTime? pickedDate = await pickDate(context);
+
+                              if (pickedDate != null) {
+                                context.read<SubscriptionProvider>()
+                                    .setSelectedStartDate(pickedDate);
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12, horizontal: 16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xffE8F0F6),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Text(
+                                subscriptionWatch.selectedStartDate == null
+                                    ? "Select Date"
+                                    : DateFormat('dd MMM yyyy').format(
+                                  subscriptionWatch.selectedStartDate!,
+                                ),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      SizedBox(height: screenHeight * 0.025),
                       /// VEHICLE BOX
                       Container(
                         padding: EdgeInsets.all(screenWidth * 0.04),
@@ -384,6 +437,33 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     );
   }
 
+  Future<DateTime?> pickDate(BuildContext context) async {
+    DateTime now = DateTime.now();
+
+    final DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: now, // disables past dates
+      lastDate: DateTime(now.year + 5),
+
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: Colors.red, // header + button color
+              onPrimary: Colors.white,
+              onSurface: Colors.black,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    // read.setSelectedStartDate(pickedDate!);
+    return pickedDate;
+  }
+
   Future<void> subscribe(Plan plan) async {
     vehicleRead.setIsLoading(true);
     String? vehicleId = vehicleRead.selectedVehicle?.id;
@@ -395,7 +475,8 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
         paymentMethod: 'UPI',
         referredBy: userWatch.user?.referredBy,
         addressId: _address.id,
-        isPointsAvail:userWatch.user?.points!=0?true:false
+        isPointsAvail:userWatch.user?.points!=0?true:false,
+        startDate:subscriptionWatch.selectedStartDate
 
     );
     print(subscription.toJson());
@@ -423,5 +504,14 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
      // referredBy = userProfileResponse.data.referredBy!;
      // points = userProfileResponse.data.points!;
     }
+  }
+
+  Future<void> checkFirstOrExpireSubscription() async {
+
+    SubscriptionResponse response = await RestServiceImp.checkFirstOrExpireSubscription(_address.id!,_vehicle.id!);
+    if(response.isSuccess&&response.data!=null){
+      subscriptionRead.selectSubscription(response.data!);
+    }
+
   }
 }

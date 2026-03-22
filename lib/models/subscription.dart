@@ -8,6 +8,7 @@ class Subscription {
   final bool? isPointsAvail;
   final int? referredBy;
   final String? addressId;
+  final DateTime? startDate;
 
   const Subscription({
     this.id,
@@ -19,6 +20,7 @@ class Subscription {
     required this.discount,
     required this.paymentMethod,
     this.addressId,
+    this.startDate,
   });
 
   factory Subscription.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,7 @@ class Subscription {
       "referredBy":referredBy,
       "isPointsAvail":isPointsAvail,
       "addressId":addressId,
+      "startDate":startDate?.toIso8601String(),
     };
   }
 }

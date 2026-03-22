@@ -14,6 +14,9 @@ class SubscriptionProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  DateTime? _selectedStartDate;
+  DateTime? get selectedStartDate => _selectedStartDate;
+
 
   // Set vehicles from API
   void setSubscription(List<Subscription> subscriptions) {
@@ -48,6 +51,17 @@ class SubscriptionProvider extends ChangeNotifier {
 
   void setIsLoading(bool isLoading){
     _isLoading = isLoading;
+    notifyListeners();
+  }
+
+  void setSelectedStartDate(DateTime date){
+    _selectedStartDate = date;
+    notifyListeners();
+  }
+
+  void clearStartDate(){
+    _selectedStartDate = null;
+    _selectedSubscription = null;
     notifyListeners();
   }
 }

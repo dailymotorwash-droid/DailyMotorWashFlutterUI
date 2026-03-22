@@ -1,5 +1,6 @@
 import 'package:car_wash/ApiResponse/subscription_vehicle_response.dart';
 import 'package:car_wash/Apis/RestServiceImp.dart';
+import 'package:car_wash/models/address.dart';
 import 'package:car_wash/models/subscription_vehicle.dart';
 import 'package:car_wash/providers/subscription_vehicle_provider.dart';
 import 'package:car_wash/utils/custom_enums.dart';
@@ -73,7 +74,7 @@ class _SubscribedWidget extends State<SubscribedWidget> {
         ...List.generate(2*watch.vehicles.length, (index){
           if(index.isOdd) return const SizedBox(height: 16);
           return SubscribedVehicleWidget(vehicle: watch.vehicles[index~/2],
-            colorTheme: ColorTheme.dark,);
+            colorTheme: ColorTheme.dark,address: Address(id:watch.vehicles[index~/2].addressId,masterAddressId:watch.vehicles[index~/2].masterAddressId ),);
 
         })
       ],

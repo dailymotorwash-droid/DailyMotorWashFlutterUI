@@ -22,10 +22,12 @@ import '../utils/local_storage.dart';
 
 class OtpVerificationScreen extends StatefulWidget {
   final String mobileNumber;
+  final String? code;
 
   const OtpVerificationScreen({
     super.key,
     required this.mobileNumber,
+    this.code
   });
 
   @override
@@ -113,7 +115,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
     if(otp.length == 6) {
       String? userState = userProvider.user?.state;
-      LogInResponse res  = await RestServiceImp.auth(_phone, otp);
+      LogInResponse res  = await RestServiceImp.auth(_phone, otp,widget.code);
       if (res.isSuccess) {
         LocalStorage.setToken(res.data.token!);
         LocalStorage.setFirstName(res.data.firstName!);

@@ -8,6 +8,7 @@ class SubscriptionVehicle{
   final String? category;
   final String? registrationNumber;
   final String? addressId;
+  final int? masterAddressId;
   final String? nickName;
   final String? color;
   final String? size;
@@ -24,7 +25,7 @@ class SubscriptionVehicle{
     this.registrationNumber,
     this.addressId,
     this.nickName, this.color, this.size, this.userId, this.id,
-    this.vehicleId,this.status,this.nextBillingDate,this.endDate
+    this.vehicleId,this.status,this.nextBillingDate,this.endDate,this.masterAddressId
   });
 
   factory SubscriptionVehicle.fromJson(Map<String, dynamic> json) {
@@ -32,6 +33,7 @@ class SubscriptionVehicle{
       id: json['id'],
       vehicleId: json['vehicleId'],
       addressId: json['addressId'],
+      masterAddressId: json['masterAddressId'],
       brand: json['brand'],
       color: json['color'],
       model:json['model'],

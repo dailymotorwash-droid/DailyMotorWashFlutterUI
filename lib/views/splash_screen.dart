@@ -1,6 +1,7 @@
 import 'package:car_wash/providers/user_provider.dart';
 import 'package:car_wash/utils/custom_colors.dart';
 import 'package:car_wash/utils/custom_text_styles.dart';
+import 'package:car_wash/utils/deep_link_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
@@ -22,13 +23,17 @@ class _SplashScreenState extends State<SplashScreen> {
 
   final Logger logger = Logger();
   final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
-  
+  final DeepLinkService _deepLinkService = DeepLinkService();
+
   late UserProvider userProvider;
 
   @override
   void initState() {
     logger.i("Splash Screen Loaded");
-
+    // ✅ Context available AFTER first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _deepLinkService.initDeepLinks(context);
+    });
     super.initState();
   }
 

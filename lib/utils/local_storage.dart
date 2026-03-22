@@ -20,6 +20,11 @@ class LocalStorage{
     prefs.setString('status', status);
   }
 
+  static setReferralCode(String referralCode) async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('referralCode', referralCode);
+  }
+
   String? getStatus() {
     // final prefs = await SharedPreferences.getInstance();
     return _preferences.getString('status');

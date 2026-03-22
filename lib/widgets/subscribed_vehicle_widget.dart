@@ -1,3 +1,4 @@
+import 'package:car_wash/models/address.dart';
 import 'package:car_wash/models/subscription_vehicle.dart';
 import 'package:car_wash/models/vehicle.dart';
 import 'package:car_wash/utils/common_utils.dart';
@@ -12,12 +13,14 @@ class SubscribedVehicleWidget extends StatefulWidget {
   final SubscriptionVehicle vehicle;
   final bool isClickable;
   final ColorTheme colorTheme;
+  final Address address;
 
   const SubscribedVehicleWidget({
     super.key,
     this.isClickable = true,
     this.colorTheme = ColorTheme.light,
     required this.vehicle,
+    required this.address,
   });
 
   @override
@@ -126,8 +129,8 @@ class _SubscribedVehicleWidget extends State<SubscribedVehicleWidget> {
         size: sub.size,
         id: sub.vehicleId);
 
-    // Navigator.push(
-    //     context, MaterialPageRoute(builder:
-    //     (context) => SelectPlanScreen(vehicle: veh,addressId: ,)));
+    Navigator.push(
+        context, MaterialPageRoute(builder:
+        (context) => SelectPlanScreen(vehicle: veh, address: widget.address,)));
   }
 }
