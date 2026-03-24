@@ -25,6 +25,8 @@ class SearchAddressProvider extends ChangeNotifier {
 
   void clearSelectedAddress() {
     _selectedAddress = null;
+    _suggestions =[];
+    _showDropdown = false;
     notifyListeners();
   }
 

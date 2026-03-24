@@ -63,9 +63,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     watch = context.watch<UserProvider>();
     if (watch.user != null) {
       _firstNameController.text = watch.user!.firstName!;
-      _lastNameController.text = watch.user!.lastName!;
-      _emailController.text = watch.user!.email!;
-      _emaddilController.text = watch.user!.email!;
+      _lastNameController.text = watch.user!.lastName != null?watch.user!.lastName! : '';
+      _emailController.text = watch.user!.email != null?watch.user!.email! : '';
+      _emaddilController.text = watch.user!.email != null?watch.user!.email! : '';
 
       if (watch.user!.gender != null) {
         _selectedGender = watch.user?.gender;

@@ -45,5 +45,10 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+    <key>AssociatedDomains</key>
+    <array>
+      <string>applinks:www.something.com</string>
+    </array>
 </dict>
 </plist>
