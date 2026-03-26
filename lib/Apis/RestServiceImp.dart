@@ -910,6 +910,7 @@ import 'dart:convert';
 import 'package:car_wash/ApiResponse/address_response.dart';
 import 'package:car_wash/ApiResponse/brand_response.dart';
 import 'package:car_wash/ApiResponse/plan_response.dart';
+import 'package:car_wash/ApiResponse/razorpay_response.dart';
 import 'package:car_wash/ApiResponse/search_address_response.dart';
 import 'package:car_wash/ApiResponse/subscription_response.dart';
 import 'package:car_wash/ApiResponse/subscription_vehicle_response.dart';
@@ -1666,6 +1667,54 @@ static Future<UserProfileResponse> editProfile(User user) async {
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
+  }
+
+
+  static Future<RazorpayResponse> createRazorpayOrder(Map<String,dynamic> data) async {
+
+    String url = '${Constraints.baseUrl}${SlugUrl.createRazorpayOrder}';
+    var storage = await LocalStorage.getInstance();
+    final response = await http.post(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': '${storage.getToken()}'
+        },
+        body: jsonEncode(data));
+
+    if (kDebugMode) {
+      print("Add Address : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $url");
+    }
+    if (response.statusCode == 200) {
+      return RazorpayResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    throw Exception('Failed to edit profile.');
+
+  }
+
+  static Future<Response> verifyPayment(Map<String, dynamic> data) async {
+
+    String url = '${Constraints.baseUrl}${SlugUrl.verifyRazorpayOrder}';
+    var storage = await LocalStorage.getInstance();
+    final response = await http.post(Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': '${storage.getToken()}'
+        },
+        body: jsonEncode(data));
+
+    if (kDebugMode) {
+      print("Add Address : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $url");
+    }
+    if (response.statusCode == 200) {
+      return Response.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+    }
+    throw Exception('Failed to edit profile.');
   }
 /////Add Address////
 

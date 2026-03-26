@@ -23,6 +23,8 @@ class SlugUrl {
   static String getColorByName= "master/color/get";
   static String addAddress= "address/add";
   static String updateAddress= "address/update";
+  static String createRazorpayOrder= "razorpay/create-order";
+  static String verifyRazorpayOrder= "razorpay/verify-payment";
   static String checkFirstOrExpireSubscription= "subscription/{addressId}/{vehicleId}/checkActiveOrExpire";
 
 }

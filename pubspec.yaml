@@ -20,7 +20,8 @@ dependencies:
   syncfusion_flutter_calendar: ^28.1.33
   http: ^1.2.2
   intl: ^0.18.1
-
+  app_links: ^3.5.0
+  razorpay_flutter: ^1.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

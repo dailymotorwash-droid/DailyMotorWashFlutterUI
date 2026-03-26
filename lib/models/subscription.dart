@@ -9,8 +9,9 @@ class Subscription {
   final int? referredBy;
   final String? addressId;
   final DateTime? startDate;
+  late String? paymentId;
 
-  const Subscription({
+  Subscription({
     this.id,
     this.isPointsAvail,
     this.referredBy,
@@ -21,6 +22,7 @@ class Subscription {
     required this.paymentMethod,
     this.addressId,
     this.startDate,
+    this.paymentId
   });
 
   factory Subscription.fromJson(Map<String, dynamic> json) {
@@ -46,6 +48,7 @@ class Subscription {
       "isPointsAvail":isPointsAvail,
       "addressId":addressId,
       "startDate":startDate?.toIso8601String(),
+      "razorpayPaymentId":paymentId,
     };
   }
 }

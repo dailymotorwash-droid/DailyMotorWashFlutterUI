@@ -180,18 +180,18 @@ class _AddVehicleAndAddressScreenState
         VehicleAndAddress vehicleAndAddress =
             VehicleAndAddress(address: add, vehicle: getVehicle(null));
         print(vehicleAndAddress.toJson());
-        // AddVehicleAndAddressResponse res =
-        //     await RestServiceImp.addVehicleAndAddress(vehicleAndAddress);
-        // if (res.isSuccess) {
-        //   LocalStorage.setStatus(ProfileStatus.completed.label);
-        //   if(isFistNameUpdated) {
-        //     LocalStorage.setFirstName(firstName!);
-        //     LocalStorage.setLastName(lastName!);
-        //   }
-        //   vehicleRead.addVehicle(res.data.vehicle!);
-        //   Navigator.pop(context);
-        // }
-        // CommonUtils.toastMessage(res.message);
+        AddVehicleAndAddressResponse res =
+            await RestServiceImp.addVehicleAndAddress(vehicleAndAddress);
+        if (res.isSuccess) {
+          LocalStorage.setStatus(ProfileStatus.completed.label);
+          if(isFistNameUpdated) {
+            LocalStorage.setFirstName(firstName!);
+            LocalStorage.setLastName(lastName!);
+          }
+          vehicleRead.addVehicle(res.data.vehicle!);
+          Navigator.pop(context);
+        }
+        CommonUtils.toastMessage(res.message);
       } else {
         CommonUtils.toastMessage("Please Select Society");
       }
@@ -681,14 +681,14 @@ class _AddVehicleAndAddressScreenState
                             //   ],
                             // ),
                             const SizedBox(height: 20),
-                            Text(
-                              searchAddressRead.selectedAddress != null
-                                  ? '${searchAddressRead.selectedAddress?.societyLine1},${searchAddressRead.selectedAddress?.societyLine2}'
-                                      '${searchAddressRead.selectedAddress!.societyLine3.isEmpty ? '' : ',${searchAddressRead.selectedAddress!.societyLine3}'}${searchAddressRead.selectedAddress!.city.isEmpty ? '' : ',${searchAddressRead.selectedAddress!.city}'}'
-                                      ',${searchAddressRead.selectedAddress?.district},${searchAddressRead.selectedAddress?.state}- ${searchAddressRead.selectedAddress?.pinCode}'
-                                  : '',
-                              style: AppTextStyles.whiteFont12Bold,
-                            ),
+                            // Text(
+                            //   searchAddressRead.selectedAddress != null
+                            //       ? '${searchAddressRead.selectedAddress?.societyLine1},${searchAddressRead.selectedAddress?.societyLine2}'
+                            //           '${searchAddressRead.selectedAddress!.societyLine3.isEmpty ? '' : ',${searchAddressRead.selectedAddress!.societyLine3}'}${searchAddressRead.selectedAddress!.city.isEmpty ? '' : ',${searchAddressRead.selectedAddress!.city}'}'
+                            //           ',${searchAddressRead.selectedAddress?.district},${searchAddressRead.selectedAddress?.state}- ${searchAddressRead.selectedAddress?.pinCode}'
+                            //       : '',
+                            //   style: AppTextStyles.whiteFont12Bold,
+                            // ),
                             // UnderlinedTextField(
                             //   isFieldEnabled:false,
                             //   colorTheme: ColorTheme.dark,
@@ -704,6 +704,8 @@ class _AddVehicleAndAddressScreenState
                             //   // controller: _landmarkController,
                             //   onChanged: (v) {},
                             // ),
+                            if(searchAddressWatch.selectedAddress!=null)
+                              showAddWidget(),
                             const SizedBox(height: 20),
                             // UnderlinedTextField(
                             //   isFieldEnabled:false,
@@ -844,6 +846,59 @@ class _AddVehicleAndAddressScreenState
     );
   }
 
+  Widget showAddWidget(){
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF252D37),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center, // Keeps icon and text centered
+        children: [
+          const Icon(Icons.location_on, color: Colors.redAccent, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              getFormattedAddress(searchAddressWatch.selectedAddress),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                height: 1.4, // Improved line spacing for multi-line addresses
+              ),
+              // Prevents the UI from breaking if the address is massive
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  String getFormattedAddress(MasterAddress? address) {
+    if (address == null) return '';
+
+    // Filter out empty or null strings to avoid double commas like ", ,"
+    final parts = [
+      address.societyLine1,
+      address.societyLine2,
+      address.societyLine3,
+      address.city,
+      address.district,
+      address.state,
+    ].where((s) => s != null && s.isNotEmpty).toList();
+
+    String base = parts.join(', ');
+
+    // Add PinCode with the specific dash formatting
+    if (address.pinCode != null && address.pinCode!.isNotEmpty) {
+      base += ' - ${address.pinCode}';
+    }
+
+    return base;
+  }
   Widget firstName(){
     return Expanded(
       child: Container(
