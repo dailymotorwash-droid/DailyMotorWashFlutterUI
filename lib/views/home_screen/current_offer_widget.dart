@@ -22,7 +22,7 @@ class CurrentOfferWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Image.asset('assets/images/ToyCar.png', height: 100, width: 100,),
+              Image.asset('assets/images/logo.png', height: 100, width: 100,),
               const SizedBox(width: 12),
               const Expanded(
                 child: CustomRichText(
@@ -43,7 +43,8 @@ class CurrentOfferWidget extends StatelessWidget {
             
             }, 
             style: AppButtonStyles.primaryButtonStyle,
-            child: const Text('Book Now', style: AppTextStyles.whiteFont16Bold)
+            // child: const Text('Book Now', style: AppTextStyles.whiteFont16Bold)
+            child: const Text('Coming Soon', style: AppTextStyles.whiteFont16Bold)
           )
         ],
       ),

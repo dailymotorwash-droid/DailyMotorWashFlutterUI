@@ -48,7 +48,7 @@ class DoorstepWashWidget extends StatelessWidget {
                     ),
                     child: Column(
                       children: [
-                        index == 0?Image.asset('assets/images/car.png', width: 100, height: 130,):Image.asset('assets/images/bike.png', width: 100, height: 130,),
+                        index == 0?Image.asset('assets/images/car_wash.png', width: 150, height: 150,):Image.asset('assets/images/bike_wash.png', width: 150, height: 150,),
                         const SizedBox(height: 8),
                         Text(index == 0 ? 'Car Wash' : 'Bike Wash', style: AppTextStyles.blackFont16Bold,)
                       ],

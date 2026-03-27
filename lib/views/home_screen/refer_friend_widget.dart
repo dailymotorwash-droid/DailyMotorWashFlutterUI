@@ -18,17 +18,17 @@ class ReferFriendWidget extends StatelessWidget {
       child: Column(
         children: [
           const Text('REFER A FRIEND', style: AppTextStyles.whiteFont20Bold),
-          const SizedBox(height: 8),
-          Image.asset('assets/images/ToyCar.png', height: 200, width: 200),
-          const SizedBox(height: 8),
-          const Text('Get \$50 Voucher', style: AppTextStyles.primaryFont20Regular),
-          const SizedBox(height: 8),
+          // const SizedBox(height: 8),
+          Image.asset('assets/images/referral.png', height: 200, width: 300),
+          // const SizedBox(height: 8),
+          const Text('Get ₹100 Voucher', style: AppTextStyles.primaryFont20Regular),
+          // const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
 
             }, 
-            style: AppButtonStyles.secondaryButtonStyle,
-            child: const Text('Refer Now', style: AppTextStyles.blackFont12Bold,),
+            style: AppButtonStyles.primaryButtonStyle,
+            child: const Text('Refer Now', style: AppTextStyles.whiteFont12Bold,),
           )
           
         ],

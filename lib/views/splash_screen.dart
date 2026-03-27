@@ -47,9 +47,9 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/ToyCar.png',height: 100, width: 100),
+            Image.asset('assets/images/logo.png',height: 100, width: 100),
             const SizedBox(width: 12),
-            const Text('Car Wash', style: AppTextStyles.whiteFont24Bold,)
+            const Text('Daily Motor Wash', style: AppTextStyles.whiteFont24Bold,)
           ]
         )
       ),
