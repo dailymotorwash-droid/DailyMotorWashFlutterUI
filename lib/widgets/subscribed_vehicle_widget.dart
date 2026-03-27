@@ -48,7 +48,7 @@ class _SubscribedVehicleWidget extends State<SubscribedVehicleWidget> {
         ),
         child: Row(
           children: [
-            Image.asset('assets/images/ToyCar.png', height: 85, width: 80),
+            widget.vehicle.vehicleType==VehicleType.car.label?Image.asset('assets/images/car.png',height: 80,width: 80,):Image.asset('assets/images/bike.png',height: 80,width: 80,),
             const SizedBox(width: 16),
             /// LEFT SIDE (Vehicle Info)
             Expanded(

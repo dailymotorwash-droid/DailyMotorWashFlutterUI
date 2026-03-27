@@ -565,7 +565,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     var options = {
       'key': 'rzp_test_SVjbFWBpXVoyC0',
       'amount': amount * 100, // Rs 500
-      'name': 'DMW',
+      'name': 'Daily Motor Wash',
       'description': 'Payment for User #${userWatch.user?.id}',
       'order_id': id, // Get this from your backend
       'prefill': {'contact': userWatch.user?.phone, 'email': userWatch.user?.email}
