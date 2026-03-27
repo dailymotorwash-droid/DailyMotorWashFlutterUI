@@ -568,7 +568,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
       'name': 'DMW',
       'description': 'Payment for User #${userWatch.user?.id}',
       'order_id': id, // Get this from your backend
-      'prefill': {'contact': userWatch.user?.id, 'email': userWatch.user?.id}
+      'prefill': {'contact': userWatch.user?.phone, 'email': userWatch.user?.email}
       // 'external': {
       //   'wallets': ['paytm']
       // }
