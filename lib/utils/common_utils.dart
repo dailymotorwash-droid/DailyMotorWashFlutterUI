@@ -51,6 +51,9 @@ class CommonUtils{
       case 'YEARLY':
         return 'Yearly';
 
+      case 'HALF_YEARLY':
+        return 'Half Yearly';
+
       default:
         return 'One Time';
     }
