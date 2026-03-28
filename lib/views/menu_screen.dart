@@ -59,7 +59,11 @@ class _MenuScreenState extends State<MenuScreen> {
                     children: [
                       Icon(menuOptions[index].icon, size: 24),
                       const SizedBox(width: 16),
-                      Text(menuOptions[index].label, style: AppTextStyles.blackFont20Regular,)
+                     Expanded(child: Text(menuOptions[index].label,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTextStyles.blackFont20Regular,)
+                     )
                     ],
                   ),
                 ),

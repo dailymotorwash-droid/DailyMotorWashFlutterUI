@@ -47,9 +47,17 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/logo.png',height: 100, width: 100),
-            const SizedBox(width: 12),
-            const Text('Daily Motor Wash', style: AppTextStyles.whiteFont24Bold,)
+            Expanded(flex:1 ,child: Image.asset('assets/images/logo.png',height: 100, width: 100)),
+            // const SizedBox(width: 12),
+            const Expanded(flex:2,
+              child: Text(
+                'Daily Motor Wash',
+                style: AppTextStyles.whiteFont24Bold,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                // textAlign: TextAlign.center,
+              ),
+            ),
           ]
         )
       ),

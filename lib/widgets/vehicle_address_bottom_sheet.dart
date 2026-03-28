@@ -3,6 +3,7 @@ import 'package:car_wash/Apis/RestServiceImp.dart';
 import 'package:car_wash/models/vehicle.dart';
 import 'package:car_wash/providers/address_provider.dart';
 import 'package:car_wash/providers/vehicle_provider.dart';
+import 'package:car_wash/utils/common_utils.dart';
 import 'package:car_wash/views/address_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +39,7 @@ class _VehicleAddressBottomSheet extends State<VehicleAddressBottomSheet> {
     _vehicle = widget.vehicle;
     read = context.read<AddressProvider>();
     Future.microtask((){
+      read.setIsLoading(true);
       loadAddresses();
     });
     super.initState();
@@ -79,7 +81,7 @@ class _VehicleAddressBottomSheet extends State<VehicleAddressBottomSheet> {
           const SizedBox(height: 40),
 
           /// Address List
-          ListView.builder(
+          watch.isLoading?CommonUtils.loader():ListView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: watch.addresses.length,
@@ -134,25 +136,46 @@ class _VehicleAddressBottomSheet extends State<VehicleAddressBottomSheet> {
             },
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
 
           /// Add Address Button
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: SizedBox(
-              width: double.infinity,
-              height: 48,
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                      context, MaterialPageRoute(builder:
-                      (context) =>  AddressScreen(vehicleId:_vehicle.id!,from: "ADD",)));
-                },
-                style: AppButtonStyles.primaryButtonStyle,
-                child: const Text("Add New Address",style: AppTextStyles.whiteFont16Bold,),
+
+          Center(
+            child: GestureDetector(
+              onTap: () {
+                // Navigator.pushNamed(context, AppRoutes.addVehicleScreen);
+                Navigator.push(
+                    context, MaterialPageRoute(builder:
+                    (context) => AddressScreen(vehicleId:_vehicle.id!,from: "ADD",)));
+              },
+              child: const Row(
+                // crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+            
+                children: [
+                  Icon(Icons.add_circle_rounded, color: AppColors.primary,),
+                  SizedBox(width: 8),
+                  Text('Add Address', style: AppTextStyles.primaryFont16Bold,)
+                ],
               ),
             ),
           ),
+          // Padding(
+          //   padding: const EdgeInsets.all(16),
+          //   child: SizedBox(
+          //     width: double.infinity,
+          //     height: 48,
+          //     child: ElevatedButton(
+          //       onPressed: () {
+          //         Navigator.push(
+          //             context, MaterialPageRoute(builder:
+          //             (context) =>  AddressScreen(vehicleId:_vehicle.id!,from: "ADD",)));
+          //       },
+          //       style: AppButtonStyles.primaryButtonStyle,
+          //       child: const Text("Add New Address",style: AppTextStyles.whiteFont16Bold,),
+          //     ),
+          //   ),
+          // ),
         ],
       ),
     );
@@ -162,8 +185,10 @@ class _VehicleAddressBottomSheet extends State<VehicleAddressBottomSheet> {
 
     AddressResponse response = await RestServiceImp.getUserAddressesByVehicleId(_vehicle.id!);
     if(response.isSuccess){
+      read.setIsLoading(false);
       read.setAddresses(response.data);
     }
+
   }
 
   Widget address(Address address) {

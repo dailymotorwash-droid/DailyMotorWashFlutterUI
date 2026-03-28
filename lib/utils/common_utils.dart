@@ -9,12 +9,12 @@ import 'package:logger/logger.dart';
 class CommonUtils{
 
   static Widget loader(){
-    return const LoaderTransparent();
-    // return const Center(
-    //   child: CircularProgressIndicator(
-    //     valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
-    //   ),
-    // );
+    // return const LoaderTransparent();
+    return const Center(
+      child: CircularProgressIndicator(
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.red),
+      ),
+    );
   }
 
   static String weightConverter(String weight){
