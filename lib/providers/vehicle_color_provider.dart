@@ -1,5 +1,5 @@
-import 'package:car_wash/models/model.dart';
-import 'package:car_wash/models/vehicle_color.dart';
+import 'package:dmw/models/model.dart';
+import 'package:dmw/models/vehicle_color.dart';
 import 'package:flutter/cupertino.dart';
 
 class VehicleColorProvider extends ChangeNotifier{

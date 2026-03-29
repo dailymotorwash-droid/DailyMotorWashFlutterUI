@@ -1,5 +1,5 @@
 import 'package:app_links/app_links.dart';
-import 'package:car_wash/views/login_screen.dart';
+import 'package:dmw/views/login_screen.dart';
 import 'package:flutter/material.dart';
 
 class DeepLinkService{

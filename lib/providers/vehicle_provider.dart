@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:car_wash/models/vehicle.dart';
+import 'package:dmw/models/vehicle.dart';
 
 class VehicleProvider extends ChangeNotifier {
 

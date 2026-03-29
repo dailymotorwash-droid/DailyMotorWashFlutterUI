@@ -1,7 +1,13 @@
-import 'package:car_wash/utils/custom_button_styles.dart';
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
+import 'package:dmw/Apis/RestServiceImp.dart';
+import 'package:dmw/utils/common_utils.dart';
+import 'package:dmw/utils/custom_button_styles.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
+
+import '../../ApiResponse/Response.dart';
+import '../../ApiResponse/referral_code_response.dart';
 
 class ReferFriendWidget extends StatelessWidget {
   const ReferFriendWidget({ super.key });
@@ -25,13 +31,31 @@ class ReferFriendWidget extends StatelessWidget {
           // const SizedBox(height: 8),
           ElevatedButton(
             onPressed: () {
-
+              getReferralLink();
             }, 
             style: AppButtonStyles.primaryButtonStyle,
             child: const Text('Refer Now', style: AppTextStyles.whiteFont12Bold,),
           )
           
         ],
+      ),
+    );
+  }
+
+  Future<void> getReferralLink() async{
+
+    ReferralCodeResponse res = await RestServiceImp.getReferralLink();
+    if(res.isSuccess){
+      shareReferral(res.data);
+    }else{
+      CommonUtils.toastMessage("Something went wrong");
+    }
+
+  }
+  void shareReferral(String link) {
+    SharePlus.instance.share(
+      ShareParams(
+        text: "Join Daily Wash using my link:\n$link",
       ),
     );
   }

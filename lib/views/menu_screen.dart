@@ -1,10 +1,10 @@
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_map_classes.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
-import 'package:car_wash/utils/page_routes.dart';
-import 'package:car_wash/views/all_saved_vehicles.dart';
-import 'package:car_wash/views/profile_screen.dart';
-import 'package:car_wash/views/saved_vehicles_screen.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_map_classes.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
+import 'package:dmw/utils/page_routes.dart';
+import 'package:dmw/views/all_saved_vehicles.dart';
+import 'package:dmw/views/profile_screen.dart';
+import 'package:dmw/views/saved_vehicles_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/custom_enums.dart';

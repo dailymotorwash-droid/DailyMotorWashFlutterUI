@@ -1,33 +1,33 @@
-import 'package:car_wash/ApiResponse/add_vehicle_and_address_response.dart';
-import 'package:car_wash/ApiResponse/address_response.dart';
-import 'package:car_wash/ApiResponse/brand_response.dart';
-import 'package:car_wash/ApiResponse/search_address_response.dart';
-import 'package:car_wash/ApiResponse/vehicle_color_response.dart';
-import 'package:car_wash/ApiResponse/vehicle_model_response.dart';
-import 'package:car_wash/ApiResponse/vehicle_response.dart';
-import 'package:car_wash/Apis/RestServiceImp.dart';
-import 'package:car_wash/models/address.dart';
-import 'package:car_wash/models/brand.dart';
-import 'package:car_wash/models/master_address.dart';
-import 'package:car_wash/models/model.dart';
-import 'package:car_wash/models/vehicle.dart';
-import 'package:car_wash/models/vehicle_and_address.dart';
-import 'package:car_wash/models/vehicle_color.dart';
-import 'package:car_wash/providers/address_provider.dart';
-import 'package:car_wash/providers/brand_provider.dart';
-import 'package:car_wash/providers/search_address_provider.dart';
-import 'package:car_wash/providers/vehicle_color_provider.dart';
-import 'package:car_wash/providers/vehicle_model_provider.dart';
-import 'package:car_wash/providers/vehicle_provider.dart';
-import 'package:car_wash/utils/common_utils.dart';
-import 'package:car_wash/utils/custom_button_styles.dart';
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_enums.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
-import 'package:car_wash/utils/local_storage.dart';
-import 'package:car_wash/utils/page_routes.dart';
-import 'package:car_wash/widgets/dropdown_underlined_field.dart';
-import 'package:car_wash/widgets/underlined_text_field.dart';
+import 'package:dmw/ApiResponse/add_vehicle_and_address_response.dart';
+import 'package:dmw/ApiResponse/address_response.dart';
+import 'package:dmw/ApiResponse/brand_response.dart';
+import 'package:dmw/ApiResponse/search_address_response.dart';
+import 'package:dmw/ApiResponse/vehicle_color_response.dart';
+import 'package:dmw/ApiResponse/vehicle_model_response.dart';
+import 'package:dmw/ApiResponse/vehicle_response.dart';
+import 'package:dmw/Apis/RestServiceImp.dart';
+import 'package:dmw/models/address.dart';
+import 'package:dmw/models/brand.dart';
+import 'package:dmw/models/master_address.dart';
+import 'package:dmw/models/model.dart';
+import 'package:dmw/models/vehicle.dart';
+import 'package:dmw/models/vehicle_and_address.dart';
+import 'package:dmw/models/vehicle_color.dart';
+import 'package:dmw/providers/address_provider.dart';
+import 'package:dmw/providers/brand_provider.dart';
+import 'package:dmw/providers/search_address_provider.dart';
+import 'package:dmw/providers/vehicle_color_provider.dart';
+import 'package:dmw/providers/vehicle_model_provider.dart';
+import 'package:dmw/providers/vehicle_provider.dart';
+import 'package:dmw/utils/common_utils.dart';
+import 'package:dmw/utils/custom_button_styles.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_enums.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
+import 'package:dmw/utils/local_storage.dart';
+import 'package:dmw/utils/page_routes.dart';
+import 'package:dmw/widgets/dropdown_underlined_field.dart';
+import 'package:dmw/widgets/underlined_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -1507,7 +1507,7 @@ class _AddVehicleAndAddressScreenState
                   ),
                 ),
                 DropdownButtonFormField<Model>(
-                  value: selectedModel,
+                  value: modelWatch.models.contains(selectedModel) ? selectedModel : null,
                   // Fixes the black hint issue:
                   hint: const Text(
                     "SELECT MODEL",
@@ -1584,7 +1584,11 @@ class _AddVehicleAndAddressScreenState
                   ),
                 ),
                 DropdownButtonFormField<VehicleColor>(
-                  value: selectedColor,
+                  value: colorWatch.colors
+                      .where((c) => c.id == selectedColor?.id)
+                      .length == 1
+                      ? colorWatch.colors.firstWhere((c) => c.id == selectedColor?.id)
+                      : null,
                   borderRadius: BorderRadius.circular(15), // Rounded corners for the popup
                   // Fixed: Hint text is now white/grey instead of black
                   hint: const Text(

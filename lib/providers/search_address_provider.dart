@@ -1,4 +1,4 @@
-import 'package:car_wash/models/master_address.dart';
+import 'package:dmw/models/master_address.dart';
 import 'package:flutter/cupertino.dart';
 
 class SearchAddressProvider extends ChangeNotifier {

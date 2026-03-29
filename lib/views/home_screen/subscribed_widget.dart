@@ -1,10 +1,10 @@
-import 'package:car_wash/ApiResponse/subscription_vehicle_response.dart';
-import 'package:car_wash/Apis/RestServiceImp.dart';
-import 'package:car_wash/models/address.dart';
-import 'package:car_wash/models/subscription_vehicle.dart';
-import 'package:car_wash/providers/subscription_vehicle_provider.dart';
-import 'package:car_wash/utils/custom_enums.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
+import 'package:dmw/ApiResponse/subscription_vehicle_response.dart';
+import 'package:dmw/Apis/RestServiceImp.dart';
+import 'package:dmw/models/address.dart';
+import 'package:dmw/models/subscription_vehicle.dart';
+import 'package:dmw/providers/subscription_vehicle_provider.dart';
+import 'package:dmw/utils/custom_enums.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

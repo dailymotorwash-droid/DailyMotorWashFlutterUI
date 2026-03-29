@@ -1,21 +1,32 @@
-import 'package:car_wash/providers/address_provider.dart';
-import 'package:car_wash/providers/brand_provider.dart';
-import 'package:car_wash/providers/search_address_provider.dart';
-import 'package:car_wash/providers/service_provider.dart';
-import 'package:car_wash/providers/subscription_provider.dart';
-import 'package:car_wash/providers/subscription_vehicle_provider.dart';
-import 'package:car_wash/providers/transaction_provider.dart';
-import 'package:car_wash/providers/user_provider.dart';
-import 'package:car_wash/providers/vehicle_color_provider.dart';
-import 'package:car_wash/providers/vehicle_model_provider.dart';
-import 'package:car_wash/providers/vehicle_provider.dart';
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
-import 'package:car_wash/utils/page_routes.dart';
+import 'package:dmw/providers/address_provider.dart';
+import 'package:dmw/providers/brand_provider.dart';
+import 'package:dmw/providers/search_address_provider.dart';
+import 'package:dmw/providers/service_provider.dart';
+import 'package:dmw/providers/subscription_provider.dart';
+import 'package:dmw/providers/subscription_vehicle_provider.dart';
+import 'package:dmw/providers/transaction_provider.dart';
+import 'package:dmw/providers/user_provider.dart';
+import 'package:dmw/providers/vehicle_color_provider.dart';
+import 'package:dmw/providers/vehicle_model_provider.dart';
+import 'package:dmw/providers/vehicle_provider.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
+import 'package:dmw/utils/page_routes.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+import 'firebase_options.dart';
+
+void main() async{
+
+  // 1. You MUST add this line first
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 2. Wait for Firebase to load using your specific project options
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(
     MultiProvider(
       providers: [

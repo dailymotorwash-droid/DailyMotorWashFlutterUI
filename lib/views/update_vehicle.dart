@@ -1,7 +1,7 @@
-import 'package:car_wash/ApiResponse/vehicle_response.dart';
-import 'package:car_wash/models/vehicle.dart';
-import 'package:car_wash/utils/page_routes.dart';
-import 'package:car_wash/views/all_saved_vehicles.dart';
+import 'package:dmw/ApiResponse/vehicle_response.dart';
+import 'package:dmw/models/vehicle.dart';
+import 'package:dmw/utils/page_routes.dart';
+import 'package:dmw/views/all_saved_vehicles.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

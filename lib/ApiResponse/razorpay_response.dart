@@ -1,5 +1,5 @@
 
-import 'package:car_wash/models/razorpay.dart';
+import 'package:dmw/models/razorpay.dart';
 
 class RazorpayResponse{
 

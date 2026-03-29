@@ -1,5 +1,5 @@
-import 'package:car_wash/ApiResponse/Response.dart';
-import 'package:car_wash/models/vehicle.dart';
+import 'package:dmw/ApiResponse/Response.dart';
+import 'package:dmw/models/vehicle.dart';
 
 class VehicleResponse extends Response{
   late Vehicle vehicle;

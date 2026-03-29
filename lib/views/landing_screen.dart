@@ -1,8 +1,8 @@
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/views/booking_screen/bookings_screen.dart';
-import 'package:car_wash/views/home_screen/home_screen.dart';
-import 'package:car_wash/views/menu_screen.dart';
-import 'package:car_wash/views/wallet_screen/wallet_screen.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/views/booking_screen/bookings_screen.dart';
+import 'package:dmw/views/home_screen/home_screen.dart';
+import 'package:dmw/views/menu_screen.dart';
+import 'package:dmw/views/wallet_screen/wallet_screen.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 

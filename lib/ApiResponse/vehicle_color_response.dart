@@ -1,5 +1,5 @@
-import 'package:car_wash/ApiResponse/Response.dart';
-import 'package:car_wash/models/vehicle_color.dart';
+import 'package:dmw/ApiResponse/Response.dart';
+import 'package:dmw/models/vehicle_color.dart';
 
 class VehicleColorResponse extends Response{
 

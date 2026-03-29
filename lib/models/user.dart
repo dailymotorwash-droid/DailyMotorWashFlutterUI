@@ -1,5 +1,5 @@
-import 'package:car_wash/models/address.dart';
-import 'package:car_wash/models/vehicle.dart';
+import 'package:dmw/models/address.dart';
+import 'package:dmw/models/vehicle.dart';
 
 class User {
   final int? id;

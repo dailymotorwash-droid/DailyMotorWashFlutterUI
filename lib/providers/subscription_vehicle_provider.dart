@@ -1,4 +1,4 @@
-import 'package:car_wash/models/subscription_vehicle.dart';
+import 'package:dmw/models/subscription_vehicle.dart';
 import 'package:flutter/material.dart';
 
 class SubscriptionVehicleProvider extends ChangeNotifier {

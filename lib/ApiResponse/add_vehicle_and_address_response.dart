@@ -1,5 +1,5 @@
-import 'package:car_wash/ApiResponse/Response.dart';
-import 'package:car_wash/models/vehicle_and_address.dart';
+import 'package:dmw/ApiResponse/Response.dart';
+import 'package:dmw/models/vehicle_and_address.dart';
 
 class AddVehicleAndAddressResponse extends Response {
   late VehicleAndAddress data;

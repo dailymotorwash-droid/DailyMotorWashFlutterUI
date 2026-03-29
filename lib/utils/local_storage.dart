@@ -10,22 +10,22 @@ class LocalStorage{
     return LocalStorage();
   }
 
-  static setToken(String token) async {
+  static Future<void> setToken(String token) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('token', token);
   }
 
-  static setStatus(String status) async {
+  static Future<void> setStatus(String status) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('status', status);
   }
 
-  static setReferralCode(String referralCode) async {
+  static Future<void> setReferralCode(String referralCode) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('referralCode', referralCode);
   }
 
-  String? getStatus() {
+  String?  getStatus() {
     // final prefs = await SharedPreferences.getInstance();
     return _preferences.getString('status');
   }
@@ -35,11 +35,11 @@ class LocalStorage{
     return _preferences.getString('token');
   }
 
-  static setFirstName(String firstName) async {
+  static Future<void> setFirstName(String firstName) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('firstName', firstName);
   }
-  static setUserId( int  id)async{
+  static Future<void> setUserId( int  id)async{
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('customerId', id);
 
@@ -55,12 +55,12 @@ class LocalStorage{
     return _preferences.getString('firstName');
   }
 
-  static setLastName(String lastName) async {
+  static Future<void> setLastName(String lastName) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('lastName', lastName);
   }
 
-  static setDefaultAddress(int addressId)async{
+  static Future<void> setDefaultAddress(int addressId)async{
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt('defaultAddress', addressId);
   }
@@ -76,7 +76,7 @@ class LocalStorage{
     return _preferences.getString('lastName');
   }
 
-  static setPhone(String phone) async {
+  static Future<void> setPhone(String phone) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setString('phone', phone);
   }

@@ -20,6 +20,14 @@ class Model{
 
     return Model(id: json['id'], name: json['name'], vehicleType: json['vehicleType'], vehicleSize: json['vehicleSize']);
   }
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Model &&
+              runtimeType == other.runtimeType &&
+              id == other.id;
 
+  @override
+  int get hashCode => id.hashCode;
 
 }

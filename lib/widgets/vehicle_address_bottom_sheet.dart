@@ -1,10 +1,10 @@
-import 'package:car_wash/ApiResponse/address_response.dart';
-import 'package:car_wash/Apis/RestServiceImp.dart';
-import 'package:car_wash/models/vehicle.dart';
-import 'package:car_wash/providers/address_provider.dart';
-import 'package:car_wash/providers/vehicle_provider.dart';
-import 'package:car_wash/utils/common_utils.dart';
-import 'package:car_wash/views/address_screen.dart';
+import 'package:dmw/ApiResponse/address_response.dart';
+import 'package:dmw/Apis/RestServiceImp.dart';
+import 'package:dmw/models/vehicle.dart';
+import 'package:dmw/providers/address_provider.dart';
+import 'package:dmw/providers/vehicle_provider.dart';
+import 'package:dmw/utils/common_utils.dart';
+import 'package:dmw/views/address_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

@@ -1,4 +1,4 @@
-import 'package:car_wash/models/plan.dart';
+import 'package:dmw/models/plan.dart';
 import 'package:flutter/material.dart';
 
 class ServiceProvider extends ChangeNotifier {

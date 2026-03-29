@@ -1,4 +1,4 @@
-import 'package:car_wash/models/model.dart';
+import 'package:dmw/models/model.dart';
 import 'package:flutter/cupertino.dart';
 
 class VehicleModelProvider extends ChangeNotifier{

@@ -1,14 +1,14 @@
-import 'package:car_wash/ApiResponse/vehicle_response.dart';
-import 'package:car_wash/Apis/RestServiceImp.dart';
-import 'package:car_wash/models/vehicle.dart';
-import 'package:car_wash/providers/vehicle_provider.dart';
-import 'package:car_wash/utils/common_utils.dart';
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_enums.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
-import 'package:car_wash/utils/local_storage.dart';
-import 'package:car_wash/utils/page_routes.dart';
-import 'package:car_wash/widgets/vehicle_widget.dart';
+import 'package:dmw/ApiResponse/vehicle_response.dart';
+import 'package:dmw/Apis/RestServiceImp.dart';
+import 'package:dmw/models/vehicle.dart';
+import 'package:dmw/providers/vehicle_provider.dart';
+import 'package:dmw/utils/common_utils.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_enums.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
+import 'package:dmw/utils/local_storage.dart';
+import 'package:dmw/utils/page_routes.dart';
+import 'package:dmw/widgets/vehicle_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

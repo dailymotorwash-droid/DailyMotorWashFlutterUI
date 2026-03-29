@@ -1,21 +1,21 @@
-import 'package:car_wash/ApiResponse/Response.dart';
-import 'package:car_wash/utils/local_storage.dart';
+import 'package:dmw/ApiResponse/Response.dart';
+import 'package:dmw/utils/local_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:pinput/pinput.dart';
 
-import 'package:car_wash/utils/custom_button_styles.dart';
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
-import 'package:car_wash/views/otp_verification_screen.dart';
-import 'package:car_wash/widgets/custom_rich_text.dart';
-import 'package:car_wash/widgets/outlined_text_field.dart';
+import 'package:dmw/utils/custom_button_styles.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
+import 'package:dmw/views/otp_verification_screen.dart';
+import 'package:dmw/widgets/custom_rich_text.dart';
+import 'package:dmw/widgets/outlined_text_field.dart';
 
 import '../ApiResponse/LoginResponse.dart';
 import '../Apis/RestServiceImp.dart';
 import '../utils/common_utils.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 
 class LoginScreen extends StatefulWidget {
 
@@ -35,6 +35,9 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void initState() {
     clearLocalStorage();
+    Future.microtask(() async {
+      await FirebaseAuth.instance.signOut();
+    });
     super.initState();
   }
 
@@ -132,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
-                    onPressed: _handleLoginSubmit, 
+                    onPressed: _verifyPhone,
                     style: AppButtonStyles.primaryButtonStyle,
                     child: const Text('Submit', style: AppTextStyles.whiteFont16Bold,)
                   )
@@ -154,7 +157,8 @@ class _LoginScreenState extends State<LoginScreen> {
       if(logInResponse.isSuccess) {
         Navigator.push(
             context, MaterialPageRoute(
-            builder: (context) => OtpVerificationScreen(mobileNumber: phone)));
+            builder: (context) => OtpVerificationScreen(mobileNumber: phone,verificationId: _verificationId,)));
+
       }else{
         CommonUtils.toastMessage("Something went wrong");
 
@@ -167,7 +171,31 @@ class _LoginScreenState extends State<LoginScreen> {
       //     .showSnackBar(const SnackBar(content: Text("Please Accept Terms and Policy and Enter 10 digits Mobile Number")));
     }
   }
+  String _verificationId = "";
 
+  void _verifyPhone() async {
+    String phoneNumber = _mobileController.text;
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: '+91$phoneNumber', // Format: +919876543210
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // ANDROID ONLY: Automatic SMS handling
+        await FirebaseAuth.instance.signInWithCredential(credential);
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print("Verification Failed: ${e.message}");
+        print("Verification Failed: ${e.phoneNumber}");
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        // Save this ID to use when the user enters the OTP
+        _verificationId = verificationId;
+        // Navigate to your OTP screen here
+        _handleLoginSubmit();
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        _verificationId = verificationId;
+      },
+    );
+  }
   static void _handleTermsOFUseClick() {
     debugPrint('Terms of Use CLicked');
   }
