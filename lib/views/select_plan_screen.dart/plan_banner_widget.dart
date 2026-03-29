@@ -1,7 +1,7 @@
-import 'package:car_wash/models/plan.dart';
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
-import 'package:car_wash/widgets/custom_divider_widget.dart';
+import 'package:dmw/models/plan.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
+import 'package:dmw/widgets/custom_divider_widget.dart';
 import 'package:flutter/material.dart';
 
 import '../../utils/common_utils.dart';

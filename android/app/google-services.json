@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "752034908739",
+    "project_id": "daily-moter-wash",
+    "storage_bucket": "daily-moter-wash.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:752034908739:android:24934d66b3d41620cc22f6",
+        "android_client_info": {
+          "package_name": "com.app.dmw"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTJufqx_wnq5kLSRDuUEBe3puLMotaJ_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

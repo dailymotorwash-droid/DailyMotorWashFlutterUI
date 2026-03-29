@@ -1,18 +1,18 @@
-import 'package:car_wash/views/add_vehicle_screen.dart';
-import 'package:car_wash/views/all_saved_vehicles.dart';
-import 'package:car_wash/views/error_route_scrren.dart';
-import 'package:car_wash/views/address_screen.dart';
-import 'package:car_wash/views/help_screen.dart';
-import 'package:car_wash/views/landing_screen.dart';
-import 'package:car_wash/views/login_screen.dart';
-import 'package:car_wash/views/notifications_screen.dart';
-import 'package:car_wash/views/profile_screen.dart';
-import 'package:car_wash/views/saved_address_screen.dart';
-import 'package:car_wash/views/saved_vehicles_screen.dart';
-import 'package:car_wash/views/splash_screen.dart';
-import 'package:car_wash/views/transactions_screen.dart';
+import 'package:dmw/views/add_vehicle_screen.dart';
+import 'package:dmw/views/all_saved_vehicles.dart';
+import 'package:dmw/views/error_route_scrren.dart';
+import 'package:dmw/views/address_screen.dart';
+import 'package:dmw/views/help_screen.dart';
+import 'package:dmw/views/landing_screen.dart';
+import 'package:dmw/views/login_screen.dart';
+import 'package:dmw/views/notifications_screen.dart';
+import 'package:dmw/views/profile_screen.dart';
+import 'package:dmw/views/saved_address_screen.dart';
+import 'package:dmw/views/saved_vehicles_screen.dart';
+import 'package:dmw/views/splash_screen.dart';
+import 'package:dmw/views/transactions_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:car_wash/views/home_screen/home_screen.dart';
+import 'package:dmw/views/home_screen/home_screen.dart';
 
 class AppRoutes {
   static const loginScreen = "/login_screen";

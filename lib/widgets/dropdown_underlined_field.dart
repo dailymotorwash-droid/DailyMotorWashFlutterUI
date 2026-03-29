@@ -1,5 +1,5 @@
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_enums.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_enums.dart';
 import 'package:flutter/material.dart';
 
 

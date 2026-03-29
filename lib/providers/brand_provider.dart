@@ -1,4 +1,4 @@
-import 'package:car_wash/models/brand.dart';
+import 'package:dmw/models/brand.dart';
 import 'package:flutter/cupertino.dart';
 
 class BrandProvider extends ChangeNotifier{

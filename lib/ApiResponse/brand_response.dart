@@ -1,5 +1,5 @@
-import 'package:car_wash/ApiResponse/Response.dart';
-import 'package:car_wash/models/brand.dart';
+import 'package:dmw/ApiResponse/Response.dart';
+import 'package:dmw/models/brand.dart';
 
 class BrandResponse extends Response{
 

@@ -1,5 +1,5 @@
-import 'package:car_wash/ApiResponse/Response.dart';
-import 'package:car_wash/models/user.dart';
+import 'package:dmw/ApiResponse/Response.dart';
+import 'package:dmw/models/user.dart';
 
 class LogInResponse extends Response {
   late User data;

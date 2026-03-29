@@ -1,6 +1,6 @@
-import 'package:car_wash/ApiResponse/vehicle_response.dart';
-import 'package:car_wash/Apis/RestServiceImp.dart';
-import 'package:car_wash/providers/vehicle_provider.dart';
+import 'package:dmw/ApiResponse/vehicle_response.dart';
+import 'package:dmw/Apis/RestServiceImp.dart';
+import 'package:dmw/providers/vehicle_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

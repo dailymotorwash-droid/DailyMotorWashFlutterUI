@@ -1,6 +1,6 @@
 
-import 'package:car_wash/ApiResponse/Response.dart';
-import 'package:car_wash/models/subscription_vehicle.dart';
+import 'package:dmw/ApiResponse/Response.dart';
+import 'package:dmw/models/subscription_vehicle.dart';
 
 class SubscriptionVehicleResponse extends Response{
 

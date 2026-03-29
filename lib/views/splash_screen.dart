@@ -1,11 +1,12 @@
-import 'package:car_wash/providers/user_provider.dart';
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
-import 'package:car_wash/utils/deep_link_service.dart';
+import 'package:dmw/providers/user_provider.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
+import 'package:dmw/utils/deep_link_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:car_wash/utils/page_routes.dart';
+import 'package:dmw/utils/page_routes.dart';
 import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -22,7 +23,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
 
   final Logger logger = Logger();
-  final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
+  // final Future<SharedPreferences> prefs = SharedPreferences.getInstance();
   final DeepLinkService _deepLinkService = DeepLinkService();
 
   late UserProvider userProvider;
@@ -40,7 +41,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context){
     userProvider = Provider.of<UserProvider>(context);
-    _navigateFurther(context: context);
+    _navigateFurther(context);
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
       body: Center(
@@ -64,34 +65,22 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  void _navigateFurther({required BuildContext context}){
+  void _navigateFurther(BuildContext context) async{
+    var storage = await LocalStorage.getInstance();
+
     String? state = userProvider.user?.state;
-    logger.d(state);
+    User? user = FirebaseAuth.instance.currentUser;
 
-    // state = 'registered_user';
+    if (storage.getToken()?.isNotEmpty == true && user != null) {
+      state = 'registered_user';
+    }
 
-    Future.delayed(const Duration(seconds: 2), () async {
-
-      var storage = await LocalStorage.getInstance();
-      if (storage.getToken() != null && storage.getToken()!.isNotEmpty) {
-        if (kDebugMode) {
-          print("token at intial start :- ${storage.getToken()!.isEmpty}");
-        }
-        state = 'registered_user';
-      }
-      switch (state) {
-        case 'verified_lead':
-          Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.profileScreen, (Route<dynamic> route) => false);
-
-        case 'registered_user':
-          Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.homeScreen, (Route<dynamic> route) => false);
-
-        default:
-          Navigator.pushNamedAndRemoveUntil(
-              context, AppRoutes.loginScreen, (Route<dynamic> route) => false);
-      }
-    });
+    if (state == 'registered_user') {
+      Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
+    } else if (state == 'verified_lead') {
+      Navigator.pushReplacementNamed(context, AppRoutes.profileScreen);
+    } else {
+      Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+    }
   }
 }

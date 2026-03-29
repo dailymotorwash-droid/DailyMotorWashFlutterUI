@@ -1,6 +1,6 @@
 
 
-import 'package:car_wash/widgets/loader_transparent.dart';
+import 'package:dmw/widgets/loader_transparent.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';

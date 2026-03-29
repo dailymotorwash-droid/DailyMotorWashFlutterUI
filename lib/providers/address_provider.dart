@@ -1,4 +1,4 @@
-import 'package:car_wash/models/address.dart';
+import 'package:dmw/models/address.dart';
 import 'package:flutter/material.dart';
 
 class AddressProvider extends ChangeNotifier {

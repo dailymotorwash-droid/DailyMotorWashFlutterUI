@@ -1,11 +1,11 @@
-import 'package:car_wash/models/address.dart';
-import 'package:car_wash/models/subscription_vehicle.dart';
-import 'package:car_wash/models/vehicle.dart';
-import 'package:car_wash/utils/common_utils.dart';
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_enums.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
-import 'package:car_wash/views/select_plan_screen.dart/select_plan_screen.dart';
+import 'package:dmw/models/address.dart';
+import 'package:dmw/models/subscription_vehicle.dart';
+import 'package:dmw/models/vehicle.dart';
+import 'package:dmw/utils/common_utils.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_enums.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
+import 'package:dmw/views/select_plan_screen.dart/select_plan_screen.dart';
 import 'package:flutter/material.dart';
 
 class SubscribedVehicleWidget extends StatefulWidget {

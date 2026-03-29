@@ -1,8 +1,8 @@
-import 'package:car_wash/utils/custom_button_styles.dart';
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
-import 'package:car_wash/utils/page_routes.dart';
-import 'package:car_wash/widgets/custom_rich_text.dart';
+import 'package:dmw/utils/custom_button_styles.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
+import 'package:dmw/utils/page_routes.dart';
+import 'package:dmw/widgets/custom_rich_text.dart';
 import 'package:flutter/material.dart';
 
 class CurrentOfferWidget extends StatelessWidget {

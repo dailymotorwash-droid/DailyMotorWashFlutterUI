@@ -1,5 +1,5 @@
-import 'package:car_wash/ApiResponse/Response.dart';
-import 'package:car_wash/models/subscription.dart';
+import 'package:dmw/ApiResponse/Response.dart';
+import 'package:dmw/models/subscription.dart';
 
 class SubscriptionResponse extends Response {
   late Subscription? data;

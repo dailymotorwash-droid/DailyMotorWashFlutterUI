@@ -907,25 +907,26 @@
 // }
 import 'dart:convert';
 
-import 'package:car_wash/ApiResponse/address_response.dart';
-import 'package:car_wash/ApiResponse/brand_response.dart';
-import 'package:car_wash/ApiResponse/plan_response.dart';
-import 'package:car_wash/ApiResponse/razorpay_response.dart';
-import 'package:car_wash/ApiResponse/search_address_response.dart';
-import 'package:car_wash/ApiResponse/subscription_response.dart';
-import 'package:car_wash/ApiResponse/subscription_vehicle_response.dart';
-import 'package:car_wash/ApiResponse/transactions_response.dart';
-import 'package:car_wash/ApiResponse/user_profile_response.dart';
-import 'package:car_wash/ApiResponse/vehicle_color_response.dart';
-import 'package:car_wash/ApiResponse/vehicle_model_response.dart';
-import 'package:car_wash/ApiResponse/vehicle_response.dart';
-import 'package:car_wash/Apis/SlugUrl.dart';
-import 'package:car_wash/models/address.dart';
-import 'package:car_wash/models/subscription.dart';
-import 'package:car_wash/models/user.dart';
-import 'package:car_wash/models/vehicle.dart';
-import 'package:car_wash/models/vehicle_and_address.dart';
-import 'package:car_wash/utils/local_storage.dart';
+import 'package:dmw/ApiResponse/address_response.dart';
+import 'package:dmw/ApiResponse/brand_response.dart';
+import 'package:dmw/ApiResponse/plan_response.dart';
+import 'package:dmw/ApiResponse/razorpay_response.dart';
+import 'package:dmw/ApiResponse/referral_code_response.dart';
+import 'package:dmw/ApiResponse/search_address_response.dart';
+import 'package:dmw/ApiResponse/subscription_response.dart';
+import 'package:dmw/ApiResponse/subscription_vehicle_response.dart';
+import 'package:dmw/ApiResponse/transactions_response.dart';
+import 'package:dmw/ApiResponse/user_profile_response.dart';
+import 'package:dmw/ApiResponse/vehicle_color_response.dart';
+import 'package:dmw/ApiResponse/vehicle_model_response.dart';
+import 'package:dmw/ApiResponse/vehicle_response.dart';
+import 'package:dmw/Apis/SlugUrl.dart';
+import 'package:dmw/models/address.dart';
+import 'package:dmw/models/subscription.dart';
+import 'package:dmw/models/user.dart';
+import 'package:dmw/models/vehicle.dart';
+import 'package:dmw/models/vehicle_and_address.dart';
+import 'package:dmw/utils/local_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
@@ -1715,6 +1716,34 @@ static Future<UserProfileResponse> editProfile(User user) async {
           jsonDecode(response.body) as Map<String, dynamic>);
     }
     throw Exception('Failed to edit profile.');
+  }
+
+  static Future<ReferralCodeResponse> getReferralLink() async {
+    var storage = await LocalStorage.getInstance();
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getReferral}';
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.get(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return ReferralCodeResponse.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
   }
 /////Add Address////
 

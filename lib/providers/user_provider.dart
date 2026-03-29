@@ -1,6 +1,6 @@
 import 'dart:core';
 
-import 'package:car_wash/models/user.dart';
+import 'package:dmw/models/user.dart';
 import 'package:flutter/material.dart';
 
 class UserProvider extends ChangeNotifier {

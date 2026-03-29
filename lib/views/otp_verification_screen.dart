@@ -1,19 +1,20 @@
 import 'dart:async';
-import 'package:car_wash/ApiResponse/LoginResponse.dart';
-import 'package:car_wash/ApiResponse/VerifyOTPResponse.dart';
-import 'package:car_wash/Apis/RestServiceImp.dart';
-import 'package:car_wash/models/log_in.dart';
-import 'package:car_wash/models/user.dart';
-import 'package:car_wash/providers/user_provider.dart';
-import 'package:car_wash/utils/custom_button_styles.dart';
+import 'package:dmw/ApiResponse/LoginResponse.dart';
+import 'package:dmw/ApiResponse/VerifyOTPResponse.dart';
+import 'package:dmw/Apis/RestServiceImp.dart';
+import 'package:dmw/models/log_in.dart';
+import 'package:dmw/models/user.dart';
+import 'package:dmw/providers/user_provider.dart';
+import 'package:dmw/utils/custom_button_styles.dart';
+import 'package:firebase_auth/firebase_auth.dart' hide User;
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
 import 'package:pinput/pinput.dart';
 
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/page_routes.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/page_routes.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:provider/provider.dart';
 
 import '../ApiResponse/Response.dart';
@@ -23,11 +24,12 @@ import '../utils/local_storage.dart';
 class OtpVerificationScreen extends StatefulWidget {
   final String mobileNumber;
   final String? code;
+  final String verificationId;
 
   const OtpVerificationScreen({
     super.key,
     required this.mobileNumber,
-    this.code
+    this.code, required this.verificationId
   });
 
   @override
@@ -39,15 +41,16 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   final Logger logger = Logger(); 
   final TextEditingController _otpController = TextEditingController();
 
-  late UserProvider userProvider; 
+  late UserProvider userProviderWatch,userProviderRead;
   late bool _isWaitTimerRunning;
   late Timer _resendOTPTimer;
   late int _remainingSeconds;
   late String _phone;
-
+  late bool isLoading = false;
   @override
   void initState() {
     _phone = widget.mobileNumber;
+    userProviderRead = context.read<UserProvider>();
     _startResendWaitTimer();
     super.initState();
   }
@@ -60,7 +63,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   @override
   Widget build(BuildContext context) {
-    userProvider = Provider.of<UserProvider>(context);
+    userProviderWatch = context.watch<UserProvider>();
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
       appBar: AppBar(
@@ -98,9 +101,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               ),
               const SizedBox(height: 8),
               ElevatedButton(
-                onPressed: _handleOTPSubmission, 
+                onPressed: _signInWithOTP,
                 style: AppButtonStyles.primaryButtonStyle,
-                child: const Text('Submit', style: AppTextStyles.whiteFont16Bold,)
+                child: userProviderWatch.isLoading? CommonUtils.loader():const Text('Submit', style: AppTextStyles.whiteFont16Bold,)
               )
             ],
           ),
@@ -114,16 +117,18 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     String otp = _otpController.text;
 
     if(otp.length == 6) {
-      String? userState = userProvider.user?.state;
-      LogInResponse res  = await RestServiceImp.auth(_phone, otp,widget.code);
+      String? userState = userProviderWatch.user?.state;
+      LogInResponse res  = await RestServiceImp.auth(_phone, '123456',widget.code);
       if (res.isSuccess) {
         LocalStorage.setToken(res.data.token!);
         LocalStorage.setFirstName(res.data.firstName!);
         LocalStorage.setLastName(res.data.lastName!);
         LocalStorage.setUserId(res.data.id!);
         LocalStorage.setStatus(res.data.status!);
-        userProvider.login(User(firstName:res.data.firstName,lastName:res.data.lastName,phone: widget.mobileNumber,state: 'registered_user'));
+        userProviderRead.login(User(firstName:res.data.firstName,lastName:res.data.lastName,phone: widget.mobileNumber,state: 'registered_user'));
         debugPrint(userState);
+        userProviderRead.setIsLoading(false);
+
         Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
       }else{
         CommonUtils.toastMessage("Incorrect OTP");
@@ -173,5 +178,27 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         });
       }
     });
+  }
+
+  void _signInWithOTP() async {
+    userProviderRead.setIsLoading(true);
+    String smsCode = _otpController.text;
+    PhoneAuthCredential credential = PhoneAuthProvider.credential(
+      verificationId: widget.verificationId,
+      smsCode: smsCode,
+    );
+
+    try {
+      await FirebaseAuth.instance.signInWithCredential(credential);
+      // User is now signed in!
+      await _handleOTPSubmission();
+
+    } on FirebaseAuthException catch (e) {
+      // Specifically handle Firebase errors (like expired codes)
+      debugPrint("Firebase Auth Error: ${e.code}");
+      CommonUtils.toastMessage("Invalid or expired OTP");
+    } catch (e) {
+      debugPrint("General Error: $e");
+    }
   }
 }

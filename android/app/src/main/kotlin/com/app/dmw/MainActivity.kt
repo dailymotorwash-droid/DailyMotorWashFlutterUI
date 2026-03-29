@@ -1,4 +1,4 @@
-package com.example.car_wash
+package com.app.dmw
 
 import io.flutter.embedding.android.FlutterActivity
 

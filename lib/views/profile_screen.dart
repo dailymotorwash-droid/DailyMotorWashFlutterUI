@@ -1,14 +1,14 @@
-import 'package:car_wash/ApiResponse/user_profile_response.dart';
-import 'package:car_wash/Apis/RestServiceImp.dart';
-import 'package:car_wash/models/user.dart';
-import 'package:car_wash/providers/user_provider.dart';
-import 'package:car_wash/utils/common_utils.dart';
-import 'package:car_wash/utils/page_routes.dart';
-import 'package:car_wash/widgets/underlined_text_field.dart';
+import 'package:dmw/ApiResponse/user_profile_response.dart';
+import 'package:dmw/Apis/RestServiceImp.dart';
+import 'package:dmw/models/user.dart';
+import 'package:dmw/providers/user_provider.dart';
+import 'package:dmw/utils/common_utils.dart';
+import 'package:dmw/utils/page_routes.dart';
+import 'package:dmw/widgets/underlined_text_field.dart';
 import 'package:flutter/material.dart';
 
-import 'package:car_wash/utils/custom_colors.dart';
-import 'package:car_wash/utils/custom_text_styles.dart';
+import 'package:dmw/utils/custom_colors.dart';
+import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
