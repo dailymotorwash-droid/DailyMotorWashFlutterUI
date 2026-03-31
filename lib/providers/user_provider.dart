@@ -12,6 +12,8 @@ class UserProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  String? _selectedGender;
+  String? get gender => _selectedGender;
 
   void updateUser(User updatedUser) {
     _user = updatedUser;
@@ -28,8 +30,19 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void selectedGender(String gender){
+    _selectedGender = gender;
+    notifyListeners();
+  }
+
   void setIsLoading(bool isLoading){
     _isLoading = isLoading;
+    notifyListeners();
+  }
+
+  void clear() {
+    _selectedGender = null;
+    _isLoading = false;
     notifyListeners();
   }
 }

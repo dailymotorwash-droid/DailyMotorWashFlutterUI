@@ -100,10 +100,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
                 ),
               ),
               const SizedBox(height: 8),
-              ElevatedButton(
+              userProviderWatch.isLoading? CommonUtils.loader():ElevatedButton(
                 onPressed: _signInWithOTP,
                 style: AppButtonStyles.primaryButtonStyle,
-                child: userProviderWatch.isLoading? CommonUtils.loader():const Text('Submit', style: AppTextStyles.whiteFont16Bold,)
+                child: const Text('Submit', style: AppTextStyles.whiteFont16Bold,)
               )
             ],
           ),
@@ -196,6 +196,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     } on FirebaseAuthException catch (e) {
       // Specifically handle Firebase errors (like expired codes)
       debugPrint("Firebase Auth Error: ${e.code}");
+      userProviderRead.setIsLoading(false);
       CommonUtils.toastMessage("Invalid or expired OTP");
     } catch (e) {
       debugPrint("General Error: $e");
