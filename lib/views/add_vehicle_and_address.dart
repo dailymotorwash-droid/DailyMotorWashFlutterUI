@@ -25,9 +25,6 @@ import 'package:dmw/utils/custom_colors.dart';
 import 'package:dmw/utils/custom_enums.dart';
 import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:dmw/utils/local_storage.dart';
-import 'package:dmw/utils/page_routes.dart';
-import 'package:dmw/widgets/dropdown_underlined_field.dart';
-import 'package:dmw/widgets/underlined_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -259,48 +256,6 @@ class _AddVehicleAndAddressScreenState
               controller: _pageController,
               physics: const NeverScrollableScrollPhysics(),
               children: [
-
-                // SingleChildScrollView(
-                //   padding: const EdgeInsets.all(20.0),
-                //   child: Column(
-                //     children: [
-                //       // Vehicle Profile Card
-                //       Container(
-                //         width: double.infinity,
-                //         padding: const EdgeInsets.all(16),
-                //         decoration: BoxDecoration(
-                //           color: cardColor,
-                //           borderRadius: BorderRadius.circular(20),
-                //         ),
-                //         child: Column(
-                //           children: [
-                //             const Text(
-                //               "Vehicle Profile",
-                //               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-                //             ),
-                //             const SizedBox(height: 10),
-                //             // Replace with your actual asset image
-                //             const Icon(Icons.directions_car, size: 120, color: Colors.purpleAccent),
-                //             const SizedBox(height: 10),
-                //             const Text(
-                //               "SUBSCRIPTION: INACTIVE",
-                //               style: TextStyle(color: textColor, letterSpacing: 1.2, fontSize: 12),
-                //             ),
-                //           ],
-                //         ),
-                //       ),
-                //       const SizedBox(height: 20),
-                //
-                //       // Input Fields
-                //       _buildInputField(Icons.filter_alt_outlined, "VEHICLE NO:", "ENTER VEHICLE NUMBER", cardColor),
-                //       _buildInputField(Icons.filter_alt_outlined, "BRAND:", "SELECT BRAND", cardColor, isDropdown: true),
-                //       _buildInputField(Icons.filter_alt_outlined, "MODEL:", "SELECT MODEL", cardColor, isDropdown: true),
-                //       _buildInputField(Icons.palette_outlined, "COLOR:", "ADD COLOR / ENTER", cardColor),
-                //
-                //     ],
-                //   ),
-                // ),
-
                 /// STEP 1 VEHICLE
                 SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
@@ -338,111 +293,10 @@ class _AddVehicleAndAddressScreenState
                         ),
                       ),
                       const SizedBox(height: 20),
-                      // UnderlinedTextField(
-                      //   colorTheme: ColorTheme.dark,
-                      //   labelText: "Vehicle Number",
-                      //   inputFormatters: [
-                      //     TextInputFormatter.withFunction((oldValue, newValue) {
-                      //       return newValue.copyWith(
-                      //           text: newValue.text.toUpperCase());
-                      //     }),
-                      //   ],
-                      //   controller: vehicleNumberController,
-                      //   errorText: _vehicleNumberFieldErrorText,
-                      //   onChanged: (v) {
-                      //     String? newErrorText;
-                      //     if (v == null || v.isEmpty || v.length != 10) {
-                      //       newErrorText =
-                      //           'Minimum 10 characters(letters & spaces only)';
-                      //     } else if (!RegExp(r'^[a-zA-Z\s]*$').hasMatch(v)) {
-                      //       newErrorText =
-                      //           'Only letters and spaces are allowed';
-                      //     }
-                      //     setState(() {
-                      //       _vehicleNumberFieldErrorText = newErrorText!;
-                      //     });
-                      //   },
-                      // ),
                       vehicleNumber(),
-                      // const SizedBox(height: 30),
-                      // Row(
-                      //   children: [
-                          /// BRAND DROPDOWN
-                          // Expanded(
-                          //   child:
-                          //   DropdownUnderlinedField<Brand>(
-                          //     colorTheme: ColorTheme.dark,
-                          //     labelText: "Brand",
-                          //     value: selectedBrand,
-                          //     items: brandWatch.brands
-                          //         .map((e) => DropdownMenuItem<Brand>(
-                          //               value: e,
-                          //               child: Text(e.name),
-                          //             ))
-                          //         .toList(),
-                          //     onChanged: (v) {
-                          //       setState(() {
-                          //         selectedBrand = v;
-                          //         loadModels(selectedBrand!.id);
-                          //       });
-                          //     },
-                          //   ),
-                          // ),
-
                       brandWidget(),
-
-                          // const SizedBox(height: 16),
-
-                          /// MODEL DROPDOWN
-                          // Expanded(
-                          //   child:
-                          //   DropdownUnderlinedField<Model>(
-                          //     colorTheme: ColorTheme.dark,
-                          //     labelText: "Model",
-                          //     value: selectedModel,
-                          //     items: modelWatch.models
-                          //         .map((e) => DropdownMenuItem<Model>(
-                          //               value: e,
-                          //               child: Text(e.name,overflow: TextOverflow.ellipsis,maxLines: 1,
-                          //               ),
-                          //             ))
-                          //         .toList(),
-                          //     onChanged: (v) {
-                          //       setState(() {
-                          //         selectedModel = v;
-                          //         loadColor(selectedModel!.id);
-                          //       });
-                          //     },
-                          //   ),
-                          // ),
-                      //   ],
-                      // ),
-
                       modelWidget(),
-                      // const SizedBox(height: 30),
-                      // DropdownUnderlinedField<VehicleColor>(
-                      //   colorTheme: ColorTheme.dark,
-                      //   labelText: "Color",
-                      //   value: selectedColor,
-                      //   items: colorWatch.colors
-                      //       .map((e) => DropdownMenuItem(
-                      //             value: e,
-                      //             child: Text(e.name),
-                      //           ))
-                      //       .toList(),
-                      //   onChanged: (v) {
-                      //     setState(() => selectedColor = v);
-                      //   },
-                      // ),
                       colorWidget(),
-                      // const SizedBox(height: 30),
-
-                      // UnderlinedTextField(
-                      //   colorTheme: ColorTheme.dark,
-                      //   hintText: "Vehicle Name (optional)",
-                      //   controller: vehicleNameController,
-                      //   onChanged: (v) {},
-                      // ),
                       nickNameWidget(),
                     ],
                   ),
@@ -787,7 +641,7 @@ class _AddVehicleAndAddressScreenState
 
   Future<void> loadBrands() async {
     var storage = await LocalStorage.getInstance();
-    BrandResponse res = await RestServiceImp.getBrands(storage.getToken());
+    BrandResponse res = await RestServiceImp.getBrands(storage.getToken(),vehicleType==VehicleType.car?true:false);
     if (res.isSuccess) {
       brandRead.setBrands(res.data);
     }
@@ -822,29 +676,6 @@ class _AddVehicleAndAddressScreenState
     addressRead.setIsLoading(false);
   }
 
-  Widget _buildInputField(IconData icon, String label, String hint, Color bgColor, {bool isDropdown = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 15),
-      child: Container(
-        decoration: BoxDecoration(
-          color: bgColor,
-          borderRadius: BorderRadius.circular(15),
-        ),
-        child: TextField(
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            prefixIcon: Icon(icon, color: Colors.white54),
-            suffixIcon: isDropdown ? const Icon(Icons.arrow_drop_down, color: Colors.white54) : null,
-            label: Text(label, style: const TextStyle(color: Colors.white54, fontSize: 12)),
-            hintText: hint,
-            hintStyle: const TextStyle(color: Colors.white, fontSize: 14),
-            contentPadding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-          ),
-        ),
-      ),
-    );
-  }
 
   Widget showAddWidget(){
     return Container(
@@ -882,6 +713,7 @@ class _AddVehicleAndAddressScreenState
 
     // Filter out empty or null strings to avoid double commas like ", ,"
     final parts = [
+      address.societyName,
       address.societyLine1,
       address.societyLine2,
       address.societyLine3,

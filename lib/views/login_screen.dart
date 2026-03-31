@@ -11,9 +11,11 @@ import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:dmw/views/otp_verification_screen.dart';
 import 'package:dmw/widgets/custom_rich_text.dart';
 import 'package:dmw/widgets/outlined_text_field.dart';
+import 'package:provider/provider.dart';
 
 import '../ApiResponse/LoginResponse.dart';
 import '../Apis/RestServiceImp.dart';
+import '../providers/user_provider.dart';
 import '../utils/common_utils.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -32,9 +34,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _mobileController = TextEditingController();
   bool isTermsAccepted = false;
 
+  late UserProvider read,watch;
+
   @override
   void initState() {
     clearLocalStorage();
+    read = context.read<UserProvider>();
     Future.microtask(() async {
       await FirebaseAuth.instance.signOut();
     });
@@ -50,6 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    watch = context.watch<UserProvider>();
 
     return Scaffold(
       backgroundColor: AppColors.darkBackground,
@@ -134,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  ElevatedButton(
+                  watch.isLoading? CommonUtils.loader():ElevatedButton(
                     onPressed: _verifyPhone,
                     style: AppButtonStyles.primaryButtonStyle,
                     child: const Text('Submit', style: AppTextStyles.whiteFont16Bold,)
@@ -155,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
       Response logInResponse = await RestServiceImp.otpSend(phone);
       print(logInResponse.isSuccess);
       if(logInResponse.isSuccess) {
+        read.setIsLoading(false);
         Navigator.push(
             context, MaterialPageRoute(
             builder: (context) => OtpVerificationScreen(mobileNumber: phone,verificationId: _verificationId,)));
@@ -174,6 +181,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String _verificationId = "";
 
   void _verifyPhone() async {
+    read.setIsLoading(true);
     String phoneNumber = _mobileController.text;
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: '+91$phoneNumber', // Format: +919876543210
@@ -184,6 +192,9 @@ class _LoginScreenState extends State<LoginScreen> {
       verificationFailed: (FirebaseAuthException e) {
         print("Verification Failed: ${e.message}");
         print("Verification Failed: ${e.phoneNumber}");
+        CommonUtils.toastMessage(e.message!);
+        read.setIsLoading(false);
+
       },
       codeSent: (String verificationId, int? resendToken) {
         // Save this ID to use when the user enters the OTP

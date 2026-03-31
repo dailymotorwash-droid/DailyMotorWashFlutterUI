@@ -53,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
         title: Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            const Text('DAILY MOTOR WASH', style: AppTextStyles.primaryFont20Bold,),
+            const Text('DMW', style: AppTextStyles.primaryFont20Bold,),
             // const Icon(Icons.pin_drop),
             // const SizedBox(width: 4),
             // const Text('You are at\n {Place}', style: AppTextStyles.whiteFont16Regular),

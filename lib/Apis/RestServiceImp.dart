@@ -1153,8 +1153,8 @@ class RestServiceImp {
   }
 
   ////Get Brands
-  static Future<BrandResponse> getBrands(String? token) async {
-    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getBrands}';
+  static Future<BrandResponse> getBrands(String? token,bool isCar) async {
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getBrands}?isCar=$isCar';
     // Prepare headers
     Map<String, String> headers = {
       'Content-Type': 'application/json',

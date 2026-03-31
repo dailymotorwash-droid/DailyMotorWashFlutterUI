@@ -170,7 +170,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              planLabels[actualIndex],
+                                planLabels[actualIndex],
                               style: AppTextStyles.blackFont16Bold,
                             ),
                             const SizedBox(height: 4),
