@@ -43,13 +43,16 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   late UserProvider userProviderWatch,userProviderRead;
   late bool _isWaitTimerRunning;
-  late Timer _resendOTPTimer;
+  Timer? _resendOTPTimer;
   late int _remainingSeconds;
+  late int _remainingMin;
   late String _phone;
   late bool isLoading = false;
+  late String _verificationId;
   @override
   void initState() {
     _phone = widget.mobileNumber;
+    _verificationId = widget.verificationId;
     userProviderRead = context.read<UserProvider>();
     _startResendWaitTimer();
     super.initState();
@@ -57,7 +60,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
 
   @override
   void dispose() {
-    _resendOTPTimer.cancel();
+    _resendOTPTimer?.cancel();
     super.dispose();
   }
 
@@ -92,9 +95,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: _isWaitTimerRunning?null: () => resendOtp(_phone),
+                  onPressed: _isWaitTimerRunning?null: () => _verifyPhone(),
                   child: Text(
-                    _isWaitTimerRunning ? '00:${_remainingSeconds > 9 ? '$_remainingSeconds' : '0$_remainingSeconds'}' : 'Resend OTP', 
+                    _isWaitTimerRunning ? '0$_remainingMin:${_remainingSeconds > 9 ? '$_remainingSeconds' : '0$_remainingSeconds'}' : 'Resend OTP',
                     style: AppTextStyles.whiteFont16Regular
                   ),
                 ),
@@ -160,31 +163,45 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     }
   }
   void _startResendWaitTimer() {
+    // Safe cancel: If it's null, nothing happens. If it exists, it stops.
+    _resendOTPTimer?.cancel();
+
+    int totalSeconds = 120;
 
     setState(() {
-      _remainingSeconds = 30;
+      _remainingMin = 2;
+      _remainingSeconds = 0;
       _isWaitTimerRunning = true;
     });
 
     _resendOTPTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if(_remainingSeconds > 1) {
-        setState(() {
-          _remainingSeconds--;
-        });
+      if (totalSeconds > 0) {
+        totalSeconds--;
+        if (mounted) { // Good practice: check if screen is still open
+          setState(() {
+            _remainingMin = totalSeconds ~/ 60;
+            _remainingSeconds = totalSeconds % 60;
+          });
+        }
       } else {
-        setState(() {
-          _isWaitTimerRunning = false;
-          _resendOTPTimer.cancel();
-        });
+        _stopTimer();
       }
     });
   }
 
+  void _stopTimer() {
+    _resendOTPTimer?.cancel();
+    if (mounted) {
+      setState(() {
+        _isWaitTimerRunning = false;
+      });
+    }
+  }
   void _signInWithOTP() async {
     userProviderRead.setIsLoading(true);
     String smsCode = _otpController.text;
     PhoneAuthCredential credential = PhoneAuthProvider.credential(
-      verificationId: widget.verificationId,
+      verificationId: _verificationId,
       smsCode: smsCode,
     );
 
@@ -201,5 +218,30 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     } catch (e) {
       debugPrint("General Error: $e");
     }
+  }
+
+  void _verifyPhone() async {
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: '+91$_phone', // Format: +919876543210
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // ANDROID ONLY: Automatic SMS handling
+        await FirebaseAuth.instance.signInWithCredential(credential);
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print("Verification Failed: ${e.message}");
+        print("Verification Failed: ${e.phoneNumber}");
+        CommonUtils.toastMessage(e.message!);
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        // Save this ID to use when the user enters the OTP
+        _verificationId = verificationId;
+        // Navigate to your OTP screen here
+        _startResendWaitTimer();
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        _verificationId = verificationId;
+      },
+    );
   }
 }

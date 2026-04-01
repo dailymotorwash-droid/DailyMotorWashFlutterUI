@@ -157,7 +157,6 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _handleLoginSubmit() async {
     debugPrint(_mobileController.text);
     String phone = _mobileController.text;
-    if (isTermsAccepted && phone.length == 10) {
       Response logInResponse = await RestServiceImp.otpSend(phone);
       print(logInResponse.isSuccess);
       if(logInResponse.isSuccess) {
@@ -170,19 +169,18 @@ class _LoginScreenState extends State<LoginScreen> {
         CommonUtils.toastMessage("Something went wrong");
 
       }
-    } else {
-      debugPrint('Please Accept Terms and Policy and Enter 10 digits Mobile Number');
-      CommonUtils.toastMessage("Please Accept Terms and Policy and Enter 10 digits Mobile Number");
-
-      // ScaffoldMessenger.of(context)
-      //     .showSnackBar(const SnackBar(content: Text("Please Accept Terms and Policy and Enter 10 digits Mobile Number")));
-    }
   }
   String _verificationId = "";
 
   void _verifyPhone() async {
-    read.setIsLoading(true);
+
     String phoneNumber = _mobileController.text;
+    if (!isTermsAccepted || phoneNumber.length != 10) {
+      debugPrint('Please Accept Terms and Policy and Enter 10 digits Mobile Number');
+      CommonUtils.toastMessage("Please Accept Terms and Policy and Enter 10 digits Mobile Number");
+      return;
+    }
+    read.setIsLoading(true);
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: '+91$phoneNumber', // Format: +919876543210
       verificationCompleted: (PhoneAuthCredential credential) async {

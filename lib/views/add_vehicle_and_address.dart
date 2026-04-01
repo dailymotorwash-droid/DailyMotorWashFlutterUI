@@ -94,6 +94,9 @@ class _AddVehicleAndAddressScreenState
     vehicleType = widget.vehicleType;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       searchAddressRead.clearSelectedAddress();
+      brandRead.clear();
+      modelRead.clear();
+      colorRead.clear();
 
     });
     Future.microtask(() {
@@ -107,9 +110,9 @@ class _AddVehicleAndAddressScreenState
 
   void nextStep() {
     if (vehicleNumberController.text.isEmpty ||
-        selectedBrand == null ||
-        selectedModel == null ||
-        selectedColor == null) {
+        brandWatch.selectedBrand == null ||
+        modelWatch.selectedModel == null ||
+        colorWatch.selectedColor == null) {
       CommonUtils.toastMessage('Please Fill All Vehicle Details');
     } else if (vehicleNumberController.text.length < 9) {
       CommonUtils.toastMessage('Registration Number Should be 10 Char');
@@ -200,11 +203,11 @@ class _AddVehicleAndAddressScreenState
   Vehicle getVehicle(String? addressId) {
     return Vehicle(
         vehicleType: vehicleType.label,
-        model: selectedModel?.name,
-        color: selectedColor?.name,
-        brand: selectedBrand?.name,
-        category: selectedModel?.vehicleSize,
-        size: selectedModel?.vehicleSize,
+        model: modelWatch.selectedModel?.name,
+        color: colorWatch.selectedColor?.name,
+        brand: brandWatch.selectedBrand?.name,
+        category: modelWatch.selectedModel?.vehicleSize,
+        size: modelWatch.selectedModel?.vehicleSize,
         registrationNumber: vehicleNumberController.text.toString(),
         nickName: vehicleNameController.text.toString(),
         addressId: addressId);
@@ -419,176 +422,20 @@ class _AddVehicleAndAddressScreenState
                                 children: [
                                   /// FIRST NAME DROPDOWN
                                   firstName(),
-
-
                                   const SizedBox(width: 16),
-
                                   /// LAST NAME DROPDOWN
                                   lastName(),
 
                                 ],
                               ),
                             const SizedBox(height: 30),
-
-
-                            // UnderlinedTextField(
-                            //   colorTheme: ColorTheme.dark,
-                            //   labelText: "*Flat No / H.No",
-                            //   controller: _flatNumberController,
-                            //   inputFormatters: [
-                            //     TextInputFormatter.withFunction(
-                            //         (oldValue, newValue) {
-                            //       return newValue.copyWith(
-                            //           text: newValue.text.toUpperCase());
-                            //     }),
-                            //   ],
-                            //   onChanged: (v) {},
-                            // ),
                             flatWidget(),
                             const SizedBox(height: 20),
                             searchSociety(),
-                            // Column(
-                            //   children: [
-                            //     TextField(
-                            //       controller: controller,
-                            //       style: AppTextStyles.whiteFont12Bold,
-                            //       decoration: const InputDecoration(
-                            //         hintText: "Search Society",
-                            //         border: OutlineInputBorder(),
-                            //       ),
-                            //       onChanged: (value) {
-                            //         if (value.isEmpty) {
-                            //           // setState(() {
-                            //           //   showDropdown = false;
-                            //           searchAddressRead.isDropDownEnable(false);
-                            //           searchAddressRead.clearSelectedAddress();
-                            //           // });
-                            //         } else {
-                            //           if (value.length > 3) {
-                            //             searchAddress(value);
-                            //           }
-                            //         }
-                            //       },
-                            //     ),
-                            //     if (searchAddressWatch.showDropdown)
-                            //       Container(
-                            //         margin: const EdgeInsets.only(top: 4),
-                            //         decoration: BoxDecoration(
-                            //           color: const Color(0xFF2B2D42),
-                            //           // dark background
-                            //           borderRadius: BorderRadius.circular(8),
-                            //           border: Border.all(
-                            //             color: Colors.grey.shade400,
-                            //             width: 1,
-                            //           ),
-                            //           boxShadow: [
-                            //             BoxShadow(
-                            //               color: Colors.black.withOpacity(0.3),
-                            //               blurRadius: 6,
-                            //               offset: const Offset(0, 3),
-                            //             ),
-                            //           ],
-                            //         ),
-                            //         child: SizedBox(
-                            //           height: dropdownHeight,
-                            //           child: Container(
-                            //             height: 200,
-                            //             decoration: BoxDecoration(
-                            //               border:
-                            //                   Border.all(color: Colors.grey),
-                            //             ),
-                            //             child: ListView.builder(
-                            //               shrinkWrap: true,
-                            //               itemCount: searchAddressWatch
-                            //                   .suggestions.length,
-                            //               itemBuilder: (context, index) {
-                            //                 return ListTile(
-                            //                   title: Text(
-                            //                     searchAddressWatch
-                            //                         .suggestions[index]
-                            //                         .societyName,
-                            //                     style: AppTextStyles
-                            //                         .whiteFont12Bold,
-                            //                   ),
-                            //                   onTap: () {
-                            //                     controller.text =
-                            //                         searchAddressWatch
-                            //                             .suggestions[index]
-                            //                             .societyName;
-                            //                     searchAddressRead
-                            //                         .isDropDownEnable(false);
-                            //                     searchAddressRead
-                            //                         .setSelectedAddress(
-                            //                             searchAddressWatch
-                            //                                     .suggestions[
-                            //                                 index]);
-                            //                     // setState(() {
-                            //                     //   showDropdown = false;
-                            //                     // });
-                            //                   },
-                            //                 );
-                            //               },
-                            //             ),
-                            //           ),
-                            //         ),
-                            //       )
-                            //   ],
-                            // ),
                             const SizedBox(height: 20),
-                            // Text(
-                            //   searchAddressRead.selectedAddress != null
-                            //       ? '${searchAddressRead.selectedAddress?.societyLine1},${searchAddressRead.selectedAddress?.societyLine2}'
-                            //           '${searchAddressRead.selectedAddress!.societyLine3.isEmpty ? '' : ',${searchAddressRead.selectedAddress!.societyLine3}'}${searchAddressRead.selectedAddress!.city.isEmpty ? '' : ',${searchAddressRead.selectedAddress!.city}'}'
-                            //           ',${searchAddressRead.selectedAddress?.district},${searchAddressRead.selectedAddress?.state}- ${searchAddressRead.selectedAddress?.pinCode}'
-                            //       : '',
-                            //   style: AppTextStyles.whiteFont12Bold,
-                            // ),
-                            // UnderlinedTextField(
-                            //   isFieldEnabled:false,
-                            //   colorTheme: ColorTheme.dark,
-                            //   labelText: '${searchAddressRead.selectedAddress!=null?searchAddressRead.selectedAddress?.societyLine1:''}',
-                            //   // controller: _addressLine2Controller,
-                            //   onChanged: (v) {},
-                            // ),
-                            // const SizedBox(height: 20),
-                            // UnderlinedTextField(
-                            //   isFieldEnabled:false,
-                            //   colorTheme: ColorTheme.dark,
-                            //   labelText: '${searchAddressRead.selectedAddress!=null?searchAddressRead.selectedAddress?.societyLine2:''}',
-                            //   // controller: _landmarkController,
-                            //   onChanged: (v) {},
-                            // ),
                             if(searchAddressWatch.selectedAddress!=null)
                               showAddWidget(),
                             const SizedBox(height: 20),
-                            // UnderlinedTextField(
-                            //   isFieldEnabled:false,
-                            //   colorTheme: ColorTheme.dark,
-                            //   labelText: '${searchAddressRead.selectedAddress!=null?searchAddressRead.selectedAddress?.societyLine3:''}',
-                            //   onChanged: (v) {},
-                            // ),
-                            // const SizedBox(height: 20),
-                            // UnderlinedTextField(
-                            //   isFieldEnabled:false,
-                            //   colorTheme: ColorTheme.dark,
-                            //   labelText: '${searchAddressRead.selectedAddress!=null?searchAddressRead.selectedAddress?.city:''}',
-                            //   onChanged: (v) {},
-                            // ),
-                            // const SizedBox(height: 20),
-                            // UnderlinedTextField(
-                            //   isFieldEnabled:false,
-                            //   colorTheme: ColorTheme.dark,
-                            //   labelText: '${searchAddressRead.selectedAddress!=null?searchAddressRead.selectedAddress?.state:''}',
-                            //   onChanged: (v) {},
-                            // ),
-                            // const SizedBox(height: 20),
-                            // UnderlinedTextField(
-                            //   isFieldEnabled:false,
-                            //   colorTheme: ColorTheme.dark,
-                            //   labelText: '${searchAddressRead.selectedAddress!=null?searchAddressRead.selectedAddress?.pinCode:''}',
-                            //   // controller: _pincodeController,
-                            //   onChanged: (v) {},
-                            // ),
                           ],
                         ),
                     ],
@@ -599,33 +446,58 @@ class _AddVehicleAndAddressScreenState
           ),
 
           /// BUTTONS
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Row(
-              children: [
-                if (currentStep == 1)
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: backStep,
-                      child: const Text("Back"),
-                    ),
-                  ),
-                if (currentStep == 1) const SizedBox(width: 12),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: nextStep,
-                    style: AppButtonStyles.primaryButtonStyle,
-                    child: Text(
-                      currentStep == 0 ? "Next" : "Submit",
-                      style: AppTextStyles.whiteFont16Bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          )
+          // Padding(
+          //   padding: const EdgeInsets.all(16),
+          //   child: Row(
+          //     children: [
+          //       if (currentStep == 1)
+          //         Expanded(
+          //           child: OutlinedButton(
+          //             onPressed: backStep,
+          //             child: const Text("Back"),
+          //           ),
+          //         ),
+          //       if (currentStep == 1) const SizedBox(width: 12),
+          //       Expanded(
+          //         child: ElevatedButton(
+          //           onPressed: nextStep,
+          //           style: AppButtonStyles.primaryButtonStyle,
+          //           child: Text(
+          //             currentStep == 0 ? "Next" : "Submit",
+          //             style: AppTextStyles.whiteFont16Bold,
+          //           ),
+          //         ),
+          //       ),
+          //     ],
+          //   ),
+          // )
         ],
       ),
+      bottomNavigationBar: SafeArea(child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            if (currentStep == 1)
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: backStep,
+                  child: const Text("Back"),
+                ),
+              ),
+            if (currentStep == 1) const SizedBox(width: 12),
+            Expanded(
+              child: ElevatedButton(
+                onPressed: nextStep,
+                style: AppButtonStyles.primaryButtonStyle,
+                child: Text(
+                  currentStep == 0 ? "Next" : "Submit",
+                  style: AppTextStyles.whiteFont16Bold,
+                ),
+              ),
+            ),
+          ],
+        ),
+      )),
     );
   }
 
@@ -1269,7 +1141,7 @@ class _AddVehicleAndAddressScreenState
                   ),
                 ),
                 DropdownButtonFormField<Brand>(
-                  value: selectedBrand,
+                  value: brandWatch.selectedBrand,
                   borderRadius: BorderRadius.circular(15), // Rounded corners for the popup
                   dropdownColor: const Color(0xFF2A313B), // Matches container when opened
                   icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
@@ -1291,10 +1163,12 @@ class _AddVehicleAndAddressScreenState
                   ))
                       .toList(),
                   onChanged: (v) {
-                    setState(() {
-                      selectedBrand = v;
-                      loadModels(selectedBrand!.id);
-                    });
+                    brandRead.setSelectedBrand(v!);
+                    loadModels(v.id);
+                    // setState(() {
+                    //   selectedBrand = v;
+                    //   loadModels(selectedBrand!.id);
+                    // });
                   },
                 ),
               ],
@@ -1339,7 +1213,7 @@ class _AddVehicleAndAddressScreenState
                   ),
                 ),
                 DropdownButtonFormField<Model>(
-                  value: modelWatch.models.contains(selectedModel) ? selectedModel : null,
+                  value: modelWatch.models.contains(modelWatch.selectedModel) ? modelWatch.selectedModel : null,
                   // Fixes the black hint issue:
                   hint: const Text(
                     "SELECT MODEL",
@@ -1367,10 +1241,12 @@ class _AddVehicleAndAddressScreenState
                   ))
                       .toList(),
                   onChanged: (v) {
-                    setState(() {
-                      selectedModel = v;
-                      loadColor(selectedModel!.id);
-                    });
+                    modelRead.setSelectedModel(v!);
+                    loadColor(v.id);
+                    // setState(() {
+                    //   selectedModel = v;
+                    //   loadColor(selectedModel!.id);
+                    // });
                   },
                 ),
               ],
@@ -1417,9 +1293,9 @@ class _AddVehicleAndAddressScreenState
                 ),
                 DropdownButtonFormField<VehicleColor>(
                   value: colorWatch.colors
-                      .where((c) => c.id == selectedColor?.id)
+                      .where((c) => c.id == colorWatch.selectedColor?.id)
                       .length == 1
-                      ? colorWatch.colors.firstWhere((c) => c.id == selectedColor?.id)
+                      ? colorWatch.colors.firstWhere((c) => c.id == colorWatch.selectedColor?.id)
                       : null,
                   borderRadius: BorderRadius.circular(15), // Rounded corners for the popup
                   // Fixed: Hint text is now white/grey instead of black
@@ -1444,7 +1320,8 @@ class _AddVehicleAndAddressScreenState
                   ))
                       .toList(),
                   onChanged: (v) {
-                    setState(() => selectedColor = v);
+                    colorRead.setSelectedColor(v!);
+                    // setState(() => selectedColor = v);
                   },
                 ),
               ],

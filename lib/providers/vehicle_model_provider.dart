@@ -28,4 +28,11 @@ class VehicleModelProvider extends ChangeNotifier{
     _isLoading = isLoading;
     notifyListeners();
   }
+
+  void clear(){
+    _selectedModel =null;
+    _isLoading = false;
+    _models = [];
+    notifyListeners();
+  }
 }

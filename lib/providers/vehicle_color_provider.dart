@@ -30,4 +30,10 @@ class VehicleColorProvider extends ChangeNotifier{
     _selectedColor = color;
     notifyListeners();
   }
+  void clear(){
+    _selectedColor =null;
+    _isLoading = false;
+    _colors = [];
+    notifyListeners();
+  }
 }
