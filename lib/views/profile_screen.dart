@@ -50,7 +50,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     read = context.read<UserProvider>();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       read.clear();
-
     });
     Future.microtask(() {
       loadUserData();
@@ -166,7 +165,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         await RestServiceImp.editProfile(user);
     if (userProfileResponse.isSuccess) {
       read.setIsLoading(false);
-      Navigator.pushNamedAndRemoveUntil(
+      LocalStorage.setFirstName(userProfileResponse.data.firstName!);
+      LocalStorage.setLastName(userProfileResponse.data.lastName!);
+      LocalStorage.setStatus(userProfileResponse.data.status!);      Navigator.pushNamedAndRemoveUntil(
           context, AppRoutes.homeScreen, (route) => false);
       return;
     }
