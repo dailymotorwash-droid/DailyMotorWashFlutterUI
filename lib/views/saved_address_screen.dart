@@ -129,7 +129,7 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                   Navigator.push(
                       context, MaterialPageRoute(builder:
                       (context) =>
-                      AddressScreen(address:address,vehicleId:address.vehicleId!,from: "UPDATE", )));
+                      AddressScreen(address:address,from: "UPDATE", )));
                 },
               ),
             )

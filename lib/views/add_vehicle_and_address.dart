@@ -190,6 +190,7 @@ class _AddVehicleAndAddressScreenState
           }
           vehicleRead.addVehicle(res.data.vehicle!);
           Navigator.pop(context);
+
         }
         CommonUtils.toastMessage(res.message);
       } else {
@@ -371,7 +372,7 @@ class _AddVehicleAndAddressScreenState
                                                       CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      item.addressLine2!,
+                                                      item.addressLine1!,
                                                       style: const TextStyle(
                                                         color: Colors.white,
                                                         fontWeight:
@@ -380,7 +381,7 @@ class _AddVehicleAndAddressScreenState
                                                     ),
                                                     const SizedBox(height: 4),
                                                     Text(
-                                                      item.addressLine1!,
+                                                      item.addressLine2!,
                                                       style: const TextStyle(
                                                           color:
                                                               Colors.white70),
@@ -1065,6 +1066,7 @@ class _AddVehicleAndAddressScreenState
                   ),
                 ),
                 TextField(
+                  maxLength: 10,
                   controller: vehicleNumberController,
                   style: const TextStyle(color: Colors.white70, fontSize: 15),
                   cursorColor: Colors.white,

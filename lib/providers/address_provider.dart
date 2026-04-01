@@ -23,8 +23,12 @@ class AddressProvider extends ChangeNotifier {
 
   // Add new vehicle
   void addAddresses(Address addresses) {
-    _addresses.add(addresses);
-    notifyListeners();
+    // Check if any address in the list has the same ID
+    bool alreadyExists = _addresses.any((element) => element.id == addresses.id);
+    if (!alreadyExists) {
+      _addresses.add(addresses);
+      notifyListeners();
+    }
   }
 
   // Select vehicle

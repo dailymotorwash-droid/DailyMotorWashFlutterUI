@@ -77,4 +77,14 @@ class Address {
       "vehicleId": vehicleId,
     };
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+          other is Address &&
+              runtimeType == other.runtimeType &&
+              id == other.id; // Or compare street/city if no ID exists
+
+  @override
+  int get hashCode => id.hashCode;
 }
