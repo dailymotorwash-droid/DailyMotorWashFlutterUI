@@ -20,10 +20,10 @@ import '../utils/custom_enums.dart';
 import '../utils/local_storage.dart';
 
 class AddressScreen extends StatefulWidget {
-  final String vehicleId;
+  final String? vehicleId;
   final Address? address;
   final String from;
-  const AddressScreen({super.key,required this.vehicleId,required this.from,this.address,});
+  const AddressScreen({super.key, this.vehicleId,required this.from,this.address,});
 
   @override
   State<AddressScreen> createState() => _AddressScreenState();
@@ -56,13 +56,15 @@ class _AddressScreenState extends State<AddressScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       searchAddressRead.clearSelectedAddress();
 
-    });    _vehicleId = widget.vehicleId;
+    });
     _from = widget.from;
     if(_from=="UPDATE"){
       _address = widget.address!;
+      controller.text = _address.addressLine1!;
       _flatNumberController.text = _address.houseNo!;
+    }else{
+      _vehicleId = widget.vehicleId!;
     }
-
       super.initState();
   }
 
@@ -93,116 +95,11 @@ class _AddressScreenState extends State<AddressScreen> {
 
             const SizedBox(height: 30),
 
-            UnderlinedTextField(
-              colorTheme: ColorTheme.dark,
-              labelText: "*Flat No / H.No",
-              controller: _flatNumberController,
-              inputFormatters: [
-                TextInputFormatter.withFunction(
-                        (oldValue, newValue) {
-                      return newValue.copyWith(
-                          text: newValue.text.toUpperCase());
-                    }),
-              ],
-              onChanged: (v) {},
-            ),
+            flatWidget(),
+            searchSociety(),
             const SizedBox(height: 20),
-            Column(
-              children: [
-                TextField(
-                  controller: controller,
-                  style: AppTextStyles.whiteFont12Bold,
-                  decoration: const InputDecoration(
-                    hintText: "Search Society",
-                    border: OutlineInputBorder(),
-                  ),
-                  onChanged: (value) {
-                    if (value.isEmpty) {
-                      // setState(() {
-                      //   showDropdown = false;
-                      searchAddressRead.isDropDownEnable(false);
-                      searchAddressRead.clearSelectedAddress();
-                      // });
-                    } else {
-                      if (value.length > 3) {
-                        searchAddress(value);
-                      }
-                    }
-                  },
-                ),
-                if (searchAddressWatch.showDropdown)
-                  Container(
-                    margin: const EdgeInsets.only(top: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2B2D42),
-                      // dark background
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.grey.shade400,
-                        width: 1,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.3),
-                          blurRadius: 6,
-                          offset: const Offset(0, 3),
-                        ),
-                      ],
-                    ),
-                    child: SizedBox(
-                      height: dropdownHeight,
-                      child: Container(
-                        height: 200,
-                        decoration: BoxDecoration(
-                          border:
-                          Border.all(color: Colors.grey),
-                        ),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: searchAddressWatch
-                              .suggestions.length,
-                          itemBuilder: (context, index) {
-                            return ListTile(
-                              title: Text(
-                                searchAddressWatch
-                                    .suggestions[index]
-                                    .societyName,
-                                style: AppTextStyles
-                                    .whiteFont12Bold,
-                              ),
-                              onTap: () {
-                                controller.text =
-                                    searchAddressWatch
-                                        .suggestions[index]
-                                        .societyName;
-                                searchAddressRead
-                                    .isDropDownEnable(false);
-                                searchAddressRead
-                                    .setSelectedAddress(
-                                    searchAddressWatch
-                                        .suggestions[
-                                    index]);
-                                // setState(() {
-                                //   showDropdown = false;
-                                // });
-                              },
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  )
-              ],
-            ),
-            const SizedBox(height: 20),
-            Text(
-              searchAddressRead.selectedAddress != null
-                  ? '${searchAddressRead.selectedAddress?.societyLine1},${searchAddressRead.selectedAddress?.societyLine2}'
-                  '${searchAddressRead.selectedAddress!.societyLine3.isEmpty ? '' : ',${searchAddressRead.selectedAddress!.societyLine3}'}${searchAddressRead.selectedAddress!.city.isEmpty ? '' : ',${searchAddressRead.selectedAddress!.city}'}'
-                  ',${searchAddressRead.selectedAddress?.district},${searchAddressRead.selectedAddress?.state}- ${searchAddressRead.selectedAddress?.pinCode}'
-                  : '',
-              style: AppTextStyles.whiteFont12Bold,
-            ),
+            if(searchAddressWatch.selectedAddress!=null)
+              showAddWidget(),
 
 
           ],
@@ -421,7 +318,7 @@ class _AddressScreenState extends State<AddressScreen> {
             city: address?.city,
             masterAddressId: searchAddressWatch.selectedAddress?.id,
             state: address?.state,
-            vehicleId: _vehicleId
+            // vehicleId: _vehicleId
         );
         AddressResponse res =
         await RestServiceImp.updateUserAddress(add);
@@ -437,5 +334,308 @@ class _AddressScreenState extends State<AddressScreen> {
 
 
   }
+
+  Widget flatWidget(){
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: const Color(0xFF252D37), // Card Face Color
+        borderRadius: BorderRadius.circular(12),
+        // border: Border.all(
+        //   color: Colors.white70, // Side-color light effect
+        //   width: 1,
+        // ),
+        boxShadow: const [
+          BoxShadow(
+            color: Colors.white10,
+            blurRadius: 10,
+            offset: Offset(0, 4), // Pushes the shadow down to give depth
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Home icon for address fields
+          const Icon(Icons.home_work_outlined, color: Colors.white70, size: 22),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // RichText allows us to color the '*' differently
+                RichText(
+                  text: const TextSpan(
+                    children: [
+                      TextSpan(
+                          text: "* ",
+                          style: TextStyle(color: Color(0xFFE55D5D), fontWeight: FontWeight.bold, fontSize: 10)
+                      ),
+                      TextSpan(
+                          text: "FLAT NO / H.NO:",
+                          style: TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5)
+                      ),
+                    ],
+                  ),
+                ),
+                TextField(
+                  controller: _flatNumberController,
+                  // Keeping your logic intact
+                  inputFormatters: [
+                    TextInputFormatter.withFunction((oldValue, newValue) {
+                      return newValue.copyWith(text: newValue.text.toUpperCase());
+                    }),
+                  ],
+                  onChanged: (v) {},
+                  style: const TextStyle(color: Colors.white, fontSize: 15),
+                  cursorColor: Colors.white70,
+                  decoration: const InputDecoration(
+                    isDense: true,
+                    contentPadding: EdgeInsets.symmetric(vertical: 4),
+                    border: InputBorder.none,
+                    hintText: "ENTER FLAT OR HOUSE NUMBER",
+                    hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+  String getFormattedAddress(MasterAddress? address) {
+    if (address == null) return '';
+
+    // Filter out empty or null strings to avoid double commas like ", ,"
+    final parts = [
+      address.societyName,
+      address.societyLine1,
+      address.societyLine2,
+      address.societyLine3,
+      address.city,
+      address.district,
+      address.state,
+    ].where((s) => s != null && s.isNotEmpty).toList();
+
+    String base = parts.join(', ');
+
+    // Add PinCode with the specific dash formatting
+    if (address.pinCode != null && address.pinCode!.isNotEmpty) {
+      base += ' - ${address.pinCode}';
+    }
+
+    return base;
+  }
+
+  Widget searchSociety(){
+    return Column(
+      children: [
+        // --- SEARCH BAR CONTAINER ---
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: const Color(0xFF252D37), // Card Face Color
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: const [
+              BoxShadow(
+                color: Colors.white10,
+                blurRadius: 10,
+                offset: Offset(0, 4), // Pushes the shadow down to give depth
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              const Icon(Icons.search, color: Colors.white70, size: 22),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "SOCIETY:",
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    TextField(
+                      controller: controller,
+                      style: const TextStyle(color: Colors.white, fontSize: 15),
+                      cursorColor: Colors.white70,
+                      decoration: const InputDecoration(
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 4),
+                        border: InputBorder.none, // Removed the ugly box border
+                        hintText: "SEARCH SOCIETY",
+                        hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
+                      ),
+                      onChanged: (value) {
+                        if (value.isEmpty) {
+                          searchAddressRead.isDropDownEnable(false);
+                          searchAddressRead.clearSelectedAddress();
+                        } else if (value.length > 3) {
+                          searchAddress(value);
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
+
+        // --- SEARCH SUGGESTIONS DROP_DOWN ---
+        if (searchAddressWatch.showDropdown)
+          dropDown()
+      ],
+    );
+  }
+
+  Widget dropDown(){
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.only(top: 8),
+      constraints: const BoxConstraints(maxHeight: 280), // Slightly taller for better visibility
+      decoration: BoxDecoration(
+        // Gradient background gives it a "glass" depth
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF2A3441),
+            Color(0xFF212832),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(16), // Softer corners
+        // border: Border.all(color: Colors.white.withOpacity(0.08)), // Subtle "rim" light
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.5),
+            blurRadius: 20,
+            spreadRadius: 2,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(16),
+        child: searchAddressWatch.suggestions.isEmpty
+            ? _buildNoResultsView() // Added an empty state
+            : Scrollbar(
+          thickness: 4,
+          radius: const Radius.circular(10),
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            shrinkWrap: true,
+            physics: const BouncingScrollPhysics(), // Premium iOS-style feel
+            itemCount: searchAddressWatch.suggestions.length,
+            separatorBuilder: (context, index) => const Divider(
+              color: Colors.white70,
+              height: 1,
+              indent: 20,
+              endIndent: 20,
+            ),
+            itemBuilder: (context, index) {
+              final suggestion = searchAddressWatch.suggestions[index];
+              return Material(
+                color: Colors.transparent,
+                child: ListTile(
+                  hoverColor: Colors.white10,
+                  splashColor: Colors.white70,
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.03),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.location_on_outlined,
+                        color: Colors.white38, size: 18),
+                  ),
+                  title: Container(
+                    margin: const EdgeInsets.only(top: 15),
+                    child: Text(
+                      '${suggestion.societyName},${suggestion.societyLine1}',
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500
+                      ),
+                    ),
+                  ),
+                  subtitle: suggestion.city != null
+                      ? Text(suggestion.city!,
+                      style: const TextStyle(color: Colors.white24, fontSize: 11))
+                      : null,
+                  trailing: const Icon(Icons.north_west_rounded,
+                      color: Colors.white12, size: 16), // "Use suggestion" icon
+                  onTap: () {
+                    controller.text = suggestion.societyName;
+                    searchAddressRead.isDropDownEnable(false);
+                    searchAddressRead.setSelectedAddress(suggestion);
+                  },
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+  }
+  // Helper for when no matches are found
+  Widget _buildNoResultsView() {
+    return const Padding(
+      padding: EdgeInsets.all(20.0),
+      child: Row(
+        children: [
+          Icon(Icons.search_off, color: Colors.white24, size: 20),
+          SizedBox(width: 12),
+          Text("No societies found...",
+              style: TextStyle(color: Colors.white38, fontSize: 13, fontStyle: FontStyle.italic)),
+        ],
+      ),
+    );
+  }
+
+  Widget showAddWidget(){
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF252D37),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.white.withOpacity(0.05)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center, // Keeps icon and text centered
+        children: [
+          const Icon(Icons.location_on, color: Colors.redAccent, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              getFormattedAddress(searchAddressWatch.selectedAddress),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                height: 1.4, // Improved line spacing for multi-line addresses
+              ),
+              // Prevents the UI from breaking if the address is massive
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 }
 

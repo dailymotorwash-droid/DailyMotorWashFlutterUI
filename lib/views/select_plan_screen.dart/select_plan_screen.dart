@@ -116,35 +116,37 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
         centerTitle: true,
         title: const Text('Select Plan'),
       ),
-      bottomNavigationBar: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(color: AppColors.white, boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.15),
-            spreadRadius: 0,
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          )
-        ]),
-        padding: const EdgeInsets.all(16),
-        child: ElevatedButton(
-          onPressed: () => proceed(watch.planes[selectPlanIndex]),
-          style: AppButtonStyles.primaryButtonStyle,
-          child: watch.planes.isEmpty
-              ? null
-              : Row(
-                  children: [
-                    Text(
-                      '₹${watch.planes[selectPlanIndex].rate - watch.planes[selectPlanIndex].discount}',
-                      style: AppTextStyles.whiteFont16Bold,
-                    ),
-                    const Spacer(),
-                    const Text(
-                      'Proceed',
-                      style: AppTextStyles.whiteFont16Bold,
-                    ),
-                  ],
-                ),
+      bottomNavigationBar: SafeArea(
+        child: Container(
+          width: double.infinity,
+          decoration: BoxDecoration(color: AppColors.white, boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.15),
+              spreadRadius: 0,
+              blurRadius: 20,
+              offset: const Offset(0, 4),
+            )
+          ]),
+          padding: const EdgeInsets.all(16),
+          child: ElevatedButton(
+            onPressed: () => proceed(watch.planes[selectPlanIndex]),
+            style: AppButtonStyles.primaryButtonStyle,
+            child: watch.planes.isEmpty
+                ? null
+                : Row(
+                    children: [
+                      Text(
+                        '₹${watch.planes[selectPlanIndex].rate - watch.planes[selectPlanIndex].discount}',
+                        style: AppTextStyles.whiteFont16Bold,
+                      ),
+                      const Spacer(),
+                      const Text(
+                        'Proceed',
+                        style: AppTextStyles.whiteFont16Bold,
+                      ),
+                    ],
+                  ),
+          ),
         ),
       ),
       body: watch.isLoading
