@@ -540,6 +540,7 @@ class _AddVehicleAndAddressScreenState
   Future<void> loadAddresses() async {
     var storage = await LocalStorage.getInstance();
     profileStatus = storage.getStatus();
+    print(profileStatus);
     AddressResponse res =
         await RestServiceImp.getUserAddresses();
     if (res.isSuccess) {

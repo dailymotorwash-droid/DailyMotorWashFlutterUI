@@ -129,19 +129,19 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
         padding: const EdgeInsets.all(16),
         child: ElevatedButton(
           onPressed: () => proceed(watch.planes[selectPlanIndex]),
-          style: AppButtonStyles.secondaryButtonStyle,
+          style: AppButtonStyles.primaryButtonStyle,
           child: watch.planes.isEmpty
               ? null
               : Row(
                   children: [
                     Text(
-                      '₹${watch.planes[selectPlanIndex].rate - watch.planes[selectPlanIndex].discount} +taxes',
-                      style: AppTextStyles.whiteFont12Bold,
+                      '₹${watch.planes[selectPlanIndex].rate - watch.planes[selectPlanIndex].discount}',
+                      style: AppTextStyles.whiteFont16Bold,
                     ),
                     const Spacer(),
                     const Text(
                       'Proceed',
-                      style: AppTextStyles.whiteFont16Regular,
+                      style: AppTextStyles.whiteFont16Bold,
                     ),
                   ],
                 ),
@@ -320,15 +320,21 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                                       color: const Color(0xffE8F0F6),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child: Text(
-                                      subscriptionWatch.selectedStartDate ==
-                                              null
-                                          ? "Select Date"
-                                          : DateFormat('dd MMM yyyy').format(
-                                              subscriptionWatch
-                                                  .selectedStartDate!,
-                                            ),
-                                      style: const TextStyle(fontSize: 14),
+                                    child: Row(
+                                        mainAxisSize: MainAxisSize.min, // Constrains the row to the content size
+                                      children: [
+                                        const Icon(Icons.calendar_month, size: 20),
+                                        const SizedBox(width: 8), // Gap between icon and text
+                                        Text(
+                                        subscriptionWatch.selectedStartDate ==
+                                                null
+                                            ? "Service Start Date"
+                                            : DateFormat('dd MMM yyyy').format(
+                                                subscriptionWatch
+                                                    .selectedStartDate!,
+                                              ),
+                                        style: const TextStyle(fontSize: 14),
+                                      ),]
                                     ),
                                   ),
                                 );
