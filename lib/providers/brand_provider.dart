@@ -27,4 +27,11 @@ class BrandProvider extends ChangeNotifier{
     _selectedBrand = brand;
     notifyListeners();
   }
+
+  void clear(){
+    _selectedBrand =null;
+    _isLoading = false;
+    _brands = [];
+    notifyListeners();
+  }
 }

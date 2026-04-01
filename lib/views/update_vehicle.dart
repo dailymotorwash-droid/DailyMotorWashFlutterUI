@@ -57,6 +57,7 @@ class _UpdateVehicle extends State<UpdateVehicle>{
   VehicleColor? selectedColor;
 
   late Vehicle _vehicle;
+  bool isFistTime = true;
 
   @override
   void initState() {
@@ -69,9 +70,15 @@ class _UpdateVehicle extends State<UpdateVehicle>{
     _vehicle = widget.vehicle;
     vehicleNumberController.text = _vehicle.registrationNumber!;
     vehicleNameController.text = _vehicle.nickName!;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      brandRead.clear();
+      modelRead.clear();
+      colorRead.clear();
 
+    });
     Future.microtask(() {
       loadBrands();
+      brandRead.setIsLoading(true);
       // loadModel();
       // loadBrand();
       // loadColor();
@@ -138,126 +145,16 @@ class _UpdateVehicle extends State<UpdateVehicle>{
               ),
             ),
             const SizedBox(height: 20),
-            vehicleNumber(),
-            brandWidget(),
-            modelWidget(),
-            colorWidget(),
-            nickNameWidget(),
+            brandWatch.isLoading?CommonUtils.loader():allVehicleDetailsWidget()
+            // vehicleNumber(),
+            // brandWidget(),
+            // modelWidget(),
+            // colorWidget(),
+            // nickNameWidget(),
           ],
         ),
       ),
 
-      // SingleChildScrollView(
-      //   padding: const EdgeInsets.all(16),
-      //   child: Column(
-      //     children: [
-      //       UnderlinedTextField(
-      //         colorTheme: ColorTheme.dark,
-      //         labelText: "Vehicle Number",
-      //         inputFormatters: [
-      //           TextInputFormatter.withFunction((oldValue, newValue) {
-      //             return newValue.copyWith(
-      //                 text: newValue.text.toUpperCase());
-      //           }),
-      //         ],
-      //         controller: vehicleNumberController,
-      //         errorText: _vehicleNumberFieldErrorText,
-      //         onChanged: (v) {
-      //           String? newErrorText;
-      //           if (v == null || v.isEmpty || v.length != 10) {
-      //             newErrorText =
-      //             'Minimum 10 characters(letters & spaces only)';
-      //           } else if (!RegExp(r'^[a-zA-Z\s]*$').hasMatch(v)) {
-      //             newErrorText =
-      //             'Only letters and spaces are allowed';
-      //           }
-      //           setState(() {
-      //             _vehicleNumberFieldErrorText = newErrorText!;
-      //           });
-      //         },
-      //       ),
-      //       const SizedBox(height: 30),
-      //       // Row(
-      //       //   children: [
-      //       /// BRAND DROPDOWN
-      //       // Expanded(
-      //       //   child:
-      //       DropdownUnderlinedField<Brand>(
-      //         colorTheme: ColorTheme.dark,
-      //         labelText: "Brand",
-      //         value: /*brandWatch.selectedBrand ??*/ selectedBrand,
-      //         items: brandWatch.brands
-      //             .map((e) => DropdownMenuItem<Brand>(
-      //           value: e,
-      //           child: Text(e.name),
-      //         ))
-      //             .toList(),
-      //         onChanged: (v) {
-      //           // brandRead.setSelectedBrand(v!);
-      //           // loadModels(selectedBrand!.id);
-      //           setState(() {
-      //             selectedBrand = v;
-      //             loadModels(selectedBrand!.id);
-      //           });
-      //         },
-      //       ),
-      //       // ),
-      //
-      //       const SizedBox(height: 16),
-      //
-      //       /// MODEL DROPDOWN
-      //       // Expanded(
-      //       //   child:
-      //       DropdownUnderlinedField<Model>(
-      //         colorTheme: ColorTheme.dark,
-      //         labelText: "Model",
-      //         value: selectedModel,
-      //         items: modelWatch.models
-      //             .map((e) => DropdownMenuItem<Model>(
-      //           value: e,
-      //           child: Text(e.name,overflow: TextOverflow.ellipsis,maxLines: 1,
-      //           ),
-      //         ))
-      //             .toList(),
-      //         onChanged: (v) {
-      //           // modelRead.setSelectedModel(v!);
-      //           // loadColors(selectedModel!.id);
-      //           setState(() {
-      //             selectedModel = v;
-      //             loadColors(selectedModel!.id);
-      //           });
-      //         },
-      //       ),
-      //       // ),
-      //       //   ],
-      //       // ),
-      //       const SizedBox(height: 30),
-      //       DropdownUnderlinedField<VehicleColor>(
-      //         colorTheme: ColorTheme.dark,
-      //         labelText: "Color",
-      //         value: selectedColor,
-      //         items: colorWatch.colors
-      //             .map((e) => DropdownMenuItem(
-      //           value: e,
-      //           child: Text(e.name),
-      //         ))
-      //             .toList(),
-      //         onChanged: (v) {
-      //           // colorRead.setSelectedColor(v!);
-      //           setState(() => selectedColor = v);
-      //         },
-      //       ),
-      //       const SizedBox(height: 30),
-      //
-      //       UnderlinedTextField(
-      //         colorTheme: ColorTheme.dark,
-      //         hintText: "Vehicle Name (optional)",
-      //         controller: vehicleNameController,
-      //         onChanged: (v) {},
-      //       ),
-      //     ],
-      //   ),
-      // ),
         bottomNavigationBar: SafeArea(
           child: Padding(
             padding: const EdgeInsets.all(16),
@@ -283,6 +180,10 @@ class _UpdateVehicle extends State<UpdateVehicle>{
     BrandResponse res = await RestServiceImp.getBrands(storage.getToken(),_vehicle.vehicleType==VehicleType.car.label?true:false);
     if (res.isSuccess) {
       brandRead.setBrands(res.data);
+      if(isFistTime) {
+        loadBrand();
+      }
+
     }
   }
 
@@ -292,6 +193,9 @@ class _UpdateVehicle extends State<UpdateVehicle>{
         storage.getToken(), id, _vehicle.vehicleType!);
     if (res.isSuccess) {
       modelRead.setModels(res.data);
+      if(isFistTime) {
+        loadModel();
+      }
     }
   }
 
@@ -301,29 +205,32 @@ class _UpdateVehicle extends State<UpdateVehicle>{
     await RestServiceImp.getColors(storage.getToken(), id);
     if (res.isSuccess) {
       colorRead.setColors(res.data);
+      if(isFistTime) {
+        loadColor();
+      }
     }
   }
 
   Future<void> updateVehicle() async {
 
     if (vehicleNumberController.text.isEmpty ||
-        selectedBrand == null ||
-        selectedModel == null ||
-        selectedColor == null) {
+        brandWatch.selectedBrand == null ||
+        modelWatch.selectedModel == null ||
+        colorWatch.selectedColor == null) {
       CommonUtils.toastMessage('Please Fill All Vehicle Details');
     } else if (vehicleNumberController.text.length < 10) {
       CommonUtils.toastMessage('Registration Number Should be 10 Char');
     }else{
       Vehicle vehicle = Vehicle(
           id: _vehicle.id,
-          model: selectedModel?.name,
-          color: selectedColor?.name,
-          brand: selectedBrand?.name,
-          category: selectedModel?.vehicleSize,
-          size: selectedModel?.vehicleSize,
+          model: modelWatch.selectedModel?.name,
+          color: colorWatch.selectedColor?.name,
+          brand: brandWatch.selectedBrand?.name,
+          category: modelWatch.selectedModel?.vehicleSize,
+          size: modelWatch.selectedModel?.vehicleSize,
           registrationNumber: vehicleNumberController.text.toString(),
           nickName: vehicleNameController.text.toString(),
-          vehicleType: selectedModel?.vehicleType
+          vehicleType: modelWatch.selectedModel?.vehicleType
 
           );
 
@@ -350,6 +257,7 @@ class _UpdateVehicle extends State<UpdateVehicle>{
     VehicleModelResponse response = await RestServiceImp.getModelByName(_vehicle.model!);
     if(response.isSuccess){
      modelRead.setSelectedModel(response.model);
+     loadColors(response.model.id);
     }
   }
 
@@ -357,15 +265,32 @@ class _UpdateVehicle extends State<UpdateVehicle>{
     BrandResponse response = await RestServiceImp.getBrandByName(_vehicle.brand!);
     if(response.isSuccess){
       brandRead.setSelectedBrand(response.brand);
+      loadModels(response.brand.id);
     }
   }
 
-  // Future<void> loadColor() async {
-  //   VehicleColorResponse response = await RestServiceImp.getColorByName(_vehicle.color!);
-  //   if(response.isSuccess){
-  //     colorRead.setSelectedColor(response.color);
-  //   }
-  // }
+  Future<void> loadColor() async {
+    VehicleColorResponse response = await RestServiceImp.getColorByName(_vehicle.color!);
+    if(response.isSuccess){
+      colorRead.setSelectedColor(response.color);
+      isFistTime = false;
+      brandRead.setIsLoading(false);
+
+    }
+  }
+
+
+  Widget allVehicleDetailsWidget(){
+    return Column(
+      children: [
+        vehicleNumber(),
+        brandWidget(),
+        modelWidget(),
+        colorWidget(),
+        nickNameWidget(),
+      ],
+    );
+  }
 
   Widget vehicleNumber(){
     return Container(
@@ -481,7 +406,7 @@ class _UpdateVehicle extends State<UpdateVehicle>{
                   ),
                 ),
                 DropdownButtonFormField<Brand>(
-                  value: selectedBrand,
+                  value: brandWatch.selectedBrand,
                   borderRadius: BorderRadius.circular(15), // Rounded corners for the popup
                   dropdownColor: const Color(0xFF2A313B), // Matches container when opened
                   icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
@@ -503,10 +428,12 @@ class _UpdateVehicle extends State<UpdateVehicle>{
                   ))
                       .toList(),
                   onChanged: (v) {
-                    setState(() {
-                      selectedBrand = v;
-                      loadModels(selectedBrand!.id);
-                    });
+                      brandRead.setSelectedBrand(v!);
+                      loadModels(v.id);
+                    // setState(() {
+                    //   selectedBrand = v;
+                    //   loadModels(selectedBrand!.id);
+                    // });
                   },
                 ),
               ],
@@ -551,7 +478,7 @@ class _UpdateVehicle extends State<UpdateVehicle>{
                   ),
                 ),
                 DropdownButtonFormField<Model>(
-                  value: modelWatch.models.contains(selectedModel) ? selectedModel : null,
+                  value: modelWatch.models.contains(modelWatch.selectedModel) ? modelWatch.selectedModel : null,
                   // Fixes the black hint issue:
                   hint: const Text(
                     "SELECT MODEL",
@@ -579,10 +506,12 @@ class _UpdateVehicle extends State<UpdateVehicle>{
                   ))
                       .toList(),
                   onChanged: (v) {
-                    setState(() {
-                      selectedModel = v;
-                      loadColors(selectedModel!.id);
-                    });
+                      modelRead.setSelectedModel(v!);
+                      loadColors(v.id);
+                    // setState(() {
+                    //   selectedModel = v;
+                    //   loadColors(selectedModel!.id);
+                    // });
                   },
                 ),
               ],
@@ -629,9 +558,9 @@ class _UpdateVehicle extends State<UpdateVehicle>{
                 ),
                 DropdownButtonFormField<VehicleColor>(
                   value: colorWatch.colors
-                      .where((c) => c.id == selectedColor?.id)
+                      .where((c) => c.id == colorWatch.selectedColor?.id)
                       .length == 1
-                      ? colorWatch.colors.firstWhere((c) => c.id == selectedColor?.id)
+                      ? colorWatch.colors.firstWhere((c) => c.id == colorWatch.selectedColor?.id)
                       : null,
                   borderRadius: BorderRadius.circular(15), // Rounded corners for the popup
                   // Fixed: Hint text is now white/grey instead of black
@@ -656,7 +585,8 @@ class _UpdateVehicle extends State<UpdateVehicle>{
                   ))
                       .toList(),
                   onChanged: (v) {
-                    setState(() => selectedColor = v);
+                    colorRead.setSelectedColor(v!);
+                    // setState(() => selectedColor = v);
                   },
                 ),
               ],

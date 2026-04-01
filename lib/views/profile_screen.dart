@@ -91,10 +91,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 32),
-              const CircleAvatar(
-                radius: 75,
-                backgroundColor: AppColors.white,
-              ),
+              _buildDynamicAvatar(watch.gender),
+              // const CircleAvatar(
+              //   radius: 75,
+              //   backgroundColor: AppColors.white,
+              // ),
               const SizedBox(height: 40),
               Row(
                 children: [
@@ -508,6 +509,55 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildDynamicAvatar(String? gender) {
+    IconData avatarIcon;
+    Color iconColor;
+
+    // Logic to switch icon based on selection
+    switch (gender) {
+      case "MALE":
+        avatarIcon = Icons.face; // Or use a male image asset
+        iconColor = Colors.blue.shade300;
+        break;
+      case "FEMALE":
+        avatarIcon = Icons.face_3; // Or use a female image asset
+        iconColor = Colors.pink.shade300;
+        break;
+      default:
+        avatarIcon = Icons.account_circle;
+        iconColor = Colors.white24;
+    }
+
+    return Center(
+      child: Stack(
+        alignment: Alignment.bottomRight,
+        children: [
+          CircleAvatar(
+            radius: 75,
+            backgroundColor: const Color(0xFF252D37),
+            // If you have local assets, use: backgroundImage: AssetImage(...)
+            child: Icon(
+              avatarIcon,
+              size: 80,
+              color: iconColor,
+            ),
+          ),
+          // Camera edit button overlay
+          // CircleAvatar(
+          //   radius: 22,
+          //   backgroundColor: const Color(0xFF007AFF),
+          //   child: IconButton(
+          //     icon: const Icon(Icons.camera_alt, size: 20, color: Colors.white),
+          //     onPressed: () {
+          //       // Add your Image Picker logic here
+          //     },
+          //   ),
+          // ),
+        ],
+      ),
     );
   }
 }
