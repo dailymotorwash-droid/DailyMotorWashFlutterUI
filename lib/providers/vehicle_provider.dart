@@ -54,6 +54,11 @@ class VehicleProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void deleteVehicle(String id){
+    _vehicles.removeWhere((v) => v.id == id);
+    notifyListeners();
+  }
   void setIsLoading(bool isLoading){
     _isLoading = isLoading;
     notifyListeners();

@@ -19,6 +19,7 @@ class SlugUrl {
   static String getReferral= "user/referral";
   static String getAllVehicles= "vehicle/getAll";
   static String updateVehicle= "vehicle/update";
+  static String deleteVehicle= "vehicle/{id}/delete";
   static String getBrandByName= "master/brand/{brand}/get";
   static String getModelByName= "master/model/get";
   static String getColorByName= "master/color/get";

@@ -98,6 +98,7 @@ class _AddVehicleAndAddressScreenState
       brandRead.clear();
       modelRead.clear();
       colorRead.clear();
+      addressRead.clearVehicles();
     });
     Future.microtask(() {
       addressRead.setIsLoading(true);
@@ -142,16 +143,17 @@ class _AddVehicleAndAddressScreenState
 
   Future<void> submitForm() async {
     String? firstName, lastName;
-    if (selectedAddressIndex != -1) {
-      vehicle = getVehicle(addressWatch.addresses[selectedAddressIndex].id);
+    if (addressWatch.selectedAddressIndex! != -1) {
+      vehicle = getVehicle(addressWatch.addresses[addressWatch.selectedAddressIndex!].id);
+      print(vehicle?.toJson());
       VehicleResponse res = await RestServiceImp.addVehicle(vehicle!);
       if (res.isSuccess) {
         vehicleRead.addVehicle(res.vehicle);
         Navigator.pop(context);
         Address address = Address(
             masterAddressId:
-                addressWatch.addresses[selectedAddressIndex].masterAddressId,
-            id: addressWatch.addresses[selectedAddressIndex].id);
+                addressWatch.addresses[addressWatch.selectedAddressIndex!].masterAddressId,
+            id: addressWatch.addresses[addressWatch.selectedAddressIndex!].id);
         Navigator.push(
             context,
             MaterialPageRoute(
@@ -236,9 +238,9 @@ class _AddVehicleAndAddressScreenState
     colorWatch = context.watch<VehicleColorProvider>();
     searchAddressWatch = context.watch<SearchAddressProvider>();
     addressWatch = context.watch<AddressProvider>();
-    if (addressWatch.addresses.isEmpty) {
-      selectedAddressIndex = -1;
-    }
+    // if (addressWatch.addresses.isEmpty) {
+    //   selectedAddressIndex = -1;
+    // }
     const backgroundColor = Color(0xFF1E2630);
     const cardColor = Color(0xFF2A3441);
     const accentColor = Color(0xFFE55D5D);
@@ -345,13 +347,15 @@ class _AddVehicleAndAddressScreenState
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       /// 🔙 BACK BUTTON (ONLY IN FORM)
-                      if (showNewAddressForm)
+                      if (addressWatch.showNewAddressForm&&addressWatch.addresses.isNotEmpty)
                         TextButton.icon(
                           onPressed: () {
-                            setState(() {
-                              showNewAddressForm = false;
-                              selectedAddressIndex=0;
-                            });
+                            addressRead.setSelectedAddressIndex(0);
+                            addressWatch.setShowNewAddressForm(false);
+                            // setState(() {
+                            //   showNewAddressForm = false;
+                            //   selectedAddressIndex=0;
+                            // });
                           },
                           icon:
                               const Icon(Icons.arrow_back, color: Colors.white),
@@ -360,15 +364,17 @@ class _AddVehicleAndAddressScreenState
                             style: TextStyle(color: Colors.white),
                           ),
                         ),
-                      if (!showNewAddressForm&&addressWatch.addresses.isNotEmpty) ...[
+                      if (!addressWatch.showNewAddressForm&&addressWatch.addresses.isNotEmpty) ...[
                         /// ➕ ADD NEW ADDRESS CARD
                         GestureDetector(
                           onTap: () {
                             // Navigator.pushNamed(context, AppRoutes.addVehicleScreen);
-                            setState(() {
-                              showNewAddressForm = true;
-                              selectedAddressIndex=-1;
-                            });
+                            addressRead.setSelectedAddressIndex(-1);
+                            addressWatch.setShowNewAddressForm(true);
+                            // setState(() {
+                            //   showNewAddressForm = true;
+                            //   selectedAddressIndex=-1;
+                            // });
                           },
                           child: const Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -383,7 +389,7 @@ class _AddVehicleAndAddressScreenState
                       const SizedBox(height: 20),
 
                       /// 📍 SAVED ADDRESSES
-                      if (!showNewAddressForm) ...[
+                      if (!addressWatch.showNewAddressForm) ...[
                         if (addressWatch.addresses.isNotEmpty)
                           const Text(
                             "Saved Address",
@@ -393,27 +399,11 @@ class _AddVehicleAndAddressScreenState
                             ),
                           ),
                         const SizedBox(height: 10),
-                        ...List.generate(2*addressWatch.addresses.length, (index) {
-                          if(index.isOdd) return const SizedBox(height: 16);
-                          return GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                selectedAddressIndex = index;
-                                showNewAddressForm = false;
-                              });
-                            },
-                            child: Container(
-                              margin:
-                              const EdgeInsets.only(right: 12),
-                              padding: const EdgeInsets.all(14),
-                              child: addresses(addressWatch.addresses),
-                            ),
-                          );
-                        }),
+                         addresses(addressWatch.addresses),
                       ],
 
                       /// 📝 ADDRESS FORM
-                      if (showNewAddressForm ||
+                      if (addressWatch.showNewAddressForm ||
                           addressWatch.addresses.isEmpty) ...[
                         const SizedBox(height: 20),
 
@@ -551,6 +541,10 @@ class _AddVehicleAndAddressScreenState
     AddressResponse res = await RestServiceImp.getUserAddresses();
     if (res.isSuccess) {
       addressRead.setAddresses(res.data);
+      if(res.data.isEmpty){
+        addressRead.setSelectedAddressIndex(-1);
+        addressRead.setShowNewAddressForm(true);
+      }
     }
     addressRead.setIsLoading(false);
   }
@@ -1438,7 +1432,7 @@ class _AddVehicleAndAddressScreenState
       children: [
         const SizedBox(height: 4),
         ...List.generate(2 * addresses.length, (index) {
-          if (index.isOdd) return const SizedBox(height: 16);
+          if (index.isOdd) return const SizedBox(height: 10);
           return addresses.isEmpty
               ? const Center(
                   child: Text(
@@ -1454,47 +1448,57 @@ class _AddVehicleAndAddressScreenState
   }
 
   Widget address(Address address,int index) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFF2A2B3D),
-        borderRadius:
-        BorderRadius.circular(12),
-        border: Border.all(
-          color:
-          selectedAddressIndex == index
-              ? Colors.purple
-              : Colors.transparent,
-          width: 2,
-        ),
-      ),
-      child: Row(
-        children: [
-          /// Address Icon
-          const Icon(Icons.location_on, size: 40, color: Colors.red),
-
-          const SizedBox(width: 16),
-
-          /// Address Text
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(address.addressLine1!,
-                    style: AppTextStyles.whiteFont16Bold),
-                const SizedBox(height: 4),
-                Text(getFormattedAdd(address),
-                  style: AppTextStyles.whiteFont12Regular,
-                ),
-                // Text(
-                //   "Sector 62, Noida, Uttar Pradesh - 201301",
-                //   style: TextStyle(fontSize: 14),
-                // ),
-              ],
-            ),
+    return GestureDetector(
+      onTap: () {
+        addressRead.setShowNewAddressForm(false);
+        addressRead.setSelectedAddressIndex(index);
+        // setState(() {
+        //   selectedAddressIndex = index;
+        //   showNewAddressForm = false;
+        // });
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        margin: const EdgeInsets.only(bottom: 12),
+        decoration: BoxDecoration(
+          color: const Color(0xFF2A2B3D),
+          borderRadius:
+          BorderRadius.circular(12),
+          border: Border.all(
+            color:
+            addressWatch.selectedAddressIndex == index
+                ? Colors.purple
+                : Colors.transparent,
+            width: 2,
           ),
-        ],
+        ),
+        child: Row(
+          children: [
+            /// Address Icon
+            const Icon(Icons.location_on, size: 40, color: Colors.red),
+
+            const SizedBox(width: 16),
+
+            /// Address Text
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(address.addressLine1!,
+                      style: AppTextStyles.whiteFont16Bold),
+                  const SizedBox(height: 4),
+                  Text(getFormattedAdd(address),
+                    style: AppTextStyles.whiteFont12Regular,
+                  ),
+                  // Text(
+                  //   "Sector 62, Noida, Uttar Pradesh - 201301",
+                  //   style: TextStyle(fontSize: 14),
+                  // ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
