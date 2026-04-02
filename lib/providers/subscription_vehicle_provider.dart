@@ -50,4 +50,8 @@ class SubscriptionVehicleProvider extends ChangeNotifier {
     _isLoading = isLoading;
     notifyListeners();
   }
+
+  bool isVehiclePresent(String vehicleId) {
+    return _vehicles.any((vehicle) => vehicle.vehicleId == vehicleId);
+  }
 }

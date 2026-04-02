@@ -1745,6 +1745,34 @@ static Future<UserProfileResponse> editProfile(User user) async {
     throw Exception('Failed to Fetch Vehicles');
 
   }
+
+  static Future<Response> deleteVehicle(String? id) async {
+    var storage = await LocalStorage.getInstance();
+    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.deleteVehicle.replaceAll("{id}", id!)}';
+    // Prepare headers
+    Map<String, String> headers = {
+      'Content-Type': 'application/json',
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+
+    final response = await http.delete(
+      Uri.parse(apiUrl),
+      headers: headers,
+    );
+
+    if (kDebugMode) {
+      print("auth : ${response.body}");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $apiUrl");
+    }
+    if (response.statusCode == 200) {
+      return Response.fromJson(
+          jsonDecode(response.body) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
 /////Add Address////
 
   // static Future<AddressResponse> AddAddressService(

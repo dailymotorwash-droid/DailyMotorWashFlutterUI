@@ -14,6 +14,11 @@ class AddressProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  int? _selectedAddressIndex;
+  int? get selectedAddressIndex=>_selectedAddressIndex;
+
+  bool _showNewAddressForm = false;
+  bool get showNewAddressForm => _showNewAddressForm;
 
   // Set vehicles from API
   void setAddresses(List<Address> addresses) {
@@ -55,11 +60,23 @@ class AddressProvider extends ChangeNotifier {
   void clearVehicles() {
     _addresses.clear();
     _selectedAddress = null;
+    _selectedAddressIndex = null;
+    _showNewAddressForm= false;
     notifyListeners();
   }
 
   void setIsLoading(bool isLoading){
     _isLoading = isLoading;
+    notifyListeners();
+  }
+
+  void setSelectedAddressIndex(int i){
+    _selectedAddressIndex = i;
+    notifyListeners();
+  }
+
+  void setShowNewAddressForm(bool isShow){
+    _showNewAddressForm = isShow;
     notifyListeners();
   }
 }

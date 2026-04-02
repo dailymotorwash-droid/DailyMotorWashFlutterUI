@@ -100,15 +100,7 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
                     style: AppTextStyles.whiteFont16Bold
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                      '${address.houseNo},${address.addressLine1!}'
-                          '${address.addressLine2 == null ? '' : ',${address
-                          .addressLine2}'}${address.addressLine3 ==null
-                          ? ''
-                          : ',${address.addressLine3}'}${address.addressLine4 == null? '' : ',${address.addressLine4}'}${address
-                          .city!.isEmpty ? '' : ',${address
-                          .city}'}'
-                          ',${address.district},${address.state}- ${address.pinCode}',
+                  Text(getFormattedAdd(address),
                     style: AppTextStyles.whiteFont12Regular,
                   ),
                   // Text(
@@ -146,4 +138,30 @@ class _SavedAddressScreenState extends State<SavedAddressScreen> {
     }
 
   }
+
+  String getFormattedAdd(Address? address) {
+    if (address == null) return '';
+
+    // Filter out empty or null strings to avoid double commas like ", ,"
+    final parts = [
+      address.houseNo,
+      address.addressLine1,
+      address.addressLine2,
+      address.addressLine3,
+      address.addressLine4,
+      address.city,
+      address.district,
+      address.state,
+    ].where((s) => s != null && s.isNotEmpty).toList();
+
+    String base = parts.join(', ');
+
+    // Add PinCode with the specific dash formatting
+    if (address.pinCode != null && address.pinCode!.isNotEmpty) {
+      base += ' - ${address.pinCode}';
+    }
+
+    return base;
+  }
+
 }

@@ -1,4 +1,8 @@
+import 'package:dmw/ApiResponse/Response.dart';
+import 'package:dmw/Apis/RestServiceImp.dart';
 import 'package:dmw/models/vehicle.dart';
+import 'package:dmw/providers/subscription_vehicle_provider.dart';
+import 'package:dmw/providers/vehicle_provider.dart';
 import 'package:dmw/utils/common_utils.dart';
 import 'package:dmw/utils/custom_colors.dart';
 import 'package:dmw/utils/custom_enums.dart';
@@ -7,6 +11,7 @@ import 'package:dmw/views/select_plan_screen.dart/select_plan_screen.dart';
 import 'package:dmw/views/update_vehicle.dart';
 import 'package:dmw/widgets/vehicle_address_bottom_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class VehicleWidget extends StatefulWidget {
 
@@ -27,8 +32,19 @@ class VehicleWidget extends StatefulWidget {
 }
 
 class _VehicleWidgetState extends State<VehicleWidget> {
+
+  late VehicleProvider read,watch;
+  late SubscriptionVehicleProvider subWatch;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    read = context.read<VehicleProvider>();
+  }
+
   @override
   Widget build(BuildContext context){
+    subWatch = context.watch<SubscriptionVehicleProvider>();
     return widget.isEditable?editableVehicles():InkWell(
       onTap: widget.isClickable ? _handleClickToSeePlans : null,
       child: Container(
@@ -140,14 +156,14 @@ class _VehicleWidgetState extends State<VehicleWidget> {
 
             IconButton(
               icon: Icon(
-                Icons.edit,
+                Icons.delete,
                 color: widget.colorTheme == ColorTheme.light
                     ? Colors.black
                     : Colors.white,
               ),
               onPressed: () {
                 // Edit action
-                editVehicle();
+                _showDeleteConfirmation(context,widget.vehicle.id!);
               },
             ),
           ],
@@ -188,12 +204,94 @@ class _VehicleWidgetState extends State<VehicleWidget> {
 
 
 
+  void _showDeleteConfirmation(BuildContext context, String vehicleId) {
+    if (subWatch.isVehiclePresent(vehicleId)) {
+      print("Error: Vehicle already exists in the system!");
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            backgroundColor: const Color(0xFF2A313B), // Matches your dark theme
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+            title: const Text(
+              "Error",
+              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            ),
+            content: const Text(
+              "You can not delete if subscription is active",
+              style: TextStyle(color: Colors.white70),
+            ),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+                onPressed: () => Navigator.of(context).pop(),
+                child: const Text("Okay", style: TextStyle(color: Colors.white)),
+              ),
+            ],
+          );
+        },
+      );
+      return; // Stop here
+    }
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF2A313B), // Matches your dark theme
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          title: const Text(
+            "Confirm Delete",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            "Are you sure you want to remove this vehicle? This action cannot be undone.",
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            // Cancel Button
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Closes the popup
+              child: const Text(
+                "CANCEL",
+                style: TextStyle(color: Colors.white38),
+              ),
+            ),
+            // Delete Button
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () {
 
+                editVehicle(vehicleId);
+                // 3. Optional: Show a snackbar confirmation
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Vehicle deleted")),
+                );
+              },
+              child: const Text("DELETE", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  void editVehicle() {
-    Navigator.push(
-        context, MaterialPageRoute(builder:
-        (context) => UpdateVehicle(vehicle: widget.vehicle)));
+  void editVehicle(String? id) async{
+    // Navigator.push(
+    //     context, MaterialPageRoute(builder:
+    //     (context) => UpdateVehicle(vehicle: widget.vehicle)));
+
+    Response response = await RestServiceImp.deleteVehicle(id);
+    if(response.isSuccess){
+      read.deleteVehicle(id!);
+      Navigator.of(context).pop();
+
+    }
 
   }
 
