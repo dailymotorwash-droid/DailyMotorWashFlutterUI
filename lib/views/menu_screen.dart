@@ -31,10 +31,10 @@ class _MenuScreenState extends State<MenuScreen> {
         icon: Icons.home,
         label: 'Manage Addresses',
         route: AppRoutes.savedAddressScreen),
-    MenuOption(
-        icon: Icons.notifications,
-        label: 'Notifications',
-        route: AppRoutes.notificationScreen),
+    // MenuOption(
+    //     icon: Icons.notifications,
+    //     label: 'Notifications',
+    //     route: AppRoutes.notificationScreen),
     MenuOption(
         icon: Icons.payment,
         label: 'Transactions',
@@ -68,6 +68,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     return;
                   } else if (AppRoutes.helpScreen == menuOptions[index].route) {
                     _launchWhatsApp();
+                    return;
                   }
                   Navigator.pushNamed(context, menuOptions[index].route);
                 }
