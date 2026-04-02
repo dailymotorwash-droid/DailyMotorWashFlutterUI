@@ -329,6 +329,7 @@ class _UpdateVehicle extends State<UpdateVehicle>{
                   ),
                 ),
                 TextField(
+                  maxLength: 10,
                   controller: vehicleNumberController,
                   style: const TextStyle(color: Colors.white70, fontSize: 15),
                   cursorColor: Colors.white,

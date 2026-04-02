@@ -25,6 +25,7 @@ import 'package:dmw/utils/custom_colors.dart';
 import 'package:dmw/utils/custom_enums.dart';
 import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:dmw/utils/local_storage.dart';
+import 'package:dmw/views/select_plan_screen.dart/select_plan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -97,7 +98,6 @@ class _AddVehicleAndAddressScreenState
       brandRead.clear();
       modelRead.clear();
       colorRead.clear();
-
     });
     Future.microtask(() {
       addressRead.setIsLoading(true);
@@ -110,9 +110,11 @@ class _AddVehicleAndAddressScreenState
 
   void nextStep() {
     if (vehicleNumberController.text.isEmpty ||
-        brandWatch.selectedBrand == null ||
-        modelWatch.selectedModel == null ||
-        colorWatch.selectedColor == null) {
+            brandWatch.selectedBrand == null ||
+            modelWatch.selectedModel ==
+                null /*||
+        colorWatch.selectedColor == null*/
+        ) {
       CommonUtils.toastMessage('Please Fill All Vehicle Details');
     } else if (vehicleNumberController.text.length < 9) {
       CommonUtils.toastMessage('Registration Number Should be 10 Char');
@@ -146,6 +148,15 @@ class _AddVehicleAndAddressScreenState
       if (res.isSuccess) {
         vehicleRead.addVehicle(res.vehicle);
         Navigator.pop(context);
+        Address address = Address(
+            masterAddressId:
+                addressWatch.addresses[selectedAddressIndex].masterAddressId,
+            id: addressWatch.addresses[selectedAddressIndex].id);
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    SelectPlanScreen(vehicle: res.vehicle, address: address)));
       }
       CommonUtils.toastMessage(res.message);
       return;
@@ -167,7 +178,7 @@ class _AddVehicleAndAddressScreenState
             firstName: firstName,
             lastName: lastName,
             houseNo: _flatNumberController.text,
-            addressLine1: '${address?.societyName}' ,
+            addressLine1: '${address?.societyName}',
             addressLine2: address?.societyLine1,
             addressLine3: address?.societyLine2,
             addressLine4: address?.societyLine3,
@@ -184,13 +195,17 @@ class _AddVehicleAndAddressScreenState
             await RestServiceImp.addVehicleAndAddress(vehicleAndAddress);
         if (res.isSuccess) {
           LocalStorage.setStatus(ProfileStatus.completed.label);
-          if(isFistNameUpdated) {
+          if (isFistNameUpdated) {
             LocalStorage.setFirstName(firstName!);
             LocalStorage.setLastName(lastName!);
           }
           vehicleRead.addVehicle(res.data.vehicle!);
           Navigator.pop(context);
-
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SelectPlanScreen(
+                      vehicle: res.data.vehicle!, address: res.data.address!)));
         }
         CommonUtils.toastMessage(res.message);
       } else {
@@ -221,9 +236,9 @@ class _AddVehicleAndAddressScreenState
     colorWatch = context.watch<VehicleColorProvider>();
     searchAddressWatch = context.watch<SearchAddressProvider>();
     addressWatch = context.watch<AddressProvider>();
-      if (addressWatch.addresses.isEmpty) {
-        selectedAddressIndex = -1;
-      }
+    if (addressWatch.addresses.isEmpty) {
+      selectedAddressIndex = -1;
+    }
     const backgroundColor = Color(0xFF1E2630);
     const cardColor = Color(0xFF2A3441);
     const accentColor = Color(0xFFE55D5D);
@@ -275,7 +290,8 @@ class _AddVehicleAndAddressScreenState
                             BoxShadow(
                               color: Colors.white12,
                               blurRadius: 10,
-                              offset: Offset(2, 0), // Pushes the shadow down to give depth
+                              offset: Offset(
+                                  2, 0), // Pushes the shadow down to give depth
                             ),
                           ],
                         ),
@@ -283,15 +299,31 @@ class _AddVehicleAndAddressScreenState
                           children: [
                             const Text(
                               "Vehicle Profile",
-                              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
                             ),
                             const SizedBox(height: 10),
                             // Replace with your actual asset image
-                            vehicleType==VehicleType.car?Image.asset('assets/images/car.png',height: 130,width: 150,):Image.asset('assets/images/bike.png',height: 130,width: 150,),
+                            vehicleType == VehicleType.car
+                                ? Image.asset(
+                                    'assets/images/car.png',
+                                    height: 130,
+                                    width: 150,
+                                  )
+                                : Image.asset(
+                                    'assets/images/bike.png',
+                                    height: 130,
+                                    width: 150,
+                                  ),
                             const SizedBox(height: 10),
                             const Text(
                               "SUBSCRIPTION: INACTIVE",
-                              style: TextStyle(color: textColor, letterSpacing: 1.2, fontSize: 12),
+                              style: TextStyle(
+                                  color: textColor,
+                                  letterSpacing: 1.2,
+                                  fontSize: 12),
                             ),
                           ],
                         ),
@@ -300,8 +332,8 @@ class _AddVehicleAndAddressScreenState
                       vehicleNumber(),
                       brandWidget(),
                       modelWidget(),
-                      colorWidget(),
-                      nickNameWidget(),
+                      // colorWidget(),
+                      // nickNameWidget(),
                     ],
                   ),
                 ),
@@ -312,136 +344,108 @@ class _AddVehicleAndAddressScreenState
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        addressWatch.addresses.isEmpty ? '' : "Saved Address",
-                        style: AppTextStyles.whiteFont12Bold,
-                      ),
+                      /// 🔙 BACK BUTTON (ONLY IN FORM)
+                      if (showNewAddressForm)
+                        TextButton.icon(
+                          onPressed: () {
+                            setState(() {
+                              showNewAddressForm = false;
+                              selectedAddressIndex=0;
+                            });
+                          },
+                          icon:
+                              const Icon(Icons.arrow_back, color: Colors.white),
+                          label: const Text(
+                            "Back to Saved Addresses",
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      if (!showNewAddressForm&&addressWatch.addresses.isNotEmpty) ...[
+                        /// ➕ ADD NEW ADDRESS CARD
+                        GestureDetector(
+                          onTap: () {
+                            // Navigator.pushNamed(context, AppRoutes.addVehicleScreen);
+                            setState(() {
+                              showNewAddressForm = true;
+                              selectedAddressIndex=-1;
+                            });
+                          },
+                          child: const Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_circle_rounded, color: AppColors.primary,),
+                              SizedBox(width: 8),
+                              Text('Add Address', style: AppTextStyles.primaryFont16Bold,)
+                            ],
+                          ),
+                        ),
+                      ],
+                      const SizedBox(height: 20),
 
-                      const SizedBox(height: 10),
+                      /// 📍 SAVED ADDRESSES
+                      if (!showNewAddressForm) ...[
+                        if (addressWatch.addresses.isNotEmpty)
+                          const Text(
+                            "Saved Address",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        const SizedBox(height: 10),
+                        ...List.generate(2*addressWatch.addresses.length, (index) {
+                          if(index.isOdd) return const SizedBox(height: 16);
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedAddressIndex = index;
+                                showNewAddressForm = false;
+                              });
+                            },
+                            child: Container(
+                              margin:
+                              const EdgeInsets.only(right: 12),
+                              padding: const EdgeInsets.all(14),
+                              child: addresses(addressWatch.addresses),
+                            ),
+                          );
+                        }),
+                      ],
 
-                      /// SAVED ADDRESSES
-                      SingleChildScrollView(
-                        scrollDirection: Axis.horizontal,
-                        child: addressWatch.isLoading
-                            ? CommonUtils.loader()
-                            : addressWatch.addresses.isEmpty
-                                ? Container()
-                                : Row(
-                                    children: List.generate(
-                                        addressWatch.addresses.length, (index) {
-                                      final item =
-                                          addressWatch.addresses[index];
+                      /// 📝 ADDRESS FORM
+                      if (showNewAddressForm ||
+                          addressWatch.addresses.isEmpty) ...[
+                        const SizedBox(height: 20),
 
-                                      return GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedAddressIndex = index;
-                                            showNewAddressForm = false;
-                                          });
-                                        },
-                                        child: Container(
-                                          width: 220,
-                                          margin:
-                                              const EdgeInsets.only(right: 12),
-                                          padding: const EdgeInsets.all(14),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFF2A2B3D),
-                                            borderRadius:
-                                                BorderRadius.circular(12),
-                                            border: Border.all(
-                                              color:
-                                                  selectedAddressIndex == index
-                                                      ? Colors.purple
-                                                      : Colors.transparent,
-                                              width: 2,
-                                            ),
-
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              // Icon(
-                                              //   selectedAddressIndex == index
-                                              //       ? Icons.radio_button_checked
-                                              //       : Icons.radio_button_off,
-                                              //   color: Colors.purple,
-                                              // ),
-                                              const SizedBox(width: 10),
-                                              Expanded(
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      item.addressLine1!,
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    ),
-                                                    const SizedBox(height: 4),
-                                                    Text(
-                                                      item.addressLine2!,
-                                                      style: const TextStyle(
-                                                          color:
-                                                              Colors.white70),
-                                                    ),
-                                                  ],
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  ),
-                      ),
-
-                      /// ADD NEW ADDRESS OPTION
-                      addressWatch.addresses.isEmpty?Container():RadioListTile<int>(
-                        value: -1,
-                        groupValue: selectedAddressIndex,
-                        title: const Text(
+                        const Text(
                           "Add New Address",
-                          style: AppTextStyles.whiteFont12Bold,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        onChanged: (value) {
-                          setState(() {
-                            print(value);
-                            selectedAddressIndex = -1;
-                            showNewAddressForm = true;
-                          });
-                        },
-                      ),
+                        if (profileStatus == ProfileStatus.pending.label)
+                          Row(
+                            children: [
+                              /// FIRST NAME DROPDOWN
+                              firstName(),
+                              const SizedBox(width: 16),
 
-                      /// ADDRESS FORM
-                      if (showNewAddressForm||addressWatch.addresses.isEmpty)
-                        Column(
-                          children: [
-                            if (profileStatus == ProfileStatus.pending.label)
-                              Row(
-                                children: [
-                                  /// FIRST NAME DROPDOWN
-                                  firstName(),
-                                  const SizedBox(width: 16),
-                                  /// LAST NAME DROPDOWN
-                                  lastName(),
+                              /// LAST NAME DROPDOWN
+                              lastName(),
+                            ],
+                          ),
+                        const SizedBox(height: 20),
 
-                                ],
-                              ),
-                            const SizedBox(height: 30),
-                            flatWidget(),
-                            const SizedBox(height: 20),
-                            searchSociety(),
-                            const SizedBox(height: 20),
-                            if(searchAddressWatch.selectedAddress!=null)
-                              showAddWidget(),
-                            const SizedBox(height: 20),
-                          ],
-                        ),
+                        /// Flat / House
+                        flatWidget(),
+
+                        /// Society / Area
+                        searchSociety(),
+                      ],
                     ],
                   ),
-                )
+                ),
               ],
             ),
           ),
@@ -474,7 +478,8 @@ class _AddVehicleAndAddressScreenState
           // )
         ],
       ),
-      bottomNavigationBar: SafeArea(child: Padding(
+      bottomNavigationBar: SafeArea(
+          child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
@@ -514,7 +519,8 @@ class _AddVehicleAndAddressScreenState
 
   Future<void> loadBrands() async {
     var storage = await LocalStorage.getInstance();
-    BrandResponse res = await RestServiceImp.getBrands(storage.getToken(),vehicleType==VehicleType.car?true:false);
+    BrandResponse res = await RestServiceImp.getBrands(
+        storage.getToken(), vehicleType == VehicleType.car ? true : false);
     if (res.isSuccess) {
       brandRead.setBrands(res.data);
     }
@@ -542,16 +548,14 @@ class _AddVehicleAndAddressScreenState
     var storage = await LocalStorage.getInstance();
     profileStatus = storage.getStatus();
     print(profileStatus);
-    AddressResponse res =
-        await RestServiceImp.getUserAddresses();
+    AddressResponse res = await RestServiceImp.getUserAddresses();
     if (res.isSuccess) {
       addressRead.setAddresses(res.data);
     }
     addressRead.setIsLoading(false);
   }
 
-
-  Widget showAddWidget(){
+  Widget showAddWidget() {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -560,7 +564,8 @@ class _AddVehicleAndAddressScreenState
         border: Border.all(color: Colors.white.withOpacity(0.05)),
       ),
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center, // Keeps icon and text centered
+        crossAxisAlignment: CrossAxisAlignment.center,
+        // Keeps icon and text centered
         children: [
           const Icon(Icons.location_on, color: Colors.redAccent, size: 20),
           const SizedBox(width: 12),
@@ -582,6 +587,7 @@ class _AddVehicleAndAddressScreenState
       ),
     );
   }
+
   String getFormattedAddress(MasterAddress? address) {
     if (address == null) return '';
 
@@ -605,7 +611,8 @@ class _AddVehicleAndAddressScreenState
 
     return base;
   }
-  Widget firstName(){
+
+  Widget firstName() {
     return Expanded(
       child: Container(
         // The "Card Side" color effect is created by this background
@@ -667,7 +674,7 @@ class _AddVehicleAndAddressScreenState
     );
   }
 
-  Widget lastName(){
+  Widget lastName() {
     return Expanded(
       child: Container(
         // The "Card Side" color effect is created by this background
@@ -729,7 +736,7 @@ class _AddVehicleAndAddressScreenState
     );
   }
 
-  Widget flatWidget(){
+  Widget flatWidget() {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -764,12 +771,17 @@ class _AddVehicleAndAddressScreenState
                     children: [
                       TextSpan(
                           text: "* ",
-                          style: TextStyle(color: Color(0xFFE55D5D), fontWeight: FontWeight.bold, fontSize: 10)
-                      ),
+                          style: TextStyle(
+                              color: Color(0xFFE55D5D),
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10)),
                       TextSpan(
                           text: "FLAT NO / H.NO:",
-                          style: TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5)
-                      ),
+                          style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5)),
                     ],
                   ),
                 ),
@@ -778,7 +790,8 @@ class _AddVehicleAndAddressScreenState
                   // Keeping your logic intact
                   inputFormatters: [
                     TextInputFormatter.withFunction((oldValue, newValue) {
-                      return newValue.copyWith(text: newValue.text.toUpperCase());
+                      return newValue.copyWith(
+                          text: newValue.text.toUpperCase());
                     }),
                   ],
                   onChanged: (v) {},
@@ -800,7 +813,7 @@ class _AddVehicleAndAddressScreenState
     );
   }
 
-  Widget searchSociety(){
+  Widget searchSociety() {
     return Column(
       children: [
         // --- SEARCH BAR CONTAINER ---
@@ -846,9 +859,11 @@ class _AddVehicleAndAddressScreenState
                       decoration: const InputDecoration(
                         isDense: true,
                         contentPadding: EdgeInsets.symmetric(vertical: 4),
-                        border: InputBorder.none, // Removed the ugly box border
+                        border: InputBorder.none,
+                        // Removed the ugly box border
                         hintText: "SEARCH SOCIETY",
-                        hintStyle: TextStyle(color: Colors.white70, fontSize: 14),
+                        hintStyle:
+                            TextStyle(color: Colors.white70, fontSize: 14),
                       ),
                       onChanged: (value) {
                         if (value.isEmpty) {
@@ -867,66 +882,65 @@ class _AddVehicleAndAddressScreenState
         ),
 
         // --- SEARCH SUGGESTIONS DROP_DOWN ---
-        if (searchAddressWatch.showDropdown)
-          dropDown()
-          // Container(
-          //   margin: const EdgeInsets.only(top: 8), // Gap between search and list
-          //   constraints: const BoxConstraints(maxHeight: 250), // Limit height
-          //   decoration: BoxDecoration(
-          //     color: const Color(0xFF2A3441), // Slightly lighter than background
-          //     borderRadius: BorderRadius.circular(12),
-          //     boxShadow: [
-          //       BoxShadow(
-          //         color: Colors.black.withOpacity(0.4),
-          //         blurRadius: 12,
-          //         offset: const Offset(0, 6),
-          //       ),
-          //     ],
-          //   ),
-          //   child: ClipRRect(
-          //     borderRadius: BorderRadius.circular(12),
-          //     child: ListView.separated(
-          //       padding: EdgeInsets.zero,
-          //       shrinkWrap: true,
-          //       itemCount: searchAddressWatch.suggestions.length,
-          //       separatorBuilder: (context, index) => const Divider(
-          //         color: Colors.white10,
-          //         height: 1,
-          //         indent: 16,
-          //         endIndent: 16,
-          //       ),
-          //       itemBuilder: (context, index) {
-          //         final suggestion = searchAddressWatch.suggestions[index];
-          //         return ListTile(
-          //           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          //           title: Text(
-          //             suggestion.societyName,
-          //             style: const TextStyle(color: Colors.white70, fontSize: 14),
-          //           ),
-          //           subtitle: suggestion.city != null
-          //               ? Text(suggestion.city!, style: const TextStyle(color: Colors.white24, fontSize: 11))
-          //               : null,
-          //           trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white10, size: 14),
-          //           onTap: () {
-          //             controller.text = suggestion.societyName;
-          //             searchAddressRead.isDropDownEnable(false);
-          //             searchAddressRead.setSelectedAddress(suggestion);
-          //           },
-          //         );
-          //       },
-          //     ),
-          //   ),
-          // ),
-
+        if (searchAddressWatch.showDropdown) dropDown()
+        // Container(
+        //   margin: const EdgeInsets.only(top: 8), // Gap between search and list
+        //   constraints: const BoxConstraints(maxHeight: 250), // Limit height
+        //   decoration: BoxDecoration(
+        //     color: const Color(0xFF2A3441), // Slightly lighter than background
+        //     borderRadius: BorderRadius.circular(12),
+        //     boxShadow: [
+        //       BoxShadow(
+        //         color: Colors.black.withOpacity(0.4),
+        //         blurRadius: 12,
+        //         offset: const Offset(0, 6),
+        //       ),
+        //     ],
+        //   ),
+        //   child: ClipRRect(
+        //     borderRadius: BorderRadius.circular(12),
+        //     child: ListView.separated(
+        //       padding: EdgeInsets.zero,
+        //       shrinkWrap: true,
+        //       itemCount: searchAddressWatch.suggestions.length,
+        //       separatorBuilder: (context, index) => const Divider(
+        //         color: Colors.white10,
+        //         height: 1,
+        //         indent: 16,
+        //         endIndent: 16,
+        //       ),
+        //       itemBuilder: (context, index) {
+        //         final suggestion = searchAddressWatch.suggestions[index];
+        //         return ListTile(
+        //           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+        //           title: Text(
+        //             suggestion.societyName,
+        //             style: const TextStyle(color: Colors.white70, fontSize: 14),
+        //           ),
+        //           subtitle: suggestion.city != null
+        //               ? Text(suggestion.city!, style: const TextStyle(color: Colors.white24, fontSize: 11))
+        //               : null,
+        //           trailing: const Icon(Icons.arrow_forward_ios, color: Colors.white10, size: 14),
+        //           onTap: () {
+        //             controller.text = suggestion.societyName;
+        //             searchAddressRead.isDropDownEnable(false);
+        //             searchAddressRead.setSelectedAddress(suggestion);
+        //           },
+        //         );
+        //       },
+        //     ),
+        //   ),
+        // ),
       ],
     );
   }
 
-  Widget dropDown(){
+  Widget dropDown() {
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       margin: const EdgeInsets.only(top: 8),
-      constraints: const BoxConstraints(maxHeight: 280), // Slightly taller for better visibility
+      constraints: const BoxConstraints(maxHeight: 280),
+      // Slightly taller for better visibility
       decoration: BoxDecoration(
         // Gradient background gives it a "glass" depth
         gradient: const LinearGradient(
@@ -937,7 +951,8 @@ class _AddVehicleAndAddressScreenState
             Color(0xFF212832),
           ],
         ),
-        borderRadius: BorderRadius.circular(16), // Softer corners
+        borderRadius: BorderRadius.circular(16),
+        // Softer corners
         // border: Border.all(color: Colors.white.withOpacity(0.08)), // Subtle "rim" light
         boxShadow: [
           BoxShadow(
@@ -953,67 +968,70 @@ class _AddVehicleAndAddressScreenState
         child: searchAddressWatch.suggestions.isEmpty
             ? _buildNoResultsView() // Added an empty state
             : Scrollbar(
-          thickness: 4,
-          radius: const Radius.circular(10),
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            shrinkWrap: true,
-            physics: const BouncingScrollPhysics(), // Premium iOS-style feel
-            itemCount: searchAddressWatch.suggestions.length,
-            separatorBuilder: (context, index) => const Divider(
-              color: Colors.white70,
-              height: 1,
-              indent: 20,
-              endIndent: 20,
-            ),
-            itemBuilder: (context, index) {
-              final suggestion = searchAddressWatch.suggestions[index];
-              return Material(
-                color: Colors.transparent,
-                child: ListTile(
-                  hoverColor: Colors.white10,
-                  splashColor: Colors.white70,
-                  contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
-                  leading: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.03),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.location_on_outlined,
-                        color: Colors.white38, size: 18),
+                thickness: 4,
+                radius: const Radius.circular(10),
+                child: ListView.separated(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  shrinkWrap: true,
+                  physics: const BouncingScrollPhysics(),
+                  // Premium iOS-style feel
+                  itemCount: searchAddressWatch.suggestions.length,
+                  separatorBuilder: (context, index) => const Divider(
+                    color: Colors.white70,
+                    height: 1,
+                    indent: 20,
+                    endIndent: 20,
                   ),
-                  title: Container(
-                    margin: const EdgeInsets.only(top: 15),
-                    child: Text(
-                      '${suggestion.societyName},${suggestion.societyLine1}',
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500
+                  itemBuilder: (context, index) {
+                    final suggestion = searchAddressWatch.suggestions[index];
+                    return Material(
+                      color: Colors.transparent,
+                      child: ListTile(
+                        hoverColor: Colors.white10,
+                        splashColor: Colors.white70,
+                        contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 2),
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.03),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.location_on_outlined,
+                              color: Colors.white38, size: 18),
+                        ),
+                        title: Container(
+                          margin: const EdgeInsets.only(top: 15),
+                          child: Text(
+                            '${suggestion.societyName},${suggestion.societyLine1}',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        subtitle: suggestion.city != null
+                            ? Text(suggestion.city!,
+                                style: const TextStyle(
+                                    color: Colors.white24, fontSize: 11))
+                            : null,
+                        trailing: const Icon(Icons.north_west_rounded,
+                            color: Colors.white12, size: 16),
+                        // "Use suggestion" icon
+                        onTap: () {
+                          controller.text = suggestion.societyName;
+                          searchAddressRead.isDropDownEnable(false);
+                          searchAddressRead.setSelectedAddress(suggestion);
+                        },
                       ),
-                    ),
-                  ),
-                  subtitle: suggestion.city != null
-                      ? Text(suggestion.city!,
-                      style: const TextStyle(color: Colors.white24, fontSize: 11))
-                      : null,
-                  trailing: const Icon(Icons.north_west_rounded,
-                      color: Colors.white12, size: 16), // "Use suggestion" icon
-                  onTap: () {
-                    controller.text = suggestion.societyName;
-                    searchAddressRead.isDropDownEnable(false);
-                    searchAddressRead.setSelectedAddress(suggestion);
+                    );
                   },
                 ),
-              );
-            },
-          ),
-        ),
+              ),
       ),
     );
-
   }
+
   // Helper for when no matches are found
   Widget _buildNoResultsView() {
     return const Padding(
@@ -1023,13 +1041,16 @@ class _AddVehicleAndAddressScreenState
           Icon(Icons.search_off, color: Colors.white24, size: 20),
           SizedBox(width: 12),
           Text("No societies found...",
-              style: TextStyle(color: Colors.white38, fontSize: 13, fontStyle: FontStyle.italic)),
+              style: TextStyle(
+                  color: Colors.white38,
+                  fontSize: 13,
+                  fontStyle: FontStyle.italic)),
         ],
       ),
     );
   }
 
-  Widget vehicleNumber(){
+  Widget vehicleNumber() {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1073,13 +1094,15 @@ class _AddVehicleAndAddressScreenState
                   // Keeping your logic intact
                   inputFormatters: [
                     TextInputFormatter.withFunction((oldValue, newValue) {
-                      return newValue.copyWith(text: newValue.text.toUpperCase());
+                      return newValue.copyWith(
+                          text: newValue.text.toUpperCase());
                     }),
                   ],
                   onChanged: (v) {
                     String? newErrorText;
                     if (v.isEmpty || v.length != 10) {
-                      newErrorText = 'Minimum 10 characters(letters & spaces only)';
+                      newErrorText =
+                          'Minimum 10 characters(letters & spaces only)';
                     } else if (!RegExp(r'^[a-zA-Z\s]*$').hasMatch(v)) {
                       newErrorText = 'Only letters and spaces are allowed';
                     }
@@ -1090,10 +1113,12 @@ class _AddVehicleAndAddressScreenState
                   decoration: InputDecoration(
                     isDense: true,
                     // contentPadding: const EdgeInsets.symmetric(vertical: 4),
-                    contentPadding: const EdgeInsets.only(top: 8,bottom: 0),
-                    border: InputBorder.none, // Removes the underline
+                    contentPadding: const EdgeInsets.only(top: 8, bottom: 0),
+                    border: InputBorder.none,
+                    // Removes the underline
                     hintText: "ENTER VEHICLE NUMBER",
-                    hintStyle: const TextStyle(color: Colors.white70, fontSize: 14),
+                    hintStyle:
+                        const TextStyle(color: Colors.white70, fontSize: 14),
                     // Display error text below the field if it exists
                     errorText: _vehicleNumberFieldErrorText,
                     errorStyle: const TextStyle(fontSize: 10, height: 0.8),
@@ -1107,7 +1132,7 @@ class _AddVehicleAndAddressScreenState
     );
   }
 
-  Widget brandWidget(){
+  Widget brandWidget() {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1122,11 +1147,11 @@ class _AddVehicleAndAddressScreenState
           ),
         ],
       ),
-
       child: Row(
         children: [
           // Icon on the left
-          const Icon(Icons.filter_alt_outlined, color: Colors.white70, size: 22),
+          const Icon(Icons.filter_alt_outlined,
+              color: Colors.white70, size: 22),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -1145,9 +1170,12 @@ class _AddVehicleAndAddressScreenState
                 ),
                 DropdownButtonFormField<Brand>(
                   value: brandWatch.selectedBrand,
-                  borderRadius: BorderRadius.circular(15), // Rounded corners for the popup
-                  dropdownColor: const Color(0xFF2A313B), // Matches container when opened
-                  icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+                  borderRadius: BorderRadius.circular(15),
+                  // Rounded corners for the popup
+                  dropdownColor: const Color(0xFF2A313B),
+                  // Matches container when opened
+                  icon:
+                      const Icon(Icons.arrow_drop_down, color: Colors.white70),
                   style: const TextStyle(color: Colors.white70, fontSize: 15),
                   decoration: const InputDecoration(
                     isDense: true,
@@ -1161,9 +1189,9 @@ class _AddVehicleAndAddressScreenState
                   ),
                   items: brandWatch.brands
                       .map((e) => DropdownMenuItem<Brand>(
-                    value: e,
-                    child: Text(e.name),
-                  ))
+                            value: e,
+                            child: Text(e.name),
+                          ))
                       .toList(),
                   onChanged: (v) {
                     brandRead.setSelectedBrand(v!);
@@ -1182,7 +1210,7 @@ class _AddVehicleAndAddressScreenState
     );
   }
 
-  Widget modelWidget(){
+  Widget modelWidget() {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1199,7 +1227,8 @@ class _AddVehicleAndAddressScreenState
       ),
       child: Row(
         children: [
-          const Icon(Icons.filter_alt_outlined, color: Colors.white70, size: 22),
+          const Icon(Icons.filter_alt_outlined,
+              color: Colors.white70, size: 22),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -1216,17 +1245,23 @@ class _AddVehicleAndAddressScreenState
                   ),
                 ),
                 DropdownButtonFormField<Model>(
-                  value: modelWatch.models.contains(modelWatch.selectedModel) ? modelWatch.selectedModel : null,
+                  value: modelWatch.models.contains(modelWatch.selectedModel)
+                      ? modelWatch.selectedModel
+                      : null,
                   // Fixes the black hint issue:
                   hint: const Text(
                     "SELECT MODEL",
                     style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
-                  icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+                  icon:
+                      const Icon(Icons.arrow_drop_down, color: Colors.white70),
                   dropdownColor: const Color(0xFF2A313B),
-                  borderRadius: BorderRadius.circular(15), // Rounded corners for the popup
-                  isDense: true, // Crucial for matching height
-                  isExpanded: true, // Prevents layout jumping
+                  borderRadius: BorderRadius.circular(15),
+                  // Rounded corners for the popup
+                  isDense: true,
+                  // Crucial for matching height
+                  isExpanded: true,
+                  // Prevents layout jumping
                   style: const TextStyle(color: Colors.white70, fontSize: 15),
                   decoration: const InputDecoration(
                     isDense: true,
@@ -1235,13 +1270,13 @@ class _AddVehicleAndAddressScreenState
                   ),
                   items: modelWatch.models
                       .map((e) => DropdownMenuItem<Model>(
-                    value: e,
-                    child: Text(
-                      e.name,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
-                    ),
-                  ))
+                            value: e,
+                            child: Text(
+                              e.name,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                            ),
+                          ))
                       .toList(),
                   onChanged: (v) {
                     modelRead.setSelectedModel(v!);
@@ -1260,7 +1295,7 @@ class _AddVehicleAndAddressScreenState
     );
   }
 
-  Widget colorWidget(){
+  Widget colorWidget() {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1296,17 +1331,22 @@ class _AddVehicleAndAddressScreenState
                 ),
                 DropdownButtonFormField<VehicleColor>(
                   value: colorWatch.colors
-                      .where((c) => c.id == colorWatch.selectedColor?.id)
-                      .length == 1
-                      ? colorWatch.colors.firstWhere((c) => c.id == colorWatch.selectedColor?.id)
+                              .where(
+                                  (c) => c.id == colorWatch.selectedColor?.id)
+                              .length ==
+                          1
+                      ? colorWatch.colors.firstWhere(
+                          (c) => c.id == colorWatch.selectedColor?.id)
                       : null,
-                  borderRadius: BorderRadius.circular(15), // Rounded corners for the popup
+                  borderRadius: BorderRadius.circular(15),
+                  // Rounded corners for the popup
                   // Fixed: Hint text is now white/grey instead of black
                   hint: const Text(
                     "ADD COLOR / ENTER",
                     style: TextStyle(color: Colors.white70, fontSize: 14),
                   ),
-                  icon: const Icon(Icons.arrow_drop_down, color: Colors.white70),
+                  icon:
+                      const Icon(Icons.arrow_drop_down, color: Colors.white70),
                   dropdownColor: const Color(0xFF2A313B),
                   isDense: true,
                   isExpanded: true,
@@ -1318,9 +1358,9 @@ class _AddVehicleAndAddressScreenState
                   ),
                   items: colorWatch.colors
                       .map((e) => DropdownMenuItem<VehicleColor>(
-                    value: e,
-                    child: Text(e.name),
-                  ))
+                            value: e,
+                            child: Text(e.name),
+                          ))
                       .toList(),
                   onChanged: (v) {
                     colorRead.setSelectedColor(v!);
@@ -1335,7 +1375,7 @@ class _AddVehicleAndAddressScreenState
     );
   }
 
-  Widget nickNameWidget(){
+  Widget nickNameWidget() {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -1353,7 +1393,8 @@ class _AddVehicleAndAddressScreenState
       child: Row(
         children: [
           // Car icon for the specific vehicle name
-          const Icon(Icons.directions_car_filled_outlined, color: Colors.white70, size: 22),
+          const Icon(Icons.directions_car_filled_outlined,
+              color: Colors.white70, size: 22),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -1376,7 +1417,7 @@ class _AddVehicleAndAddressScreenState
                   cursorColor: Colors.white70,
                   decoration: const InputDecoration(
                     isDense: true,
-                    contentPadding: EdgeInsets.only(top: 8,bottom: 0),
+                    contentPadding: EdgeInsets.only(top: 8, bottom: 0),
                     border: InputBorder.none,
                     // Fixed: Hint text is now white/grey instead of black
                     hintText: "VEHICLE NAME (OPTIONAL)",
@@ -1390,5 +1431,96 @@ class _AddVehicleAndAddressScreenState
       ),
     );
   }
-}
 
+  Widget addresses(List<Address> addresses) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 4),
+        ...List.generate(2 * addresses.length, (index) {
+          if (index.isOdd) return const SizedBox(height: 16);
+          return addresses.isEmpty
+              ? const Center(
+                  child: Text(
+                  "Please Add Address",
+                  style: TextStyle(color: AppColors.white),
+                ))
+              : address(
+                  addresses[index ~/ 2],index ~/ 2
+                );
+        }),
+      ],
+    );
+  }
+
+  Widget address(Address address,int index) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF2A2B3D),
+        borderRadius:
+        BorderRadius.circular(12),
+        border: Border.all(
+          color:
+          selectedAddressIndex == index
+              ? Colors.purple
+              : Colors.transparent,
+          width: 2,
+        ),
+      ),
+      child: Row(
+        children: [
+          /// Address Icon
+          const Icon(Icons.location_on, size: 40, color: Colors.red),
+
+          const SizedBox(width: 16),
+
+          /// Address Text
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(address.addressLine1!,
+                    style: AppTextStyles.whiteFont16Bold),
+                const SizedBox(height: 4),
+                Text(getFormattedAdd(address),
+                  style: AppTextStyles.whiteFont12Regular,
+                ),
+                // Text(
+                //   "Sector 62, Noida, Uttar Pradesh - 201301",
+                //   style: TextStyle(fontSize: 14),
+                // ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String getFormattedAdd(Address? address) {
+    if (address == null) return '';
+
+    // Filter out empty or null strings to avoid double commas like ", ,"
+    final parts = [
+      address.houseNo,
+      address.addressLine1,
+      address.addressLine2,
+      address.addressLine3,
+      address.addressLine4,
+      address.city,
+      address.district,
+      address.state,
+    ].where((s) => s != null && s.isNotEmpty).toList();
+
+    String base = parts.join(', ');
+
+    // Add PinCode with the specific dash formatting
+    if (address.pinCode != null && address.pinCode!.isNotEmpty) {
+      base += ' - ${address.pinCode}';
+    }
+
+    return base;
+  }
+}
