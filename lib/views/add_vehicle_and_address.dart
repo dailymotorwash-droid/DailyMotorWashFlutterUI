@@ -432,6 +432,9 @@ class _AddVehicleAndAddressScreenState
 
                         /// Society / Area
                         searchSociety(),
+                        const SizedBox(height: 20),
+
+                        if(searchAddressWatch.selectedAddress!=null)showAddWidget(),
                       ],
                     ],
                   ),
@@ -780,6 +783,7 @@ class _AddVehicleAndAddressScreenState
                   ),
                 ),
                 TextField(
+                  maxLength: 10,
                   controller: _flatNumberController,
                   // Keeping your logic intact
                   inputFormatters: [

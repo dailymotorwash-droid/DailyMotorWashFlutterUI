@@ -365,12 +365,12 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
 
                             SizedBox(height: screenHeight * 0.005),
 
-                            Text(
-                              '${_vehicle.color}',
-                              style: TextStyle(
-                                fontSize: screenWidth * 0.035,
-                              ),
-                            ),
+                            // Text(
+                            //   '${_vehicle.color}',
+                            //   style: TextStyle(
+                            //     fontSize: screenWidth * 0.035,
+                            //   ),
+                            // ),
 
                             const Divider(),
 
