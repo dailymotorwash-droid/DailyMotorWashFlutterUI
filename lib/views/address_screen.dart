@@ -380,6 +380,7 @@ class _AddressScreenState extends State<AddressScreen> {
                   ),
                 ),
                 TextField(
+                  maxLength: 10,
                   controller: _flatNumberController,
                   // Keeping your logic intact
                   inputFormatters: [
