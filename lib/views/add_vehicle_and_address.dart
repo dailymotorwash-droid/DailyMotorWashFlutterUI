@@ -1278,7 +1278,7 @@ class _AddVehicleAndAddressScreenState
                       .toList(),
                   onChanged: (v) {
                     modelRead.setSelectedModel(v!);
-                    loadColor(v.id);
+                    // loadColor(v.id);
                     // setState(() {
                     //   selectedModel = v;
                     //   loadColor(selectedModel!.id);
