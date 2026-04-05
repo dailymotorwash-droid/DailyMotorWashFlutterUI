@@ -472,11 +472,12 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
 
   Future<DateTime?> pickDate(BuildContext context) async {
     DateTime now = DateTime.now();
+    DateTime minDate = DateTime.now().add(Duration(days: 2));
 
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate: now,
-      firstDate: now,
+      initialDate:minDate,
+      firstDate: minDate,
       // disables past dates
       lastDate: DateTime(now.year + 5),
 
