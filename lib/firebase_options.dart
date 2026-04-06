@@ -25,10 +25,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         return windows;
       case TargetPlatform.linux:
@@ -55,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDTJufqx_wnq5kLSRDuUEBe3puLMotaJ_c',
-    appId: '1:752034908739:android:24934d66b3d41620cc22f6',
+    appId: '1:752034908739:android:b5fec528392f2c76cc22f6',
     messagingSenderId: '752034908739',
     projectId: 'daily-moter-wash',
     storageBucket: 'daily-moter-wash.firebasestorage.app',
@@ -63,20 +60,30 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyA1jjQmWMq6bq60dILMSlxj_z5nBlO-j2c',
-    appId: '1:752034908739:ios:76c4f78de81f1cd4cc22f6',
+    appId: '1:752034908739:ios:68de42778fb9477fcc22f6',
     messagingSenderId: '752034908739',
     projectId: 'daily-moter-wash',
     storageBucket: 'daily-moter-wash.firebasestorage.app',
-    iosBundleId: 'com.app.dmw',
+    iosBundleId: 'com.app.dailymotorwash',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyAeQ5J0jpPFdJeWjJ2pkPccFV3FkzUG0xE',
-    appId: '1:752034908739:web:63cda97321897baacc22f6',
+    appId: '1:752034908739:web:5447ef743a5b038dcc22f6',
     messagingSenderId: '752034908739',
     projectId: 'daily-moter-wash',
     authDomain: 'daily-moter-wash.firebaseapp.com',
     storageBucket: 'daily-moter-wash.firebasestorage.app',
-    measurementId: 'G-4HP5XG3FXF',
+    measurementId: 'G-H02XB50ESD',
   );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyA1jjQmWMq6bq60dILMSlxj_z5nBlO-j2c',
+    appId: '1:752034908739:ios:765c3f41f3719614cc22f6',
+    messagingSenderId: '752034908739',
+    projectId: 'daily-moter-wash',
+    storageBucket: 'daily-moter-wash.firebasestorage.app',
+    iosBundleId: 'com.app.dwm',
+  );
+
 }
