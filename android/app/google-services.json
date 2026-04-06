@@ -7,6 +7,25 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:752034908739:android:b5fec528392f2c76cc22f6",
+        "android_client_info": {
+          "package_name": "com.app.dailymotorwash"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDTJufqx_wnq5kLSRDuUEBe3puLMotaJ_c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:752034908739:android:24934d66b3d41620cc22f6",
         "android_client_info": {
           "package_name": "com.app.dmw"

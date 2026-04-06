@@ -1,4 +1,4 @@
-package com.app.dmw
+package com.app.dailymotorwash
 
 import io.flutter.embedding.android.FlutterActivity
 
