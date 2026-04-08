@@ -39,6 +39,10 @@ class _MenuScreenState extends State<MenuScreen> {
         icon: Icons.payment,
         label: 'Transactions',
         route: AppRoutes.transactionsScreen),
+    MenuOption(
+        icon: Icons.privacy_tip,
+        label: 'Privacy & Policy',
+        route: AppRoutes.privacyPolicy),
     MenuOption(icon: Icons.help, label: 'Help', route: AppRoutes.helpScreen),
     MenuOption(
         icon: Icons.logout, label: 'Sign Out', route: AppRoutes.loginScreen),
