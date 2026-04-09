@@ -29,6 +29,10 @@ class VehicleModelProvider extends ChangeNotifier{
     notifyListeners();
   }
 
+  void resetSelected(){
+    _selectedModel =null;
+    notifyListeners();
+  }
   void clear(){
     _selectedModel =null;
     _isLoading = false;
