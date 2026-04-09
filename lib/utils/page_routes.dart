@@ -6,6 +6,7 @@ import 'package:dmw/views/help_screen.dart';
 import 'package:dmw/views/landing_screen.dart';
 import 'package:dmw/views/login_screen.dart';
 import 'package:dmw/views/notifications_screen.dart';
+import 'package:dmw/views/privay_policy.dart';
 import 'package:dmw/views/profile_screen.dart';
 import 'package:dmw/views/saved_address_screen.dart';
 import 'package:dmw/views/saved_vehicles_screen.dart';
@@ -29,6 +30,7 @@ class AppRoutes {
   static const helpScreen = "/help_screen";
   static const allSavedVehicles = "/allSavedVehicles";
   static const transactionsScreen = "/transactions_screen";
+  static const privacyPolicy = "/privacy_policy";
 }
 
 class RouteGenerator {
@@ -69,6 +71,8 @@ class RouteGenerator {
       // case AppRoutes.savedVehiclesScreen:
       //   return buildRoute(const SavedVehiclesScreen(), settings: settings);
 
+      case AppRoutes.privacyPolicy:
+        return buildRoute(const PrivacyPolicy(), settings: settings);
       case AppRoutes.helpScreen:
         return buildRoute(const HelpScreen(), settings: settings);
 

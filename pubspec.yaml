@@ -1,7 +1,7 @@
 name: dmw
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0
+version: 0.1.0+1
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -27,6 +27,7 @@ dependencies:
   firebase_auth: ^6.3.0
   share_plus: ^12.0.1
   url_launcher: ^6.3.0
+  webview_flutter: ^4.13.1
 dev_dependencies:
   flutter_test:
     sdk: flutter
