@@ -143,7 +143,7 @@ class _AddVehicleAndAddressScreenState
 
   Future<void> submitForm() async {
     String? firstName, lastName;
-    if (addressWatch.selectedAddressIndex! != -1) {
+    if (addressWatch.selectedAddressIndex!=null&&addressWatch.selectedAddressIndex! != -1) {
       vehicle = getVehicle(addressWatch.addresses[addressWatch.selectedAddressIndex!].id);
       print(vehicle?.toJson());
       VehicleResponse res = await RestServiceImp.addVehicle(vehicle!);
@@ -547,6 +547,8 @@ class _AddVehicleAndAddressScreenState
       if(res.data.isEmpty){
         addressRead.setSelectedAddressIndex(-1);
         addressRead.setShowNewAddressForm(true);
+      }else{
+        addressRead.setSelectedAddressIndex(0);
       }
     }
     addressRead.setIsLoading(false);
@@ -1193,6 +1195,7 @@ class _AddVehicleAndAddressScreenState
                       .toList(),
                   onChanged: (v) {
                     brandRead.setSelectedBrand(v!);
+                    modelRead.resetSelected();
                     loadModels(v.id);
                     // setState(() {
                     //   selectedBrand = v;
@@ -1243,8 +1246,14 @@ class _AddVehicleAndAddressScreenState
                   ),
                 ),
                 DropdownButtonFormField<Model>(
-                  value: modelWatch.models.contains(modelWatch.selectedModel)
-                      ? modelWatch.selectedModel
+                  value: (modelWatch.models.isEmpty ||
+                      modelWatch.selectedModel == null)
+                      ? null
+                      : modelWatch.models
+                      .any((m) => m.id == modelWatch.selectedModel!.id)
+                      ? modelWatch.models.firstWhere(
+                        (m) => m.id == modelWatch.selectedModel!.id,
+                  )
                       : null,
                   // Fixes the black hint issue:
                   hint: const Text(
@@ -1266,16 +1275,14 @@ class _AddVehicleAndAddressScreenState
                     contentPadding: EdgeInsets.only(top: 9, bottom: 9),
                     border: InputBorder.none,
                   ),
-                  items: modelWatch.models
-                      .map((e) => DropdownMenuItem<Model>(
-                            value: e,
-                            child: Text(
-                              e.name,
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ))
-                      .toList(),
+                  items: modelWatch.models.isEmpty
+                      ? []
+                      : modelWatch.models.map((e) {
+                    return DropdownMenuItem<Model>(
+                      value: e,
+                      child: Text(e.name),
+                    );
+                  }).toList(),
                   onChanged: (v) {
                     modelRead.setSelectedModel(v!);
                     // loadColor(v.id);
