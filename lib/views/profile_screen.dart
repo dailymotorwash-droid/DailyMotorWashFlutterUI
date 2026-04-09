@@ -112,7 +112,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 16),
               phoneNumber(),
               const SizedBox(height: 16),
-              gender()
+              gender(),
+              const SizedBox(height: 50),
+              deleteAccount(context),
             ],
           ),
         ),
@@ -559,6 +561,68 @@ class _ProfileScreenState extends State<ProfileScreen> {
           // ),
         ],
       ),
+    );
+  }
+
+  Widget deleteAccount(BuildContext context) {
+    return OutlinedButton(
+      onPressed: () => _showDeleteConfirmation(context),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.red,
+        side: const BorderSide(color: Colors.red),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: const Text(
+        "Delete Account",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF2A313B), // Matches your dark theme
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          title: const Text(
+            "Account Delete",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            "Are you sure you want to delete your account? Your data will be permanently removed after 90 days of inactivity. Simply log in again before then to cancel this request.",
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            // Cancel Button
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Closes the popup
+              child: const Text(
+                "CANCEL",
+                style: TextStyle(color: Colors.white38),
+              ),
+            ),
+            // Delete Button
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(context,
+                    AppRoutes.loginScreen, (Route<dynamic> route) => false);
+                // 3. Optional: Show a snackbar confirmation
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Your data will be permanently removed after 90 days of inactivity.")),
+                );
+              },
+              child: const Text("DELETE", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
     );
   }
 }
