@@ -406,25 +406,30 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                       SizedBox(height: screenHeight * 0.03),
 
                       /// BUTTON
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            padding: EdgeInsets.symmetric(
-                              vertical: screenHeight * 0.018,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          onPressed: () => createRazorpayOrder(plan),
-                          child: vehicleWatch.isLoading
+                      Consumer<VehicleProvider>(
+                        builder: (context, vehicleWatch, _) {
+                          return                      vehicleWatch.isLoading
                               ? CommonUtils.loader()
-                              : const Text("Subscribe",
+                              : SizedBox(
+                            width: double.infinity,
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.red,
+                                padding: EdgeInsets.symmetric(
+                                  vertical: screenHeight * 0.018,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
+                              onPressed: () => createRazorpayOrder(plan),
+                              child: const Text("Subscribe",
                                   style: AppTextStyles.whiteFont12Bold),
-                        ),
+                            ),
+                          );
+                        },
                       ),
+
 
                       SizedBox(height: screenHeight * 0.01),
 
@@ -550,6 +555,8 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   }
 
   Future<void> createRazorpayOrder(Plan plan) async {
+    vehicleRead.setIsLoading(true);
+    print("isLoading: ${vehicleWatch.isLoading}");
     double amount = plan.rate - plan.discount;
     if (userWatch.user?.points != 0) {
       amount = amount - userWatch.user!.points!;
@@ -585,7 +592,9 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
 
     try {
       _razorpay.open(options);
+      vehicleRead.setIsLoading(false);
     } catch (e) {
+      vehicleRead.setIsLoading(false);
       debugPrint('Error: $e');
     }
   }

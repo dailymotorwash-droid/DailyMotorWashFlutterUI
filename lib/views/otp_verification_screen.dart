@@ -24,12 +24,11 @@ import '../utils/local_storage.dart';
 class OtpVerificationScreen extends StatefulWidget {
   final String mobileNumber;
   final String? code;
-  final String verificationId;
 
   const OtpVerificationScreen({
     super.key,
     required this.mobileNumber,
-    this.code, required this.verificationId
+    this.code
   });
 
   @override
@@ -52,7 +51,9 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   @override
   void initState() {
     _phone = widget.mobileNumber;
-    _verificationId = widget.verificationId;
+    Future.microtask((){
+      _sendOtp();
+    });
     userProviderRead = context.read<UserProvider>();
     _startResendWaitTimer();
     super.initState();
@@ -166,10 +167,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     // Safe cancel: If it's null, nothing happens. If it exists, it stops.
     _resendOTPTimer?.cancel();
 
-    int totalSeconds = 120;
+    int totalSeconds = 60;
 
     setState(() {
-      _remainingMin = 2;
+      _remainingMin = 1;
       _remainingSeconds = 0;
       _isWaitTimerRunning = true;
     });
@@ -226,7 +227,11 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
       phoneNumber: '+91$_phone', // Format: +919876543210
       verificationCompleted: (PhoneAuthCredential credential) async {
         // ANDROID ONLY: Automatic SMS handling
+        if (credential.smsCode != null) {
+          _otpController.text = credential.smsCode!;
+        }
         await FirebaseAuth.instance.signInWithCredential(credential);
+        _handleOTPSubmission();
       },
       verificationFailed: (FirebaseAuthException e) {
         print("Verification Failed: ${e.message}");
@@ -238,6 +243,48 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         _verificationId = verificationId;
         // Navigate to your OTP screen here
         _startResendWaitTimer();
+      },
+      codeAutoRetrievalTimeout: (String verificationId) {
+        _verificationId = verificationId;
+      },
+    );
+  }
+
+  Future<void> _handleLoginSubmit() async {
+    debugPrint(_phone);
+    String phone = _phone;
+    Response logInResponse = await RestServiceImp.otpSend(phone);
+    print(logInResponse.isSuccess);
+    if(logInResponse.isSuccess) {
+      
+    }else{
+      CommonUtils.toastMessage("Something went wrong");
+
+    }
+  }
+
+  void _sendOtp() async {
+
+    String phoneNumber = _phone;
+
+    await FirebaseAuth.instance.verifyPhoneNumber(
+      phoneNumber: '+91$phoneNumber', // Format: +919876543210
+      verificationCompleted: (PhoneAuthCredential credential) async {
+        // ANDROID ONLY: Automatic SMS handling
+        await FirebaseAuth.instance.signInWithCredential(credential);
+        _handleOTPSubmission();
+      },
+      verificationFailed: (FirebaseAuthException e) {
+        print("Verification Failed: ${e.message}");
+        print("Verification Failed: ${e.phoneNumber}");
+        CommonUtils.toastMessage(e.message!);
+
+      },
+      codeSent: (String verificationId, int? resendToken) {
+        // Save this ID to use when the user enters the OTP
+        _verificationId = verificationId;
+        // Navigate to your OTP screen here
+        _handleLoginSubmit();
       },
       codeAutoRetrievalTimeout: (String verificationId) {
         _verificationId = verificationId;
