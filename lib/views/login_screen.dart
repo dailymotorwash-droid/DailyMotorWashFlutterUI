@@ -1,5 +1,6 @@
 import 'package:dmw/ApiResponse/Response.dart';
 import 'package:dmw/utils/local_storage.dart';
+import 'package:dmw/utils/page_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -121,21 +122,21 @@ class _LoginScreenState extends State<LoginScreen> {
                           });
                         }
                       ),
-                      const CustomRichText(
+                      CustomRichText(
                         arrayLength: 4, 
-                        textsInOrder: [
+                        textsInOrder: const [
                           'By continuing, you agree to honc\'s\n',
                           'terms of use',
                           ' and ',
                           'privacy policy'
                         ], 
-                        textStylesInOrder: [
+                        textStylesInOrder: const [
                           AppTextStyles.whiteFont12Regular,
                           AppTextStyles.whiteUnderlinedFont12Bold,
                           AppTextStyles.whiteFont12Regular,
                           AppTextStyles.whiteUnderlinedFont12Bold
                         ], 
-                        callBacksInOrder: [null, _handleTermsOFUseClick, null, _handlePrivacyPolicyClick],
+                        callBacksInOrder: [null, () => _handleTermsOFUseClick(context), null, () => _handlePrivacyPolicyClick(context)],
                       )
                     ],
                   ),
@@ -164,13 +165,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
 
-  static void _handleTermsOFUseClick() {
+  static void _handleTermsOFUseClick(BuildContext context) {
     debugPrint('Terms of Use CLicked');
+    Navigator.pushNamed(context, AppRoutes.termCondition);
+
   }
  
 
-  static void _handlePrivacyPolicyClick() {
+  static void _handlePrivacyPolicyClick(BuildContext context) {
     debugPrint("Privacy Policy Clicked");
+    Navigator.pushNamed(context, AppRoutes.privacyPolicy);
+
   }
 
   Future<void> clearLocalStorage() async {
