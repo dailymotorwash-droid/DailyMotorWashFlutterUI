@@ -11,6 +11,7 @@ import 'package:dmw/views/profile_screen.dart';
 import 'package:dmw/views/saved_address_screen.dart';
 import 'package:dmw/views/saved_vehicles_screen.dart';
 import 'package:dmw/views/splash_screen.dart';
+import 'package:dmw/views/term_and_condition.dart';
 import 'package:dmw/views/transactions_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:dmw/views/home_screen/home_screen.dart';
@@ -31,6 +32,7 @@ class AppRoutes {
   static const allSavedVehicles = "/allSavedVehicles";
   static const transactionsScreen = "/transactions_screen";
   static const privacyPolicy = "/privacy_policy";
+  static const termCondition = "/term_condition";
 }
 
 class RouteGenerator {
@@ -73,6 +75,8 @@ class RouteGenerator {
 
       case AppRoutes.privacyPolicy:
         return buildRoute(const PrivacyPolicy(), settings: settings);
+      case AppRoutes.termCondition:
+        return buildRoute(const TermAndCondition(), settings: settings);
       case AppRoutes.helpScreen:
         return buildRoute(const HelpScreen(), settings: settings);
 

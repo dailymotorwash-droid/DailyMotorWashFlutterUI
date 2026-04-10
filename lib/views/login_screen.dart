@@ -1,5 +1,6 @@
 import 'package:dmw/ApiResponse/Response.dart';
 import 'package:dmw/utils/local_storage.dart';
+import 'package:dmw/utils/page_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -121,27 +122,36 @@ class _LoginScreenState extends State<LoginScreen> {
                           });
                         }
                       ),
-                      const CustomRichText(
+                      CustomRichText(
                         arrayLength: 4, 
-                        textsInOrder: [
+                        textsInOrder: const [
                           'By continuing, you agree to honc\'s\n',
                           'terms of use',
                           ' and ',
                           'privacy policy'
                         ], 
-                        textStylesInOrder: [
+                        textStylesInOrder: const [
                           AppTextStyles.whiteFont12Regular,
                           AppTextStyles.whiteUnderlinedFont12Bold,
                           AppTextStyles.whiteFont12Regular,
                           AppTextStyles.whiteUnderlinedFont12Bold
                         ], 
-                        callBacksInOrder: [null, _handleTermsOFUseClick, null, _handlePrivacyPolicyClick],
+                        callBacksInOrder: [null, () => _handleTermsOFUseClick(context), null, () => _handlePrivacyPolicyClick(context)],
                       )
                     ],
                   ),
                   const SizedBox(height: 12),
                   watch.isLoading? CommonUtils.loader():ElevatedButton(
-                    onPressed: _verifyPhone,
+                    onPressed: (){
+                      if (!isTermsAccepted || _mobileController.text.length != 10) {
+                        debugPrint('Please Accept Terms and Policy and Enter 10 digits Mobile Number');
+                        CommonUtils.toastMessage("Please Accept Terms and Policy and Enter 10 digits Mobile Number");
+                        return;
+                      }
+                      Navigator.push(
+                          context, MaterialPageRoute(
+                          builder: (context) => OtpVerificationScreen(mobileNumber: _mobileController.text)));
+                    },
                     style: AppButtonStyles.primaryButtonStyle,
                     child: const Text('Submit', style: AppTextStyles.whiteFont16Bold,)
                   )
@@ -154,64 +164,18 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Future<void> _handleLoginSubmit() async {
-    debugPrint(_mobileController.text);
-    String phone = _mobileController.text;
-      Response logInResponse = await RestServiceImp.otpSend(phone);
-      print(logInResponse.isSuccess);
-      if(logInResponse.isSuccess) {
-        read.setIsLoading(false);
-        Navigator.push(
-            context, MaterialPageRoute(
-            builder: (context) => OtpVerificationScreen(mobileNumber: phone,verificationId: _verificationId,)));
 
-      }else{
-        CommonUtils.toastMessage("Something went wrong");
-
-      }
-  }
-  String _verificationId = "";
-
-  void _verifyPhone() async {
-
-    String phoneNumber = _mobileController.text;
-    if (!isTermsAccepted || phoneNumber.length != 10) {
-      debugPrint('Please Accept Terms and Policy and Enter 10 digits Mobile Number');
-      CommonUtils.toastMessage("Please Accept Terms and Policy and Enter 10 digits Mobile Number");
-      return;
-    }
-    read.setIsLoading(true);
-    await FirebaseAuth.instance.verifyPhoneNumber(
-      phoneNumber: '+91$phoneNumber', // Format: +919876543210
-      verificationCompleted: (PhoneAuthCredential credential) async {
-        // ANDROID ONLY: Automatic SMS handling
-        await FirebaseAuth.instance.signInWithCredential(credential);
-      },
-      verificationFailed: (FirebaseAuthException e) {
-        print("Verification Failed: ${e.message}");
-        print("Verification Failed: ${e.phoneNumber}");
-        CommonUtils.toastMessage(e.message!);
-        read.setIsLoading(false);
-
-      },
-      codeSent: (String verificationId, int? resendToken) {
-        // Save this ID to use when the user enters the OTP
-        _verificationId = verificationId;
-        // Navigate to your OTP screen here
-        _handleLoginSubmit();
-      },
-      codeAutoRetrievalTimeout: (String verificationId) {
-        _verificationId = verificationId;
-      },
-    );
-  }
-  static void _handleTermsOFUseClick() {
+  static void _handleTermsOFUseClick(BuildContext context) {
     debugPrint('Terms of Use CLicked');
+    Navigator.pushNamed(context, AppRoutes.termCondition);
+
   }
  
 
-  static void _handlePrivacyPolicyClick() {
+  static void _handlePrivacyPolicyClick(BuildContext context) {
     debugPrint("Privacy Policy Clicked");
+    Navigator.pushNamed(context, AppRoutes.privacyPolicy);
+
   }
 
   Future<void> clearLocalStorage() async {
