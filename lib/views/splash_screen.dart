@@ -76,11 +76,11 @@ class _SplashScreenState extends State<SplashScreen> {
     }
 
     if (state == 'registered_user') {
-      Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.homeScreen,(Route<dynamic> route) => false);
     } else if (state == 'verified_lead') {
-      Navigator.pushReplacementNamed(context, AppRoutes.profileScreen);
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.profileScreen,(Route<dynamic> route) => false);
     } else {
-      Navigator.pushReplacementNamed(context, AppRoutes.loginScreen);
+      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.loginScreen,(Route<dynamic> route) => false);
     }
   }
 }
