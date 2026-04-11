@@ -28,6 +28,7 @@ dependencies:
   share_plus: ^12.0.1
   url_launcher: ^6.3.0
   webview_flutter: ^4.13.1
+  flutter_native_splash: ^2.4.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -47,3 +48,12 @@ flutter:
           weight: 700
         - asset: assets/fonts/Rubik/Rubik-Italic.ttf
           style: italic
+flutter_native_splash:
+  color: "#ffffff"
+  color_dark: "#000000"
+
+  image: assets/images/app_icon.png
+  image_dark: assets/images/app_icon.png
+
+  ios: true
+  android: false
