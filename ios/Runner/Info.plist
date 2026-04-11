@@ -55,6 +55,8 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>REVERSED_CLIENT_ID</key>
+        <string>com.googleusercontent.apps.752034908739-hdh320ivsmssplm9mtlnkkr3sk06u5nv</string>
 		<key>FirebaseAppDelegateProxyEnabled</key>
         <true/>
 	</dict>
