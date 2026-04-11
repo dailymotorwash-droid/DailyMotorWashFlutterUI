@@ -133,7 +133,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         debugPrint(userState);
         userProviderRead.setIsLoading(false);
 
-        Navigator.pushReplacementNamed(context, AppRoutes.homeScreen);
+        Navigator.pushNamedAndRemoveUntil(context, AppRoutes.homeScreen,(Route<dynamic> route) => false);
       }else{
         CommonUtils.toastMessage("Incorrect OTP");
 
