@@ -55,6 +55,17 @@
 		</array>
 		<key>UIStatusBarHidden</key>
 		<false/>
+		<key>CFBundleURLTypes</key>
+        <array>
+          <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+              <string>com.googleusercontent.apps.752034908739-hdh320ivsmssplm9mtlnkkr3sk06u5nv</string>
+            </array>
+          </dict>
+        </array>
 		<key>REVERSED_CLIENT_ID</key>
         <string>com.googleusercontent.apps.752034908739-hdh320ivsmssplm9mtlnkkr3sk06u5nv</string>
 		<key>FirebaseAppDelegateProxyEnabled</key>
