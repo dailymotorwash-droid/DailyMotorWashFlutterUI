@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       CustomRichText(
                         arrayLength: 4, 
                         textsInOrder: const [
-                          'By continuing, you agree to honc\'s\n',
+                          'By continuing, you agree to DMW\'s\n',
                           'terms of use',
                           ' and ',
                           'privacy policy'

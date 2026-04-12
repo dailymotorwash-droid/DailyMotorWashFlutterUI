@@ -222,7 +222,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   }
 
   void _verifyPhone() async {
-
+    _startResendWaitTimer();
     await FirebaseAuth.instance.verifyPhoneNumber(
       phoneNumber: '+91$_phone', // Format: +919876543210
       verificationCompleted: (PhoneAuthCredential credential) async {
@@ -242,7 +242,6 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         // Save this ID to use when the user enters the OTP
         _verificationId = verificationId;
         // Navigate to your OTP screen here
-        _startResendWaitTimer();
       },
       codeAutoRetrievalTimeout: (String verificationId) {
         _verificationId = verificationId;
