@@ -129,6 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       hintText: 'Referral Code (Optional)',
                       prefixIcon: const Icon(Icons.card_giftcard),
                       inputFormatters: [
+                        LengthLimitingTextInputFormatter(6), // Limits input to 6 chars
                         TextInputFormatter.withFunction((oldValue, newValue) {
                           return newValue.copyWith(
                               text: newValue.text.toUpperCase());
