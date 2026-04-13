@@ -29,7 +29,7 @@ dependencies:
   url_launcher: ^6.3.0
   webview_flutter: ^4.13.1
   flutter_native_splash: ^2.4.0
-#  recaptcha_enterprise_flutter: ^18.8.2
+  recaptcha_enterprise_flutter: ^18.8.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

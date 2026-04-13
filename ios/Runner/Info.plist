@@ -4,7 +4,7 @@
 <dict>
 	<key>AssociatedDomains</key>
 	<array>
-		<string>applinks:www.something.com</string>
+		<string>applinks:www.dailymotorwash.com/</string>
 	</array>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
@@ -68,6 +68,7 @@
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
 	<key>UIStatusBarHidden</key>
+	<false/>
 	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>

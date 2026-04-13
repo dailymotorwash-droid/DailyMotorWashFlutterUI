@@ -1,4 +1,5 @@
 import 'package:dmw/ApiResponse/Response.dart';
+import 'package:dmw/ApiResponse/user_profile_response.dart';
 import 'package:dmw/utils/local_storage.dart';
 import 'package:dmw/utils/page_routes.dart';
 import 'package:flutter/material.dart';
@@ -33,6 +34,8 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
 
   final TextEditingController _mobileController = TextEditingController();
+  bool showReferral = false;
+  final TextEditingController _referralController = TextEditingController();
   bool isTermsAccepted = false;
 
   late UserProvider read,watch;
@@ -64,15 +67,29 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Container(
           padding: const EdgeInsets.only(bottom: 20),
           alignment: Alignment.bottomCenter,
-          child: const CustomRichText(
-            arrayLength: 3,
-            textsInOrder: ['Made with ', 'L❤️ove ', 'for Bharat'],
-            textStylesInOrder: [
-              AppTextStyles.orangeFont16Regular,
-              AppTextStyles.whiteFont16Regular,
-              AppTextStyles.greenFont16Regular
-            ],
-            callBacksInOrder: [null, null, null],
+          child: Column(
+            children: [
+              // --- BOTTOM TEXT BUTTON ---
+              if (!showReferral)
+                TextButton(
+                  onPressed: () => setState(() => showReferral = true),
+                  child: const Text(
+                    'Have referral code?',
+                    style: AppTextStyles.whiteFont16Regular, // Adjust style as needed
+                  ),
+                ),
+              const SizedBox(height: 16),
+
+              const CustomRichText(
+              arrayLength: 3,
+              textsInOrder: ['Made with ', 'L❤️ove ', 'for Bharat'],
+              textStylesInOrder: [
+                AppTextStyles.orangeFont16Regular,
+                AppTextStyles.whiteFont16Regular,
+                AppTextStyles.greenFont16Regular
+              ],
+              callBacksInOrder: [null, null, null],
+            ),]
           ),
         ),
       ),
@@ -105,6 +122,21 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                     onChanged: (value) => null,
                   ),
+                  // --- ADDED REFERRAL FIELD ---
+                  if (showReferral) ...[
+                    const SizedBox(height: 12),
+                    OutlinedTextField(
+                      hintText: 'Referral Code (Optional)',
+                      prefixIcon: const Icon(Icons.card_giftcard),
+                      inputFormatters: [
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          return newValue.copyWith(
+                              text: newValue.text.toUpperCase());
+                        }),
+                      ],
+                      controller: _referralController, onChanged: (value) => null,
+                    ),
+                  ],
                   const SizedBox(height: 12),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -148,13 +180,19 @@ class _LoginScreenState extends State<LoginScreen> {
                         CommonUtils.toastMessage("Please Accept Terms and Policy and Enter 10 digits Mobile Number");
                         return;
                       }
+                      String referralCode = _referralController.text;
+                      if(referralCode.isNotEmpty) {
+                        read.setIsLoading(true);
+                        checkReferralCode(referralCode);
+                        return;
+                      }
                       Navigator.push(
                           context, MaterialPageRoute(
-                          builder: (context) => OtpVerificationScreen(mobileNumber: _mobileController.text)));
+                          builder: (context) => OtpVerificationScreen(mobileNumber: _mobileController.text,code: widget.code,)));
                     },
                     style: AppButtonStyles.primaryButtonStyle,
                     child: const Text('Submit', style: AppTextStyles.whiteFont16Bold,)
-                  )
+                  ),
                 ],
               ),
             ),
@@ -181,5 +219,18 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> clearLocalStorage() async {
     var storage = await LocalStorage.getInstance();
     storage.clearSharedPreferences();
+  }
+
+  Future<void> checkReferralCode(String referralCode) async{
+      UserProfileResponse res = await RestServiceImp.checkReferralCode(
+          referralCode);
+      read.setIsLoading(false);
+      if(res.isSuccess){
+        Navigator.push(
+            context, MaterialPageRoute(
+            builder: (context) => OtpVerificationScreen(mobileNumber: _mobileController.text,code: referralCode,)));
+        return;
+      }
+      CommonUtils.toastMessage("Invalid referral code");
   }
 }
