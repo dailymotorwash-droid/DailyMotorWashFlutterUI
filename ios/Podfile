@@ -30,7 +30,7 @@ flutter_ios_podfile_setup
 target 'Runner' do
   use_frameworks!
   # Add this line for iOS-only reCAPTCHA support
-  pod 'recaptcha-enterprise-mobile-sdk'
+#   pod 'recaptcha-enterprise-mobile-sdk'
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
   target 'RunnerTests' do
     inherit! :search_paths
