@@ -17,6 +17,7 @@ class SlugUrl {
   static String getTransactions= "subscription/transactions";
   static String updateUser= "user/update";
   static String getReferral= "user/referral";
+  static String checkReferral= "user/{referralCode}/referral-check";
   static String getAllVehicles= "vehicle/getAll";
   static String updateVehicle= "vehicle/update";
   static String deleteVehicle= "vehicle/{id}/delete";

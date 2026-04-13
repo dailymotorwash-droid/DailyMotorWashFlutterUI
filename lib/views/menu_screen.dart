@@ -58,45 +58,59 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
         backgroundColor: AppColors.darkBackground,
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(children: [
-          ...List.generate(menuOptions.length, (index) {
-            return InkWell(
-              onTap: () {
-                if (index != menuOptions.length) {
-                  debugPrint(menuOptions[index].route);
-                  if (AppRoutes.loginScreen == menuOptions[index].route) {
-                    Navigator.pushNamedAndRemoveUntil(context,
-                        AppRoutes.loginScreen, (Route<dynamic> route) => false);
-                    return;
-                  } else if (AppRoutes.helpScreen == menuOptions[index].route) {
-                    _launchWhatsApp();
-                    return;
-                  }
-                  Navigator.pushNamed(context, menuOptions[index].route);
-                }
-              },
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-                child: Row(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight - 32), // Subtracting padding
+              child: IntrinsicHeight( // Required to make Spacer/Expanded work in a Column
+                child: Column(
                   children: [
-                    Icon(menuOptions[index].icon, size: 24),
-                    const SizedBox(width: 16),
-                    Expanded(
-                        child: Text(
-                      menuOptions[index].label,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTextStyles.blackFont20Regular,
-                    ))
+                    ...List.generate(menuOptions.length, (index) {
+                      final option = menuOptions[index];
+                      return InkWell(
+                        onTap: () {
+                          debugPrint(option.route);
+                          if (AppRoutes.loginScreen == option.route) {
+                            Navigator.pushNamedAndRemoveUntil(context, AppRoutes.loginScreen, (route) => false);
+                            return;
+                          } else if (AppRoutes.helpScreen == option.route) {
+                            _launchWhatsApp();
+                            return;
+                          }
+                          Navigator.pushNamed(context, option.route);
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+                          child: Row(
+                            children: [
+                              Icon(option.icon, size: 24),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Text(
+                                  option.label,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppTextStyles.blackFont20Regular,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                      );
+                    }),
+
+                    // This pushes the next widget to the bottom
+                    const Spacer(),
+
+                    deleteAccount(context),
                   ],
                 ),
               ),
-            );
-          }),
-        ]),
+            ),
+          );
+        },
       ),
     );
   }
@@ -120,5 +134,66 @@ class _MenuScreenState extends State<MenuScreen> {
       // Handle the error (e.g., WhatsApp not installed)
       print("Could not launch WhatsApp");
     }
+  }
+  Widget deleteAccount(BuildContext context) {
+    return OutlinedButton(
+      onPressed: () => _showDeleteConfirmation(context),
+      style: OutlinedButton.styleFrom(
+        foregroundColor: Colors.red,
+        side: const BorderSide(color: Colors.red),
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 70),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+      child: const Text(
+        "Delete Account",
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmation(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: const Color(0xFF2A313B), // Matches your dark theme
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          title: const Text(
+            "Account Delete",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: const Text(
+            "Are you sure you want to delete your account? Your data will be permanently removed after 90 days of inactivity. Simply log in again before then to cancel this request.",
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            // Cancel Button
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(), // Closes the popup
+              child: const Text(
+                "CANCEL",
+                style: TextStyle(color: Colors.white38),
+              ),
+            ),
+            // Delete Button
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              ),
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(context,
+                    AppRoutes.loginScreen, (Route<dynamic> route) => false);
+                // 3. Optional: Show a snackbar confirmation
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Your data will be permanently removed after 90 days of inactivity.")),
+                );
+              },
+              child: const Text("DELETE", style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
