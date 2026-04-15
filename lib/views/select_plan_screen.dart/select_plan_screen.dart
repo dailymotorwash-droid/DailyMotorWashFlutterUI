@@ -1,3 +1,4 @@
+import 'dart:core';
 import 'dart:ui';
 
 import 'package:dmw/ApiResponse/plan_response.dart';
@@ -99,8 +100,6 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
       read.setIsLoading(true);
       vehicleRead.selectVehicle(_vehicle);
       loadServices();
-      loadUserDetails();
-      checkFirstOrExpireSubscription();
     });
     super.initState();
   }
@@ -172,7 +171,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                                planLabels[actualIndex],
+                              planLabels[actualIndex],
                               style: AppTextStyles.blackFont16Bold,
                             ),
                             const SizedBox(height: 4),
@@ -207,11 +206,13 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
       read.setPlans(response.data);
       read.setIsLoading(false);
     }
+    loadUserDetails();
   }
 
   void proceed(Plan plan) {
     // selectedDate = null;
     read.selectPlan(plan);
+    vehicleRead.setIsLoading(false);
     final screenHeight = MediaQuery.of(context).size.height;
     final screenWidth = MediaQuery.of(context).size.width;
     double sheetHeight = screenHeight * 0.55;
@@ -323,21 +324,27 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Row(
-                                        mainAxisSize: MainAxisSize.min, // Constrains the row to the content size
-                                      children: [
-                                        const Icon(Icons.calendar_month, size: 20),
-                                        const SizedBox(width: 8), // Gap between icon and text
-                                        Text(
-                                        subscriptionWatch.selectedStartDate ==
-                                                null
-                                            ? "Service Start Date"
-                                            : DateFormat('dd MMM yyyy').format(
-                                                subscriptionWatch
-                                                    .selectedStartDate!,
-                                              ),
-                                        style: const TextStyle(fontSize: 14),
-                                      ),]
-                                    ),
+                                        mainAxisSize: MainAxisSize.min,
+                                        // Constrains the row to the content size
+                                        children: [
+                                          const Icon(Icons.calendar_month,
+                                              size: 20),
+                                          const SizedBox(width: 8),
+                                          // Gap between icon and text
+                                          Text(
+                                            subscriptionWatch
+                                                        .selectedStartDate ==
+                                                    null
+                                                ? DateFormat('dd MMM yyyy').format(DateTime.now().add(const Duration(days: 2)))
+                                                : DateFormat('dd MMM yyyy')
+                                                    .format(
+                                                    subscriptionWatch
+                                                        .selectedStartDate!,
+                                                  ),
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ]),
                                   ),
                                 );
                         },
@@ -408,28 +415,27 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                       /// BUTTON
                       Consumer<VehicleProvider>(
                         builder: (context, vehicleWatch, _) {
-                          return                      vehicleWatch.isLoading
+                          return vehicleWatch.isLoading
                               ? CommonUtils.loader()
                               : SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.red,
-                                padding: EdgeInsets.symmetric(
-                                  vertical: screenHeight * 0.018,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                              ),
-                              onPressed: () => createRazorpayOrder(plan),
-                              child: const Text("Subscribe",
-                                  style: AppTextStyles.whiteFont12Bold),
-                            ),
-                          );
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: screenHeight * 0.018,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    onPressed: () => createRazorpayOrder(plan),
+                                    child: const Text("Subscribe",
+                                        style: AppTextStyles.whiteFont12Bold),
+                                  ),
+                                );
                         },
                       ),
-
 
                       SizedBox(height: screenHeight * 0.01),
 
@@ -481,7 +487,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
 
     final DateTime? pickedDate = await showDatePicker(
       context: context,
-      initialDate:minDate,
+      initialDate: minDate,
       firstDate: minDate,
       // disables past dates
       lastDate: DateTime(now.year + 5),
@@ -543,6 +549,8 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
       // referredBy = userProfileResponse.data.referredBy!;
       // points = userProfileResponse.data.points!;
     }
+    checkFirstOrExpireSubscription();
+
   }
 
   Future<void> checkFirstOrExpireSubscription() async {
@@ -567,8 +575,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     };
 
     RazorpayResponse response = await RestServiceImp.createRazorpayOrder(data);
-    openCheckout(amount,response.data.id);
-
+    openCheckout(amount, response.data.id);
 
     // Navigator.push(
     //     context, MaterialPageRoute(builder:
@@ -584,7 +591,10 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
       'name': 'Daily Motor Wash',
       'description': 'Payment for User #${userWatch.user?.id}',
       'order_id': id, // Get this from your backend
-      'prefill': {'contact': userWatch.user?.phone, 'email': userWatch.user?.email}
+      'prefill': {
+        'contact': userWatch.user?.phone,
+        'email': userWatch.user?.email
+      }
       // 'external': {
       //   'wallets': ['paytm']
       // }

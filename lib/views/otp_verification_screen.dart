@@ -128,6 +128,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
         LocalStorage.setFirstName(res.data.firstName!);
         LocalStorage.setLastName(res.data.lastName!);
         LocalStorage.setUserId(res.data.id!);
+        LocalStorage.setPhone(res.data.phone);
         LocalStorage.setStatus(res.data.status!);
         userProviderRead.login(User(firstName:res.data.firstName,lastName:res.data.lastName,phone: widget.mobileNumber,state: 'registered_user'));
         debugPrint(userState);

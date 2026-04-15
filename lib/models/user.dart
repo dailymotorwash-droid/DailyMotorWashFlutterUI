@@ -58,6 +58,8 @@ class User {
       "email": email,
       "gender": gender,
       "referredBy": referredBy,
+      "phone": phone,
+      "token": token,
     };
   }
 }
