@@ -11,6 +11,7 @@ import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../utils/AuthHandler.dart';
 import '../utils/local_storage.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -36,6 +37,19 @@ class _SplashScreenState extends State<SplashScreen> {
       _deepLinkService.initDeepLinks(context);
     });
     super.initState();
+
+    @override
+    void initState() {
+      super.initState();
+
+      AuthHandler.onLogout = () {
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          AppRoutes.loginScreen,
+              (route) => false,
+        );
+      };
+    }
   }
 
   @override
