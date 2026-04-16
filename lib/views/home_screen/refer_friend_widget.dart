@@ -53,9 +53,15 @@ class ReferFriendWidget extends StatelessWidget {
 
   }
   void shareReferral(String link) {
+
+// Parse the string into a Uri object
+    Uri uri = Uri.parse(link);
+// Extract the 'code' parameter
+    String? referralCode = uri.queryParameters['code'];
+    print(referralCode);
     SharePlus.instance.share(
       ShareParams(
-        text: "Join Daily Wash using my link:\n$link",
+        text: "Join Daily Wash using my link:\n$link \n \n Code:${referralCode?.toUpperCase()}",
       ),
     );
   }
