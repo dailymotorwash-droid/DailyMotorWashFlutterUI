@@ -9,6 +9,7 @@ import 'package:dmw/providers/user_provider.dart';
 import 'package:dmw/providers/vehicle_color_provider.dart';
 import 'package:dmw/providers/vehicle_model_provider.dart';
 import 'package:dmw/providers/vehicle_provider.dart';
+import 'package:dmw/utils/NetworkService.dart';
 import 'package:dmw/utils/custom_colors.dart';
 import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:dmw/utils/page_routes.dart';
@@ -22,6 +23,8 @@ void main() async{
 
   // 1. You MUST add this line first
   WidgetsFlutterBinding.ensureInitialized();
+  final networkService = NetworkService();
+  networkService.startListening();
 
   // 2. Wait for Firebase to load using your specific project options
   await Firebase.initializeApp(
@@ -42,13 +45,14 @@ void main() async{
         ChangeNotifierProvider(create: (_) => SubscriptionVehicleProvider()),
         ChangeNotifierProvider(create: (_) => TransactionProvider()),
       ],
-      child: const MainApp(), 
+      child: MainApp(),
     )
   );
 }
 
 class MainApp extends StatelessWidget {
-  const MainApp({super.key});
+  final NetworkService networkService = NetworkService();
+  MainApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +72,53 @@ class MainApp extends StatelessWidget {
           surfaceTintColor: AppColors.darkBackground
         ),
       ),
+      // 👇 IMPORTANT: wrap builder
+      builder: (context, child) {
+        return Stack(
+          children: [
+            child!,
+
+            /// 🔴 No Internet Banner
+            ValueListenableBuilder<bool>(
+              valueListenable: networkService.isOffline,
+              builder: (context, isOffline, _) {
+                return AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  top: isOffline ? 0 : -60,
+                  left: 0,
+                  right: 0,
+                  child: _banner("No Internet Connection", Colors.red),
+                );
+              },
+            ),
+
+            /// 🟢 Back Online Banner
+            ValueListenableBuilder<bool>(
+              valueListenable: networkService.isBackOnline,
+              builder: (context, show, _) {
+                return AnimatedPositioned(
+                  duration: const Duration(milliseconds: 300),
+                  top: show ? 0 : -60,
+                  left: 0,
+                  right: 0,
+                  child: _banner("Back Online", Colors.green),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _banner(String text, Color color) {
+    return Material(
+      color: color,
+      child: Text(
+            text,
+            textAlign: TextAlign.center,
+            style: const TextStyle(color: Colors.white)
+        )
     );
   }
 }

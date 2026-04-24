@@ -1,7 +1,7 @@
 name: dmw
 description: "A new Flutter project."
 publish_to: 'none'
-version: 0.1.0+11`
+version: 0.1.0+13
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
@@ -31,6 +31,7 @@ dependencies:
   flutter_native_splash: ^2.4.0
   recaptcha_enterprise_flutter: ^18.8.2
   dio: ^5.4.0
+  connectivity_plus: ^6.0.3
 dev_dependencies:
   flutter_test:
     sdk: flutter
