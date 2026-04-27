@@ -34,7 +34,7 @@
 
                 <data
                     android:scheme="https"
-                    android:host="www.dailymotorwash.com/"
+                    android:host="www.dailymotorwash.com"
                     android:pathPrefix="/refer"/>
             </intent-filter>
         </activity>
