@@ -208,8 +208,9 @@ class _AddVehicleAndAddressScreenState
               MaterialPageRoute(
                   builder: (context) => SelectPlanScreen(
                       vehicle: res.data.vehicle!, address: res.data.address!)));
+        }else {
+          CommonUtils.toastMessage(res.message);
         }
-        CommonUtils.toastMessage(res.message);
       } else {
         CommonUtils.toastMessage("Please Select Society");
       }

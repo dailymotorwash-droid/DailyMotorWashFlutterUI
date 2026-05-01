@@ -32,11 +32,11 @@ class DeepLinkService{
       final code = uri.queryParameters['code'];
 
       if (code != null) {
-        Navigator.push(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
             builder: (_) => LoginScreen(code: code),
-          ),
+          ),(Route<dynamic> route) => false
         );
       }
     }

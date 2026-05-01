@@ -602,7 +602,6 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
 
     try {
       _razorpay.open(options);
-      vehicleRead.setIsLoading(false);
     } catch (e) {
       vehicleRead.setIsLoading(false);
       debugPrint('Error: $e');
@@ -611,7 +610,8 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
 
   @override
   void dispose() {
-    _razorpay.clear(); // Always clear listeners to avoid memory leaks
+    _razorpay.clear();
+    // Always clear listeners to avoid memory leaks
     super.dispose();
   }
 
@@ -624,12 +624,14 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   void _handlePaymentError(PaymentFailureResponse response) {
     // response.code, response.message
     CommonUtils.toastMessage("Payment Failed");
+    vehicleRead.setIsLoading(false);
     Navigator.pushNamedAndRemoveUntil(
         context, AppRoutes.homeScreen, (Route<dynamic> route) => false);
     print("Error: ${response.code} - ${response.message}");
   }
 
   void _handleExternalWallet(ExternalWalletResponse response) {
+    vehicleRead.setIsLoading(false);
     print("External Wallet: ${response.walletName}");
   }
 
@@ -644,6 +646,8 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     if (response.isSuccess) {
       subscribe(paymentId);
     }
+    vehicleRead.setIsLoading(false);
+
   }
 
   Future<void> subscribe(String? paymentId) async {
@@ -665,7 +669,8 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     if (response.isSuccess) {
       Navigator.pushNamedAndRemoveUntil(
           context, AppRoutes.homeScreen, (Route<dynamic> route) => false);
+    }else {
+      CommonUtils.toastMessage(response.message);
     }
-    CommonUtils.toastMessage(response.message);
   }
 }
