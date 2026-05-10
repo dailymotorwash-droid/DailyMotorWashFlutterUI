@@ -586,7 +586,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   void openCheckout(double amount, String id) async {
     // Note: In a real app, 'order_id' comes from your Spring Boot API
     var options = {
-      'key': 'rzp_test_SVjbFWBpXVoyC0',
+      'key': 'rzp_live_ShK7walg82j14u',
       'amount': amount * 100, // Rs 500
       'name': 'Daily Motor Wash',
       'description': 'Payment for User #${userWatch.user?.id}',
