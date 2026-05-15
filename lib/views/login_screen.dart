@@ -187,6 +187,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         checkReferralCode(referralCode);
                         return;
                       }
+                      if(_mobileController.text =="9999999999"){
+                        read.setIsLoading(true);
+                        _handleLoginSubmit(_mobileController.text);
+                        return;
+                      }
                       Navigator.push(
                           context, MaterialPageRoute(
                           builder: (context) => OtpVerificationScreen(mobileNumber: _mobileController.text,code: widget.code,)));
@@ -233,5 +238,19 @@ class _LoginScreenState extends State<LoginScreen> {
         return;
       }
       CommonUtils.toastMessage("Invalid referral code");
+  }
+
+  Future<void> _handleLoginSubmit(String phone) async {
+    debugPrint(phone);
+    Response logInResponse = await RestServiceImp.otpSend(phone);
+    print(logInResponse.isSuccess);
+    if(logInResponse.isSuccess) {
+      Navigator.push(
+          context, MaterialPageRoute(
+          builder: (context) => OtpVerificationScreen(mobileNumber: _mobileController.text,code: widget.code,)));
+    }else{
+      CommonUtils.toastMessage("Something went wrong");
+    }
+    read.setIsLoading(false);
   }
 }

@@ -569,12 +569,18 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     if (userWatch.user?.points != 0) {
       amount = amount - userWatch.user!.points!;
     }
+    // debugPrint('${userWatch.user?.id}');
+    // if(userWatch.user?.id==12){
+    //   debugPrint('amount');
+    //   amount =1;
+    // }
     Map<String, dynamic> data = {
       "amount": amount,
       "userId": userWatch.user?.id
     };
 
     RazorpayResponse response = await RestServiceImp.createRazorpayOrder(data);
+
     openCheckout(amount, response.data.id);
 
     // Navigator.push(

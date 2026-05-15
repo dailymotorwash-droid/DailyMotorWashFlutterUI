@@ -52,7 +52,10 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
   void initState() {
     _phone = widget.mobileNumber;
     Future.microtask((){
-      _sendOtp();
+      if(_phone!="9999999999") {
+        debugPrint(" if(_phone!=999999999) {");
+        _sendOtp();
+      }
     });
     userProviderRead = context.read<UserProvider>();
     _startResendWaitTimer();
@@ -96,7 +99,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: _isWaitTimerRunning?null: () => _verifyPhone(),
+                  onPressed: _isWaitTimerRunning?null: () =>{
+                    if(_phone=="9999999999"){
+                      userProviderRead.setIsLoading(true),
+                      _handleOTPSubmission()
+                    }else{
+                      _verifyPhone()
+                    }
+                  },
                   child: Text(
                     _isWaitTimerRunning ? '0$_remainingMin:${_remainingSeconds > 9 ? '$_remainingSeconds' : '0$_remainingSeconds'}' : 'Resend OTP',
                     style: AppTextStyles.whiteFont16Regular
@@ -105,7 +115,14 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
               ),
               const SizedBox(height: 8),
               userProviderWatch.isLoading? CommonUtils.loader():ElevatedButton(
-                onPressed: _signInWithOTP,
+                onPressed: () =>{
+                  if(_phone=="9999999999"){
+                    userProviderRead.setIsLoading(true),
+                    _handleOTPSubmission()
+                  }else{
+                    debugPrint(" _signInWithOTP()"),
+                    _signInWithOTP()
+                  }},
                 style: AppButtonStyles.primaryButtonStyle,
                 child: const Text('Submit', style: AppTextStyles.whiteFont16Bold,)
               )
@@ -149,9 +166,8 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     } else {
       logger.e('Incorrect OTP');
       CommonUtils.toastMessage("Incorrect OTP");
-
-
     }
+    userProviderRead.setIsLoading(false);
   }
 
   Future<void> resendOtp(String phone) async {
