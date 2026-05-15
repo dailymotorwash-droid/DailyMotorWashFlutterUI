@@ -1,7 +1,7 @@
 name: dmw
-description: "A new Flutter project."
+description: "Daily Motor Wash"
 publish_to: 'none'
-version: 0.1.0+16
+version: 1.0.0+18
 
 environment:
   sdk: '>=3.4.0 <4.0.0'
