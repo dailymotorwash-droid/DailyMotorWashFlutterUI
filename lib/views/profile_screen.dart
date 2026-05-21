@@ -55,6 +55,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       loadUserData();
       read.clear();
     });
+    CommonUtils.init(context);
+
   }
 
   @override

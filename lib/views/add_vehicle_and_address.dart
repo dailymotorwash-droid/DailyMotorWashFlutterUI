@@ -105,7 +105,7 @@ class _AddVehicleAndAddressScreenState
       loadAddresses();
       loadBrands();
     });
-
+    CommonUtils.init(context);
     super.initState();
   }
 

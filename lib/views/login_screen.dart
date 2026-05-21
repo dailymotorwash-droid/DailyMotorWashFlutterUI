@@ -44,6 +44,8 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     clearLocalStorage();
     read = context.read<UserProvider>();
+    CommonUtils.init(context);
+
     Future.microtask(() async {
       await FirebaseAuth.instance.signOut();
     });

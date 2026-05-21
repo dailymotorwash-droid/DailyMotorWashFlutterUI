@@ -54,6 +54,7 @@ class _OtpVerificationScreenState extends State<OtpVerificationScreen> {
     Future.microtask((){
       _sendOtp();
     });
+    CommonUtils.init(context);
     userProviderRead = context.read<UserProvider>();
     _startResendWaitTimer();
     super.initState();

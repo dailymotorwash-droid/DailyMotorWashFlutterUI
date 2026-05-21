@@ -31,6 +31,7 @@ class _AllSavedVehicles extends State<AllSavedVehicles>{
   void initState() {
     // TODO: implement initState
     read = context.read<VehicleProvider>();
+    CommonUtils.init(context);
 
     Future.microtask((){
       read.setIsLoading(true);
