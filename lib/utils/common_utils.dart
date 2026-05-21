@@ -1,5 +1,6 @@
 
 
+import 'package:another_flushbar/flushbar.dart';
 import 'package:dmw/widgets/loader_transparent.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -7,6 +8,10 @@ import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
 class CommonUtils{
+  static late BuildContext context;
+  static void init(BuildContext ctx){
+    context = ctx;
+}
 
   static Widget loader(){
     // return const LoaderTransparent();
@@ -28,16 +33,39 @@ class CommonUtils{
     }
   }
 
-  static Future<bool?> toastMessage(String message){
-    return Fluttertoast.showToast(
-        msg: message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+  static Future<Future> toastMessage(String message) async {
+    return
+    //   Fluttertoast.showToast(
+    //     msg: message,
+    //     toastLength: Toast.LENGTH_SHORT,
+    //     gravity: ToastGravity.BOTTOM,
+    //     timeInSecForIosWeb: 1,
+    //     backgroundColor: Colors.red,
+    //     textColor: Colors.white,
+    //     fontSize: 16.0
+    // );
+      Flushbar(
+        message: message,
+        duration: const Duration(seconds: 2),
+        flushbarPosition: FlushbarPosition.BOTTOM,
         backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
+        messageColor: Colors.white,
+        messageText: Text(
+          message,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+          ),
+        ),
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+        borderRadius: BorderRadius.circular(25),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
+        ),
+        animationDuration: const Duration(milliseconds: 300),
+      ).show(context);
   }
 
   static String cycle(String cycle){

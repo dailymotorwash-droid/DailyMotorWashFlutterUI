@@ -30,6 +30,7 @@ class VehicleModelProvider extends ChangeNotifier{
   }
 
   void resetSelected(){
+    _models = [];
     _selectedModel =null;
     notifyListeners();
   }
@@ -39,4 +40,5 @@ class VehicleModelProvider extends ChangeNotifier{
     _models = [];
     notifyListeners();
   }
+
 }

@@ -80,6 +80,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
   void initState() {
     // TODO: implement initState
     _razorpay = Razorpay();
+    CommonUtils.init(context);
 
     // Setup listeners
     _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);

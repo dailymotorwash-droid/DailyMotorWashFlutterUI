@@ -14,6 +14,7 @@ class ReferFriendWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context){
+    CommonUtils.init(context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
