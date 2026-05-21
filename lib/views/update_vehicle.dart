@@ -66,6 +66,7 @@ class _UpdateVehicle extends State<UpdateVehicle>{
     modelRead = context.read<VehicleModelProvider>();
     colorRead = context.read<VehicleColorProvider>();
     vehicleRead = context.read<VehicleProvider>();
+    CommonUtils.init(context);
 
     _vehicle = widget.vehicle;
     vehicleNumberController.text = _vehicle.registrationNumber!;

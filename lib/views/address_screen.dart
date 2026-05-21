@@ -57,6 +57,7 @@ class _AddressScreenState extends State<AddressScreen> {
       searchAddressRead.clearSelectedAddress();
 
     });
+    CommonUtils.init(context);
     _from = widget.from;
     if(_from=="UPDATE"){
       _address = widget.address!;
