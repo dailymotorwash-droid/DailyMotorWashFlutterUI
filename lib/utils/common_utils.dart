@@ -33,8 +33,8 @@ class CommonUtils{
     }
   }
 
-  static Future<Future> toastMessage(String message) async {
-    return
+  static void toastMessage(String message) async {
+    // return
     //   Fluttertoast.showToast(
     //     msg: message,
     //     toastLength: Toast.LENGTH_SHORT,
@@ -44,28 +44,52 @@ class CommonUtils{
     //     textColor: Colors.white,
     //     fontSize: 16.0
     // );
-      Flushbar(
-        message: message,
-        duration: const Duration(seconds: 2),
-        flushbarPosition: FlushbarPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        messageColor: Colors.white,
-        messageText: Text(
-          message,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.white,
-            fontSize: 16,
+    //   Flushbar(
+    //     message: message,
+    //     duration: const Duration(seconds: 2),
+    //     flushbarPosition: FlushbarPosition.BOTTOM,
+    //     backgroundColor: Colors.red,
+    //     messageColor: Colors.white,
+    //     messageText: Text(
+    //       message,
+    //       textAlign: TextAlign.center,
+    //       style: const TextStyle(
+    //         color: Colors.white,
+    //         fontSize: 16,
+    //       ),
+    //     ),
+    //     margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+    //     borderRadius: BorderRadius.circular(25),
+    //     padding: const EdgeInsets.symmetric(
+    //       horizontal: 16,
+    //       vertical: 12,
+    //     ),
+    //     animationDuration: const Duration(milliseconds: 300),
+    //   ).show(context);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
           ),
+          backgroundColor: Colors.red,
+          behavior: SnackBarBehavior.floating,
+          margin: EdgeInsets.only(
+            left: 20,
+            right: 20,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+          duration: const Duration(seconds: 2),
         ),
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
-        borderRadius: BorderRadius.circular(25),
-        padding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 12,
-        ),
-        animationDuration: const Duration(milliseconds: 300),
-      ).show(context);
+      );
   }
 
   static String cycle(String cycle){
