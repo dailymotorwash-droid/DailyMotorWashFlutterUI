@@ -10,21 +10,34 @@ import Firebase
   ) -> Bool {
     FirebaseApp.configure()
     application.registerForRemoteNotifications()
+    print("REMOTE NOTIFICATION REGISTER CALLED")
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
+  override func application(
+    _ application: UIApplication,
+    didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+  ) {
 
-    override func application(
-      _ application: UIApplication,
-      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
-    ) {
+    let token = deviceToken.map {
+      String(format: "%02.2hhx", $0)
+    }.joined()
 
-      // Important for Firebase Phone Auth silent push verification
-      Auth.auth().setAPNSToken(deviceToken, type: .unknown)
+    print("APNS TOKEN:", token)
 
-      super.application(
-        application,
-        didRegisterForRemoteNotificationsWithDeviceToken: deviceToken
-      )
-    }
+    Auth.auth().setAPNSToken(deviceToken, type: .prod)
+
+    super.application(
+      application,
+      didRegisterForRemoteNotificationsWithDeviceToken: deviceToken
+    )
+  }
+
+  override func application(
+    _ application: UIApplication,
+    didFailToRegisterForRemoteNotificationsWithError error: Error
+  ) {
+
+    print("APNS FAILED:", error.localizedDescription)
+  }
 }
