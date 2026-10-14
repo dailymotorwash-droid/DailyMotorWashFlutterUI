@@ -10,6 +10,7 @@ class Subscription {
   final String? addressId;
   final DateTime? startDate;
   late String? paymentId;
+  late int? masterAddressId;
 
   Subscription({
     this.id,
@@ -22,7 +23,8 @@ class Subscription {
     required this.paymentMethod,
     this.addressId,
     this.startDate,
-    this.paymentId
+    this.paymentId,
+    this.masterAddressId
   });
 
   factory Subscription.fromJson(Map<String, dynamic> json) {

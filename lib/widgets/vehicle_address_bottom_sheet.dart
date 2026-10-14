@@ -2,14 +2,17 @@ import 'package:dmw/ApiResponse/address_response.dart';
 import 'package:dmw/Apis/RestServiceImp.dart';
 import 'package:dmw/models/vehicle.dart';
 import 'package:dmw/providers/address_provider.dart';
+import 'package:dmw/providers/one_time_service_provider.dart';
 import 'package:dmw/providers/vehicle_provider.dart';
 import 'package:dmw/utils/common_utils.dart';
 import 'package:dmw/views/address_screen.dart';
+import 'package:dmw/views/select_plan_screen.dart/selected_ots_plan_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/address.dart';
+import '../models/service.dart';
 import '../utils/custom_button_styles.dart';
 import '../utils/custom_colors.dart';
 import '../utils/custom_text_styles.dart';
@@ -17,10 +20,12 @@ import '../views/select_plan_screen.dart/select_plan_screen.dart';
 
 class VehicleAddressBottomSheet extends StatefulWidget {
   final Vehicle vehicle;
-
+  final bool isSubscription;
+  final DateTime? time;
+  final Service? serviceItem;
   const VehicleAddressBottomSheet({
     super.key,
-    required this.vehicle,
+    required this.vehicle, required this.isSubscription, this.time,  this.serviceItem,
   });
 
   @override
@@ -88,10 +93,13 @@ class _VehicleAddressBottomSheet extends State<VehicleAddressBottomSheet> {
             itemBuilder: (context, index) {
               final addresses= watch.addresses[index];
               return InkWell(
-                onTap: (){
+                onTap: (){widget.isSubscription?
                   Navigator.push(
                         context, MaterialPageRoute(builder:
-                          (context) => SelectPlanScreen(vehicle: _vehicle,address:addresses)));
+                          (context) => SelectPlanScreen(vehicle: _vehicle,address:addresses))):
+                Navigator.push(
+                    context, MaterialPageRoute(builder:
+                    (context) => SelectedOtsPlanScreen(vehicle: _vehicle,address:addresses, serviceItem: widget.serviceItem!, time: widget.time!,)));
                 },
                   child: address(addresses));
 

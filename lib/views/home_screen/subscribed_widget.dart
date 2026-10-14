@@ -18,9 +18,11 @@ class SubscribedWidget extends StatefulWidget {
   State<SubscribedWidget> createState() => _SubscribedWidget();
 }
 
-class _SubscribedWidget extends State<SubscribedWidget> {
+class _SubscribedWidget extends State<SubscribedWidget> with AutomaticKeepAliveClientMixin{
 
-
+// 2. Override wantKeepAlive and set to true
+  @override
+  bool get wantKeepAlive => true;
   late SubscriptionVehicleProvider read,watch;
 
   final List<Vehicle> defaultCarList = const [
@@ -41,14 +43,18 @@ class _SubscribedWidget extends State<SubscribedWidget> {
   void initState() {
     // TODO: implement initState
     read  = context.read<SubscriptionVehicleProvider>();
-    Future.microtask((){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       loadSubscriptionVehicles();
+
     });
+    // Future.microtask((){
+    // });
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     watch = context.watch<SubscriptionVehicleProvider>();
 
     return  watch.vehicles.isEmpty?Container(): Column(

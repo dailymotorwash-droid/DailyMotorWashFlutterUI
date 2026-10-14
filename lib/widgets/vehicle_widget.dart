@@ -194,7 +194,7 @@ class _VehicleWidgetState extends State<VehicleWidget> {
                 top: Radius.circular(28),
               ),
             ),
-            child: VehicleAddressBottomSheet(vehicle: widget.vehicle));
+            child: VehicleAddressBottomSheet(vehicle: widget.vehicle,isSubscription: true, serviceItem: null,));
       },
     );
   }

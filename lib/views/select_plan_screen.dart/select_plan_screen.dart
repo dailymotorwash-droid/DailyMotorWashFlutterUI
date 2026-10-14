@@ -196,13 +196,14 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     );
   }
 
-  Future<void> loadServices() async {
+  Future<void>
+  loadServices() async {
     var storage = await LocalStorage.getInstance();
     PlanResponse response = await RestServiceImp.getUserServices(
         storage.getToken(),
         _vehicle.vehicleType!,
         _vehicle.size!,
-        _address.masterAddressId!);
+        _address.masterAddressId!,'SUBSCRIPTION');
     if (response.isSuccess) {
       read.setPlans(response.data);
       read.setIsLoading(false);
@@ -663,7 +664,9 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
         addressId: _address.id,
         isPointsAvail: userWatch.user?.points != 0 ? true : false,
         startDate: subscriptionWatch.selectedStartDate,
-        paymentId: paymentId);
+        paymentId: paymentId,
+        masterAddressId: _address.masterAddressId
+    );
     print(subscription.toJson());
     SubscriptionResponse response =
         await RestServiceImp.subscribe(subscription);
