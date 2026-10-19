@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/service.dart';
 import '../../providers/one_time_service_provider.dart';
+import '../../utils/custom_enums.dart';
+import '../saved_vehicles_screen.dart';
 import '../select_plan_screen.dart/one_time_booking_schedule_widget.dart';
 
 class ServiceCardWidget extends StatelessWidget {
@@ -17,7 +19,8 @@ class ServiceCardWidget extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => OneTimeBookingScheduleWidget(selectedService: item),
+        // builder: (_) => OneTimeBookingScheduleWidget(selectedService: item),
+        builder: (_) => SavedVehiclesScreen(vehicleType: VehicleType.car,isSubscription: false,selectedService: item,)
       ),
     );
   }

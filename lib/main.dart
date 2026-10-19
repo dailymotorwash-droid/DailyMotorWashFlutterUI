@@ -3,6 +3,7 @@ import 'package:dmw/providers/address_provider.dart';
 import 'package:dmw/providers/brand_provider.dart';
 import 'package:dmw/providers/home_screen_provider.dart';
 import 'package:dmw/providers/one_time_service_provider.dart';
+import 'package:dmw/providers/one_time_service_vehicle_provider.dart';
 import 'package:dmw/providers/search_address_provider.dart';
 import 'package:dmw/providers/service_provider.dart';
 import 'package:dmw/providers/subscription_provider.dart';
@@ -39,6 +40,7 @@ void main() async{
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
+        ChangeNotifierProvider(create: (_) => OneTimeServiceVehicleProvider()),
         ChangeNotifierProvider(create: (_) => OneTimeServiceProvider()),
         ChangeNotifierProvider(create: (_) => VehicleProvider()),
         ChangeNotifierProvider(create: (_) => ServiceProvider()),

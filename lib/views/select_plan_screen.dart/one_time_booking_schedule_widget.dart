@@ -1,28 +1,24 @@
 import 'package:dmw/providers/ScheduleProvider.dart';
-import 'package:dmw/providers/one_time_service_provider.dart';
+import 'package:dmw/utils/common_utils.dart';
 import 'package:dmw/utils/custom_button_styles.dart';
 import 'package:dmw/utils/custom_colors.dart';
 import 'package:dmw/utils/custom_text_styles.dart';
-import 'package:dmw/widgets/ots_vehicle_widget.dart';
+import 'package:dmw/views/select_plan_screen.dart/selected_ots_plan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../ApiResponse/vehicle_response.dart';
-import '../../Apis/RestServiceImp.dart';
+import '../../models/address.dart';
 import '../../models/service.dart';
 import '../../models/vehicle.dart';
 import '../../providers/vehicle_provider.dart';
-import '../../utils/common_utils.dart';
-import '../../utils/custom_enums.dart';
-import '../../utils/local_storage.dart';
-import '../../widgets/vehicle_widget.dart';
 
 class OneTimeBookingScheduleWidget extends StatefulWidget{
   final Service selectedService;
-
+  final Vehicle vehicle;
+  final Address address;
   const OneTimeBookingScheduleWidget({
     super.key,
-    required this.selectedService,
+    required this.selectedService, required this.vehicle, required this.address,
   });
   @override
   State<OneTimeBookingScheduleWidget> createState() => _OneTimeBookingScheduleState();
@@ -38,21 +34,22 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    read = context.read<VehicleProvider>();
-    read.setIsLoading(true);
-    Future.microtask((){
-      loadVehicles();
-
+// Fetch slots after the first frame mounts
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final scheduleProvider = context.read<ScheduleProvider>();
+      scheduleProvider.resetSchedule();
+      scheduleProvider.fetchSlots(widget.address.masterAddressId!);
     });
     super.initState();
   }
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<ScheduleProvider>();
-    watch = context.watch<VehicleProvider>();
+    // watch = context.watch<VehicleProvider>();
 
-
+    if (provider.isLoading) {
+      return CommonUtils.loader();
+    }
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
       appBar: AppBar(
@@ -91,17 +88,12 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
                     const SizedBox(height: 16),
                     _buildSelectionConfirmation(provider),
                   ],
-
-                  const SizedBox(height: 20),
-                  if(provider.isReadyToContinue) ...[
-                    _vehicles(watch,provider.selectedDateTime,widget.selectedService)
-                  ]
                 ],
               ),
             ),
           ),
           _buildBottomPromoBar(),
-          // _buildBottomContinueSection(context, provider),
+          _buildBottomContinueSection(context, provider, vehicle: widget.vehicle, address: widget.address, selectedService: widget.selectedService)
         ],
       ),
     );
@@ -171,8 +163,12 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
     );
   }
 
-  // --- Step 1: Date Section (Matching SelectPlan Date Container) ---
+// --- Step 1: Date Section (Matching SelectPlan Date Container) ---
   Widget _buildDateSection(BuildContext context, ScheduleProvider provider) {
+    if (provider.dateLabels.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return _buildCardWrapper(
       title: 'Select Date',
       child: Row(
@@ -182,6 +178,7 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
             child: Padding(
               padding: EdgeInsets.only(
                 left: index == 0 ? 0 : 5.0,
+                // Fixed: properly subtract 1 to remove right padding on the last item
                 right: index == provider.dateLabels.length - 1 ? 0 : 5.0,
               ),
               child: InkWell(
@@ -190,7 +187,6 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 13),
                   decoration: BoxDecoration(
-                    // Selected state: #E8F0F6 with primary red accent border
                     color: isSelected ? selectedItemBgColor : AppColors.white,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
@@ -216,11 +212,14 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
     );
   }
 
-  // --- Step 2: Time Slot Section ---
+// --- Step 2: Time Slot Section ---
   Widget _buildTimeSlotSection(BuildContext context, ScheduleProvider provider) {
+    final slots = provider.currentSlots;
+
     return _buildCardWrapper(
       title: 'Select Start Time',
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Morning / Afternoon / Evening Period Filter
           Row(
@@ -254,52 +253,79 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
           ),
           const SizedBox(height: 18),
 
-          // Time Grid Slots
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: provider.morningSlots.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 4,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 8,
-              childAspectRatio: 1.85,
-            ),
-            itemBuilder: (context, index) {
-              final isSelected = provider.selectedSlotIndex == index;
-              return InkWell(
-                borderRadius: BorderRadius.circular(10),
-                onTap: () => context.read<ScheduleProvider>().selectSlot(index),
-                child: Container(
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    // Selected state: #E8F0F6 with primary red accent border
-                    color: isSelected ? selectedItemBgColor : AppColors.white,
-                    borderRadius: BorderRadius.circular(10),
-                    border: Border.all(
-                      color: isSelected ? primaryActiveRed : cardBorderColor,
-                      width: isSelected ? 1.5 : 1,
-                    ),
-                  ),
-                  child: Text(
-                    provider.morningSlots[index],
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                      color: isSelected ? primaryActiveRed : textDark,
-                    ),
-                  ),
+          // Empty state when period has no slots
+          if (slots.isEmpty)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 24),
+              alignment: Alignment.center,
+              child: Text(
+                'No available slots for this period',
+                style: TextStyle(
+                  color: Colors.grey.shade500,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
                 ),
-              );
-            },
-          ),
+              ),
+            )
+          else
+          // Time Grid Slots
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: slots.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 4,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 8,
+                childAspectRatio: 1.85,
+              ),
+              itemBuilder: (context, index) {
+                final slot = slots[index];
+                final isSelected = provider.selectedSlot?.slotInventoryId == slot.slotInventoryId;
+                final isEnabled = slot.bookable && slot.available > 0;
+
+                return InkWell(
+                  borderRadius: BorderRadius.circular(10),
+                  onTap: isEnabled
+                      ? () => context.read<ScheduleProvider>().selectSlot(slot)
+                      : null,
+                  child: Container(
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? selectedItemBgColor
+                          : (isEnabled ? AppColors.white : Colors.grey.shade100),
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        color: isSelected
+                            ? primaryActiveRed
+                            : (isEnabled ? cardBorderColor : Colors.grey.shade300),
+                        width: isSelected ? 1.5 : 1,
+                      ),
+                    ),
+                    child: Text(
+                      slot.startTimeLabel,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                        color: isSelected
+                            ? primaryActiveRed
+                            : (isEnabled ? textDark : Colors.grey.shade400),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
         ],
       ),
     );
   }
 
-  // --- Whole Date & Time Preview Badge ---
+// --- Whole Date & Time Preview Badge ---
   Widget _buildSelectionConfirmation(ScheduleProvider provider) {
+    if (provider.selectedSlot == null) return const SizedBox.shrink();
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(14),
@@ -327,7 +353,7 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
     );
   }
 
-  // --- Promo Saving Banner ---
+// --- Promo Saving Banner ---
   Widget _buildBottomPromoBar() {
     return Container(
       width: double.infinity,
@@ -358,21 +384,23 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
             ),
           ),
           const SizedBox(width: 10),
-           RichText(
-            text: const TextSpan(
-              style: TextStyle(fontSize: 13, color: textDark),
-              children: [
-                TextSpan(text: 'You are saving '),
-                TextSpan(
-                  text: '₹347 ',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: primaryActiveRed),
-                ),
-                TextSpan(text: 'using '),
-                TextSpan(
-                  text: 'Starter Pack',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: primaryActiveRed),
-                ),
-              ],
+          const Expanded(
+            child: Text.rich(
+              TextSpan(
+                style: TextStyle(fontSize: 13, color: textDark),
+                children: [
+                  TextSpan(text: 'You are saving '),
+                  TextSpan(
+                    text: '₹347 ',
+                    style: TextStyle(fontWeight: FontWeight.bold, color: primaryActiveRed),
+                  ),
+                  TextSpan(text: 'using '),
+                  TextSpan(
+                    text: 'Starter Pack',
+                    style: TextStyle(fontWeight: FontWeight.bold, color: primaryActiveRed),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -380,8 +408,14 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
     );
   }
 
-  // --- Bottom Action Navigation Bar ---
-  Widget _buildBottomContinueSection(BuildContext context, ScheduleProvider provider) {
+// --- Bottom Action Navigation Bar ---
+  Widget _buildBottomContinueSection(
+      BuildContext context,
+      ScheduleProvider provider, {
+        required dynamic vehicle,
+        required dynamic address,
+        required dynamic selectedService,
+      }) {
     return SafeArea(
       child: Container(
         width: double.infinity,
@@ -403,11 +437,17 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
           child: ElevatedButton(
             onPressed: provider.isReadyToContinue
                 ? () {
-              final scheduledDateTime = provider.selectedDateTime;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Scheduled for: $scheduledDateTime'),
-                  backgroundColor: primaryActiveRed,
+              final scheduledDateTime = provider.selectedDateTime ?? DateTime.now();
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SelectedOtsPlanScreen(
+                    vehicle: vehicle,
+                    address: address,
+                    serviceItem: selectedService,
+                    selectedSlot: provider.selectedSlot!,
+                    selectedSlotDate: provider.selectedDateString!,
+                  ),
                 ),
               );
             }
@@ -437,7 +477,7 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
     );
   }
 
-  // --- Base Card Shell ---
+// --- Base Card Shell ---
   Widget _buildCardWrapper({required String title, required Widget child}) {
     return Container(
       width: double.infinity,
@@ -467,39 +507,11 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
       ),
     );
   }
-
-  Widget _vehicles(VehicleProvider watch,DateTime? time,Service serviceItem){
-    return watch.isLoading?CommonUtils.loader():SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-    // child:  watch.vehicles.isEmpty?/*defaultVehicles()*/const Center(child: Text("Please Add Address")):vehicles(watch.vehicles)
-    child: vehicles(watch.vehicles,time!,serviceItem)    );
-  }
-
-
-  Widget vehicles(List<Vehicle> vehicles,DateTime time,Service serviceItem){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-
-        const SizedBox(height: 4),
-        ...List.generate(2*vehicles.length, (index) {
-          if(index.isOdd) return const SizedBox(height: 16);
-          return vehicles.isEmpty?const Center(child: Text("Please Add Vehicle",style:TextStyle(
-              color: AppColors.white
-          ) ,)):OtsVehicleWidget(
-            vehicle: vehicles[index~/2], time: time,serviceItem: serviceItem,
-          );
-        }),
-      ],
-    );
-  }
-
-  Future<void> loadVehicles() async {
-    var storage = await LocalStorage.getInstance();
-    VehicleResponse response =  await RestServiceImp.getUserVehicles(storage.getToken(),VehicleType.car.label);
-    if (response.isSuccess) {
-      read.setVehicles(response.data);
-      read.setIsLoading(false);
-    }
+  
+ @override
+  void dispose() {
+    // TODO: implement dispose
+   // context.read<ScheduleProvider>().resetSchedule();
+    super.dispose();
   }
 }

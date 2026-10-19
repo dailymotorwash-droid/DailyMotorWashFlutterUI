@@ -25,11 +25,11 @@ class DoorstepWashWidget extends StatelessWidget {
                     if(index == 0) {
                       Navigator.push(
                         context, MaterialPageRoute(builder:
-                          (context) => const SavedVehiclesScreen(vehicleType: VehicleType.car,),));
+                          (context) => const SavedVehiclesScreen(vehicleType: VehicleType.car,isSubscription: true,),));
                     } else {
                       Navigator.push(
                         context, MaterialPageRoute(builder:
-                          (context) => const SavedVehiclesScreen(vehicleType: VehicleType.twoWheeler,),));
+                          (context) => const SavedVehiclesScreen(vehicleType: VehicleType.twoWheeler,isSubscription: true,),));
                     }
                   },
                   child: Container(

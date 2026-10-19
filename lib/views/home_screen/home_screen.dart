@@ -27,11 +27,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   late UserProvider userProviderRead,userProviderWatch;
-
+  late final PageController _pageController;
   @override
   initState()  {
     // TODO: implement initState
     userProviderRead = context.read<UserProvider>();
+    final initialTab = context.read<HomeScreenProvider>().selectedTab;
+    _pageController = PageController(initialPage: initialTab);
     Future.microtask((){
       loadProfile();
 
@@ -43,6 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     userProviderWatch =  context.watch<UserProvider>();
     final homeProvider = context.watch<HomeScreenProvider>();
+    // Sync tab animations from provider to local controller safely
+    final selectedTab = context.select<HomeScreenProvider, int>((p) => p.selectedTab);
+    if (_pageController.hasClients && _pageController.page?.round() != selectedTab) {
+      _pageController.animateToPage(
+        selectedTab,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeOutCubic,
+      );
+    }
     return Scaffold(
       drawer: const DrawerWidget(),
       backgroundColor: AppColors.lightBackground,
@@ -110,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // Swipable views between Subscription (Index 0) and One-Time Service (Index 1)
             Expanded(
               child: PageView(
-                controller: homeProvider.pageController,
+                controller: _pageController, // Use local widget controller
                 onPageChanged: (index) =>
                     context.read<HomeScreenProvider>().onPageChanged(index),
                 children: [
@@ -169,5 +180,12 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    // Always dispose local controllers
+    _pageController.dispose();
+    super.dispose();
   }
 }

@@ -28,19 +28,21 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:razorpay_flutter/razorpay_flutter.dart';
 
+import '../../models/OneTimeBookingRequest.dart';
+import '../../models/schedule_slot.dart';
 import '../../models/service.dart';
 
 class SelectedOtsPlanScreen extends StatefulWidget {
   final Vehicle vehicle;
   final Address address;
   final Service serviceItem;
-  final DateTime time;
+  final ScheduleSlot selectedSlot;
+  final String selectedSlotDate;
   const SelectedOtsPlanScreen({
     super.key,
     required this.vehicle,
     required this.address,
-    required this.serviceItem,
-    required this.time
+    required this.serviceItem, required this.selectedSlot, required this.selectedSlotDate,
   });
 
   @override
@@ -159,6 +161,8 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
               vehicle: vehicleWatch.selectedVehicle ?? _vehicle,
               isClickable: false,
               isEditable: false,
+                isSubscription:false,
+                selectedService: widget.serviceItem,
             ),
             const SizedBox(height: 16),
 
@@ -577,39 +581,6 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
                       ),
                       SizedBox(height: screenHeight * 0.025),
 
-                      // DATE SELECTION
-                      GestureDetector(
-                        onTap: () async {
-                          final DateTime? pickedDate = await pickDate(context);
-                          if (pickedDate != null) {
-                            setState(() {
-                              selectedDate = pickedDate;
-                            });
-                          }
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: const Color(0xffE8F0F6),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(Icons.calendar_month, size: 20),
-                              const SizedBox(width: 8),
-                              Text(
-                                selectedDate == null
-                                    ? DateFormat('dd MMM yyyy').format(DateTime.now())
-                                    : DateFormat('dd MMM yyyy').format(selectedDate!),
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: screenHeight * 0.025),
-
                       // VEHICLE & SERVICE DETAILS BOX
                       Container(
                         padding: EdgeInsets.all(screenWidth * 0.04),
@@ -718,29 +689,6 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
     );
   }
 
-  Future<DateTime?> pickDate(BuildContext context) async {
-    final DateTime now = DateTime.now();
-
-    final DateTime? pickedDate = await showDatePicker(
-      context: context,
-      initialDate: now,
-      firstDate: now,
-      lastDate: DateTime(now.year + 5),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
-              primary: Colors.red,
-              onPrimary: Colors.white,
-              onSurface: Colors.black,
-            ),
-          ),
-          child: child!,
-        );
-      },
-    );
-    return pickedDate;
-  }
 
   Future<void> createRazorpayOrder(Plan plan) async {
     vehicleRead.setIsLoading(true);
@@ -817,31 +765,33 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
   }
 
   Future<void> bookOneTimeService(String? paymentId) async {
-    final vehicleId = vehicleRead.selectedVehicle?.id ?? _vehicle.id;
-    final scheduleProvider = context.read<ScheduleProvider>();
 
-    final Map<String, dynamic> bookingData = {
-      "vehicleId": vehicleId,
-      "serviceId": _serviceItem.id,
-      "rateId": watch.selectedPlan?.id,
-      "amount": watch.selectedPlan?.rate,
-      "paymentMethod": 'UPI',
-      "paymentId": paymentId,
-      "addressId": _address.id,
-      "masterAddressId": _address.masterAddressId,
-      "scheduledDate": scheduleProvider.selectedDateTime?.toIso8601String() ??
-          selectedDate?.toIso8601String(),
-    };
 
-    // final Response response = await RestServiceImp.bookOneTimeService(bookingData);
-    // if (response.isSuccess) {
-    //   Navigator.pushNamedAndRemoveUntil(
-    //     context,
-    //     AppRoutes.homeScreen,
-    //         (Route<dynamic> route) => false,
-    //   );
-    // } else {
-    //   CommonUtils.toastMessage(response.message);
-    // }
+    final bookingRequest = OneTimeBookingRequest(
+      vehicleId: (_vehicle.id ?? '').toString(),
+      serviceId: _serviceItem.id,
+      rateId: widget.serviceItem.id,
+      rate: read.planes[0].rate.toDouble(),
+      discount: read.planes[0].discount.toDouble(),
+      bookingDate: widget.selectedSlotDate,
+      slotStartTime: widget.selectedSlot.startTime,
+      slotEndTime: widget.selectedSlot.endTime,
+      slotLabel: widget.selectedSlot.label,
+      paymentId: paymentId!,
+      slotInventoryId: widget.selectedSlot.slotInventoryId,
+      addressId: widget.address.id!,
+
+    );
+
+    final Response response = await RestServiceImp.bookOneTimeService(bookingRequest);
+    if (response.isSuccess) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.homeScreen,
+            (Route<dynamic> route) => false,
+      );
+    } else {
+      CommonUtils.toastMessage(response.message);
+    }
   }
 }

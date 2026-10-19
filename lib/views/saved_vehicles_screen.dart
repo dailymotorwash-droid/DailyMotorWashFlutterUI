@@ -1,3 +1,4 @@
+
 import 'package:dmw/ApiResponse/vehicle_response.dart';
 import 'package:dmw/Apis/RestServiceImp.dart';
 import 'package:dmw/models/vehicle.dart';
@@ -13,16 +14,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../ApiResponse/user_profile_response.dart';
+import '../models/service.dart';
 import '../widgets/default_vehicle.dart';
 import 'add_vehicle_and_address.dart';
 
 class SavedVehiclesScreen extends StatefulWidget {
 
   final VehicleType? vehicleType;
+  final bool isSubscription;
+  final Service? selectedService;
 
   const SavedVehiclesScreen({
     super.key,
-    required this.vehicleType,
+    required this.vehicleType, required this.isSubscription, this.selectedService,
   });
 
   @override
@@ -99,7 +103,7 @@ class _SavedVehiclesScreenState extends State<SavedVehiclesScreen> {
             // Navigator.pushNamed(context, AppRoutes.addVehicleScreen);
             Navigator.push(
                           context, MaterialPageRoute(builder:
-                          (context) => AddVehicleAndAddressScreen(vehicleType:_vehicleType)));
+                          (context) => AddVehicleAndAddressScreen(vehicleType:_vehicleType,isSubscription: widget.isSubscription,selectedService: widget.selectedService,)));
           },
           child: const Row(
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -120,6 +124,9 @@ class _SavedVehiclesScreenState extends State<SavedVehiclesScreen> {
               vehicle: vehicles[index~/2],
               colorTheme: ColorTheme.dark,
               isEditable: false,
+                isSubscription:widget.isSubscription,
+                selectedService:widget.selectedService
+
             );
           }),
         if(vehicles.isEmpty)

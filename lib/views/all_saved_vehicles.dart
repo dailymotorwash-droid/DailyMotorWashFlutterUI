@@ -78,6 +78,7 @@ class _AllSavedVehicles extends State<AllSavedVehicles>{
             vehicle: vehicles[index~/2],
             colorTheme: ColorTheme.dark,
             isEditable: true,
+              isSubscription:false
           );
         }),
       ],

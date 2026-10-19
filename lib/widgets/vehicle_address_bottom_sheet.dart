@@ -6,6 +6,7 @@ import 'package:dmw/providers/one_time_service_provider.dart';
 import 'package:dmw/providers/vehicle_provider.dart';
 import 'package:dmw/utils/common_utils.dart';
 import 'package:dmw/views/address_screen.dart';
+import 'package:dmw/views/select_plan_screen.dart/one_time_booking_schedule_widget.dart';
 import 'package:dmw/views/select_plan_screen.dart/selected_ots_plan_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class VehicleAddressBottomSheet extends StatefulWidget {
   final Service? serviceItem;
   const VehicleAddressBottomSheet({
     super.key,
-    required this.vehicle, required this.isSubscription, this.time,  this.serviceItem,
+    required this.vehicle, required this.isSubscription, this.time,this.serviceItem,
   });
 
   @override
@@ -99,7 +100,7 @@ class _VehicleAddressBottomSheet extends State<VehicleAddressBottomSheet> {
                           (context) => SelectPlanScreen(vehicle: _vehicle,address:addresses))):
                 Navigator.push(
                     context, MaterialPageRoute(builder:
-                    (context) => SelectedOtsPlanScreen(vehicle: _vehicle,address:addresses, serviceItem: widget.serviceItem!, time: widget.time!,)));
+                    (context) => OneTimeBookingScheduleWidget(vehicle: _vehicle,address:addresses, selectedService: widget.serviceItem!,)));
                 },
                   child: address(addresses));
 

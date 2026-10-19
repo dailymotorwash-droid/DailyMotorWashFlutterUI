@@ -51,6 +51,7 @@ class Subscription {
       "addressId":addressId,
       "startDate":startDate?.toIso8601String(),
       "razorpayPaymentId":paymentId,
+      "masterAddressId":masterAddressId,
     };
   }
 }

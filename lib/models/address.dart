@@ -17,6 +17,7 @@ class Address {
   final String? vehicleId;
   final String? houseNo;
   final int? masterAddressId;
+  final String? serviceStartDate;
 
 
   const Address( {
@@ -36,6 +37,7 @@ class Address {
     this.vehicleId,
     this.houseNo,
     this.masterAddressId,
+    this.serviceStartDate
   });
 
   factory Address.fromJson(Map<String, dynamic> json) {
@@ -54,6 +56,7 @@ class Address {
       vehicleId:json['vehicleId'],
       houseNo:json['houseNo'],
       masterAddressId:json['masterAddressId'],
+      serviceStartDate:json['serviceStartDate'],
     );
   }
 

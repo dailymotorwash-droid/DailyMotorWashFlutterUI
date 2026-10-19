@@ -5,19 +5,25 @@ class HomeScreenProvider extends ChangeNotifier {
   final PageController pageController = PageController(initialPage: 0);
   int get selectedTab => _selectedTab;
 
+  // void setTab(int index) {
+  //   if (_selectedTab != index) {
+  //     _selectedTab = index;
+  //     pageController.animateToPage(
+  //       index,
+  //       duration: const Duration(milliseconds: 300),
+  //       curve: Curves.easeOutCubic,
+  //     );
+  //     notifyListeners();
+  //   }
+  // }
   void setTab(int index) {
     if (_selectedTab != index) {
       _selectedTab = index;
-      pageController.animateToPage(
-        index,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOutCubic,
-      );
       notifyListeners();
     }
   }
 
-  // Called continuously by PageView swipe
+// Called continuously by PageView swipe
   void onPageChanged(int index) {
     if (_selectedTab != index) {
       _selectedTab = index;

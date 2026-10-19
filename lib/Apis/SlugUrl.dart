@@ -32,5 +32,8 @@ class SlugUrl {
   static String verifyRazorpayOrder= "razorpay/verify-payment";
   static String checkFirstOrExpireSubscription= "subscription/{addressId}/{vehicleId}/checkActiveOrExpire";
   static String oneTimeServices= "service/one-time";
+  static String slots = "master/{addressId}/slots";
+  static String bookSlot = "subscription/one-time";
+  static String oneTimeBookedVehicles = "subscription/one-time/vehicle";
 
 }
