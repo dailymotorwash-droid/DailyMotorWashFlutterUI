@@ -147,19 +147,29 @@ class HomeTabWidget extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 2),
-                                FittedBox(
-                                  fit: BoxFit.scaleDown,
+                                Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isTablet ? 8 : 6,
+                                    vertical: isTablet ? 2 : 1,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: !isCloserToTab0
+                                        ? const Color(0xFFEEEEEE)
+                                        : const Color(0xFF434960),
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
                                   child: Text(
                                     'Quick Booking',
                                     style: TextStyle(
                                       color: !isCloserToTab0
-                                          ? Colors.black54
-                                          : Colors.white54,
-                                      fontSize: isTablet ? 11.0 : 10.0,
-                                      fontWeight: FontWeight.w500,
+                                          ? Colors.black87
+                                          : Colors.white60,
+                                      fontSize: isTablet ? 10.0 : 9.0,
+                                      fontWeight: FontWeight.w600,
                                     ),
                                   ),
                                 ),
+
                               ],
                             ),
                           ),
