@@ -92,7 +92,7 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
               ),
             ),
           ),
-          _buildBottomPromoBar(),
+          // _buildBottomPromoBar(),
           _buildBottomContinueSection(context, provider, vehicle: widget.vehicle, address: widget.address, selectedService: widget.selectedService)
         ],
       ),

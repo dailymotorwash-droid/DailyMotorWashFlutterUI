@@ -612,14 +612,16 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
                               title: '${_serviceItem.serviceName} - Wash',
                               value: '₹${plan.rate}',
                             ),
-                            PriceRowWidget(
-                              title: 'Discount',
-                              value: '₹${plan.discount}',
-                            ),
-                            PriceRowWidget(
-                              title: 'Points',
-                              value: '₹$userPoints',
-                            ),
+                            if(plan.discount>0)...[
+                              PriceRowWidget(
+                                title: 'discount',
+                                value: '${plan.discount}',
+                              ),
+                            ],
+                            // PriceRowWidget(
+                            //   title: 'Points',
+                            //   value: '₹$userPoints',
+                            // ),
                             const Divider(),
                             PriceRowWidget(
                               title: 'Total',
