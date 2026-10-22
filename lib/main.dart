@@ -17,6 +17,7 @@ import 'package:dmw/utils/NetworkService.dart';
 import 'package:dmw/utils/custom_colors.dart';
 import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:dmw/utils/page_routes.dart';
+import 'package:dmw/views/home_screen/ForceUpdateGate.dart';
 import 'package:dmw/views/home_screen/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -83,38 +84,41 @@ class MainApp extends StatelessWidget {
       ),
       // 👇 IMPORTANT: wrap builder
       builder: (context, child) {
-        return Stack(
-          children: [
-            child!,
-
-            /// 🔴 No Internet Banner
-            ValueListenableBuilder<bool>(
-              valueListenable: networkService.isOffline,
-              builder: (context, isOffline, _) {
-                return AnimatedPositioned(
-                  duration: const Duration(milliseconds: 300),
-                  top: isOffline ? 0 : -60,
-                  left: 0,
-                  right: 0,
-                  child: _banner("No Internet Connection", Colors.red),
-                );
-              },
-            ),
-
-            /// 🟢 Back Online Banner
-            ValueListenableBuilder<bool>(
-              valueListenable: networkService.isBackOnline,
-              builder: (context, show, _) {
-                return AnimatedPositioned(
-                  duration: const Duration(milliseconds: 300),
-                  top: show ? 0 : -60,
-                  left: 0,
-                  right: 0,
-                  child: _banner("Back Online", Colors.green),
-                );
-              },
-            ),
-          ],
+        debugPrint('MaterialApp builder called');
+        return ForceUpdateGate(
+          child: Stack(
+            children: [
+              child!,
+          
+              /// 🔴 No Internet Banner
+              ValueListenableBuilder<bool>(
+                valueListenable: networkService.isOffline,
+                builder: (context, isOffline, _) {
+                  return AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    top: isOffline ? 0 : -60,
+                    left: 0,
+                    right: 0,
+                    child: _banner("No Internet Connection", Colors.red),
+                  );
+                },
+              ),
+          
+              /// 🟢 Back Online Banner
+              ValueListenableBuilder<bool>(
+                valueListenable: networkService.isBackOnline,
+                builder: (context, show, _) {
+                  return AnimatedPositioned(
+                    duration: const Duration(milliseconds: 300),
+                    top: show ? 0 : -60,
+                    left: 0,
+                    right: 0,
+                    child: _banner("Back Online", Colors.green),
+                  );
+                },
+              ),
+            ],
+          ),
         );
       },
     );

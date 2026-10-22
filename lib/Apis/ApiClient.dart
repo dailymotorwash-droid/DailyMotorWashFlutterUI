@@ -53,18 +53,35 @@ class ApiClient {
           return handler.next(response);
         },
         onError: (error, handler) async {
+          final path = error.requestOptions.path;
+          final statusCode = error.response?.statusCode;
+
           if (kDebugMode) {
             print("❌ ERROR:");
             print("URL: ${error.requestOptions.baseUrl}${error.requestOptions.path}");
             print("Status: ${error.response?.statusCode}");
             print("Message: ${error.message}");
           }
-          // 🚫 Prevent infinite loop
-          if (error.requestOptions.path.contains("/auth/refresh")||error.response?.statusCode==null) {
-            AuthHandler.onLogout?.call();
+          // 1. Never refresh recursively for the refresh API.
+          if (path.contains("/auth/refresh")) {
             return handler.next(error);
           }
-          final statusCode = error.response?.statusCode;
+
+          // 2. Network errors, timeouts and connection failures
+          // must not log out the user.
+          if (statusCode == null) {
+            return handler.next(error);
+          }
+
+          // 3. Refresh only for authentication errors.
+          if (statusCode != 401 && statusCode != 403) {
+            return handler.next(error);
+          }
+
+          // 4. Prevent retrying a request more than once.
+          if (error.requestOptions.extra['retried'] == true) {
+            return handler.next(error);
+          }
           if (statusCode == 401 || statusCode == 403) {
 
             try {
@@ -93,6 +110,13 @@ class ApiClient {
                   data: error.requestOptions.data,
                   queryParameters: error.requestOptions.queryParameters,
                 );
+
+                // 5. Retry the original request only once.
+                final requestOptions = error.requestOptions;
+
+                requestOptions.headers['Authorization'] = newToken;
+                requestOptions.extra['retried'] = true;
+
 
                 return handler.resolve(response);
 
