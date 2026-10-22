@@ -96,6 +96,8 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       subscriptionRead.clearStartDate();
       read.clearPlans();
+      initializeStartDate(_address.serviceStartDate);
+
     });
     Future.microtask(() {
       read.setIsLoading(true);
@@ -161,6 +163,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                         vehicle: vehicleWatch.selectedVehicle!,
                         isClickable: false,
                         isEditable: false,
+                          isSubscription:true
                       ),
                       const SizedBox(height: 16),
                       ...List.generate(2 * watch.planes.length - 1, (index) {
@@ -196,13 +199,14 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
     );
   }
 
-  Future<void> loadServices() async {
+  Future<void>
+  loadServices() async {
     var storage = await LocalStorage.getInstance();
     PlanResponse response = await RestServiceImp.getUserServices(
         storage.getToken(),
         _vehicle.vehicleType!,
         _vehicle.size!,
-        _address.masterAddressId!);
+        _address.masterAddressId!,'SUBSCRIPTION');
     if (response.isSuccess) {
       read.setPlans(response.data);
       read.setIsLoading(false);
@@ -309,7 +313,7 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                               : GestureDetector(
                                   onTap: () async {
                                     DateTime? pickedDate =
-                                        await pickDate(context);
+                                        await pickDate(context,subscriptionWatch.selectedStartDate);
 
                                     if (pickedDate != null) {
                                       context
@@ -332,15 +336,9 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                                               size: 20),
                                           const SizedBox(width: 8),
                                           // Gap between icon and text
-                                          Text(
-                                            subscriptionWatch
-                                                        .selectedStartDate ==
-                                                    null
-                                                ? DateFormat('dd MMM yyyy').format(DateTime.now().add(const Duration(days: 2)))
-                                                : DateFormat('dd MMM yyyy')
-                                                    .format(
-                                                    subscriptionWatch
-                                                        .selectedStartDate!,
+                                          Text(DateFormat('dd MMM yyyy').format(
+                                              subscriptionWatch.selectedStartDate ??
+                                                  DateTime.now().add(const Duration(days: 2))
                                                   ),
                                             style:
                                                 const TextStyle(fontSize: 14),
@@ -387,14 +385,19 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
                                   '${CommonUtils.cycle(plan.cycle)} ${CommonUtils.vehicleType(_vehicle.vehicleType!)} wash',
                               value: '${plan.rate}',
                             ),
+
+                            if(plan.discount>0)...[
                             PriceRowWidget(
                               title: 'discount',
                               value: '${plan.discount}',
                             ),
-                            PriceRowWidget(
-                              title: 'points',
-                              value: '${userWatch.user!.points!}',
-                            ),
+                            ],
+                            if(userWatch.user!.points! > 0)...[
+                              PriceRowWidget(
+                                title: 'points',
+                                value: '${userWatch.user!.points!}',
+                              ),
+                            ],
                             // PriceRowWidget(
                             //   title: 'Amount',
                             //   value: '${plan.rate - plan.discount-userWatch.user!.points!}',
@@ -481,11 +484,44 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
       },
     );
   }
+  void initializeStartDate(String? serviceStartDate) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    DateTime defaultDate = today.add(const Duration(days: 2));
 
-  Future<DateTime?> pickDate(BuildContext context) async {
+    if (serviceStartDate != null && serviceStartDate.isNotEmpty) {
+      final parsed = DateTime.tryParse(serviceStartDate);
+      if (parsed != null) {
+        final serviceDateOnly = DateTime(parsed.year, parsed.month, parsed.day);
+        if (serviceDateOnly.isAfter(today)) {
+          defaultDate = serviceDateOnly;
+        }
+      }
+    }
+
+    // Set default in provider immediately
+    subscriptionRead.setSelectedStartDate(defaultDate);
+  }
+  Future<DateTime?> pickDate(BuildContext context, DateTime? selectedStartDate) async {
     DateTime now = DateTime.now();
+    // Strip time components to compare calendar dates safely
+    final DateTime today = DateTime(now.year, now.month, now.day);
     DateTime minDate = DateTime.now().add(Duration(days: 2));
 
+    // Parse serviceStartDate string (e.g. "2026-09-17")
+
+      if (selectedStartDate != null) {
+        final DateTime serviceDateOnly = DateTime(
+          selectedStartDate.year,
+          selectedStartDate.month,
+          selectedStartDate.day,
+        );
+
+        // If serviceStartDate is strictly greater than the current date
+        if (serviceDateOnly.isAfter(today)) {
+          minDate = serviceDateOnly;
+        }
+    }
     final DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: minDate,
@@ -669,7 +705,9 @@ class _SelectPlanScreenState extends State<SelectPlanScreen> {
         addressId: _address.id,
         isPointsAvail: userWatch.user?.points != 0 ? true : false,
         startDate: subscriptionWatch.selectedStartDate,
-        paymentId: paymentId);
+        paymentId: paymentId,
+        masterAddressId: _address.masterAddressId
+    );
     print(subscription.toJson());
     SubscriptionResponse response =
         await RestServiceImp.subscribe(subscription);

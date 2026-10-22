@@ -1,5 +1,9 @@
+import 'package:dmw/providers/ScheduleProvider.dart';
 import 'package:dmw/providers/address_provider.dart';
 import 'package:dmw/providers/brand_provider.dart';
+import 'package:dmw/providers/home_screen_provider.dart';
+import 'package:dmw/providers/one_time_service_provider.dart';
+import 'package:dmw/providers/one_time_service_vehicle_provider.dart';
 import 'package:dmw/providers/search_address_provider.dart';
 import 'package:dmw/providers/service_provider.dart';
 import 'package:dmw/providers/subscription_provider.dart';
@@ -13,6 +17,7 @@ import 'package:dmw/utils/NetworkService.dart';
 import 'package:dmw/utils/custom_colors.dart';
 import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:dmw/utils/page_routes.dart';
+import 'package:dmw/views/home_screen/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -34,6 +39,9 @@ void main() async{
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => HomeScreenProvider()),
+        ChangeNotifierProvider(create: (_) => OneTimeServiceVehicleProvider()),
+        ChangeNotifierProvider(create: (_) => OneTimeServiceProvider()),
         ChangeNotifierProvider(create: (_) => VehicleProvider()),
         ChangeNotifierProvider(create: (_) => ServiceProvider()),
         ChangeNotifierProvider(create: (_) => VehicleModelProvider()),
@@ -44,6 +52,7 @@ void main() async{
         ChangeNotifierProvider(create: (_) => SubscriptionProvider()),
         ChangeNotifierProvider(create: (_) => SubscriptionVehicleProvider()),
         ChangeNotifierProvider(create: (_) => TransactionProvider()),
+        ChangeNotifierProvider(create: (_) => ScheduleProvider()),
       ],
       child: MainApp(),
     )

@@ -8,6 +8,7 @@ class MasterAddress{
   final String state;
   final String pinCode;
   final String district;
+  final String serviceStartDate;
 
   const MasterAddress({
     required this.id,
@@ -18,7 +19,8 @@ class MasterAddress{
     required this.city,
     required this.state,
     required this.pinCode,
-    required this.district
+    required this.district,
+    required this.serviceStartDate
 });
 
   factory MasterAddress.fromJson(Map<String,dynamic> json){
@@ -32,7 +34,10 @@ class MasterAddress{
         city: json['city']??'',
         state: json['state'],
         pinCode: json['pinCode'],
-        district: json['district']);
+        serviceStartDate: json['serviceStartDate'],
+        district: json['district']
+
+    );
 
   }
 }

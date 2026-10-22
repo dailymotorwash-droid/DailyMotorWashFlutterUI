@@ -4,10 +4,14 @@ import 'dart:convert';
 import 'package:dio/dio.dart' hide Response;
 import 'package:dmw/ApiResponse/address_response.dart';
 import 'package:dmw/ApiResponse/brand_response.dart';
+import 'package:dmw/ApiResponse/one_time_booking_response.dart';
+import 'package:dmw/ApiResponse/one_time_service_vehicle_response.dart';
 import 'package:dmw/ApiResponse/plan_response.dart';
 import 'package:dmw/ApiResponse/razorpay_response.dart';
 import 'package:dmw/ApiResponse/referral_code_response.dart';
 import 'package:dmw/ApiResponse/search_address_response.dart';
+import 'package:dmw/ApiResponse/services_response.dart';
+import 'package:dmw/ApiResponse/slot_response.dart';
 import 'package:dmw/ApiResponse/subscription_response.dart';
 import 'package:dmw/ApiResponse/subscription_vehicle_response.dart';
 import 'package:dmw/ApiResponse/transactions_response.dart';
@@ -16,6 +20,7 @@ import 'package:dmw/ApiResponse/vehicle_color_response.dart';
 import 'package:dmw/ApiResponse/vehicle_model_response.dart';
 import 'package:dmw/ApiResponse/vehicle_response.dart';
 import 'package:dmw/Apis/SlugUrl.dart';
+import 'package:dmw/models/OneTimeBookingRequest.dart';
 import 'package:dmw/models/address.dart';
 import 'package:dmw/models/subscription.dart';
 import 'package:dmw/models/user.dart';
@@ -101,7 +106,7 @@ class RestServiceImp {
   }
 
   //////User Services
-  static Future<PlanResponse> getUserServices(String? token,String vehicleType,String vehicleSize,int addressId) async {
+  static Future<PlanResponse> getUserServices(String? token,String vehicleType,String vehicleSize,int addressId,String serviceType) async {
     debugPrint(token);
     // Prepare headers
     Map<String, String> headers = {
@@ -110,10 +115,35 @@ class RestServiceImp {
     final dio = ApiClient().dio;
 
     final response = await dio.get(
-      '${SlugUrl.getServices.replaceAll("{vehicleType}", vehicleType).replaceAll("{addressId}", '$addressId')}?vehicleSize=$vehicleSize',
+      '${SlugUrl.getServices.replaceAll("{vehicleType}", vehicleType).replaceAll("{addressId}", '$addressId')}?vehicleSize=$vehicleSize&serviceType=$serviceType',
       options: Options(
         headers: headers
       )
+    );
+
+    if (response.statusCode == 200) {
+      return PlanResponse.fromJson(
+          (response.data) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+
+  }
+
+  //////One Time User Services
+  static Future<PlanResponse> getUserOneTimeServices(String? token,String vehicleType,String vehicleSize,int addressId,String serviceType,int serviceId) async {
+    debugPrint(token);
+    // Prepare headers
+    Map<String, String> headers = {
+      'Authorization': '$token', // Adding Authorization Token
+    };
+    final dio = ApiClient().dio;
+
+    final response = await dio.get(
+        '${SlugUrl.getOneTimeServices.replaceAll("{vehicleType}", vehicleType).replaceAll("{addressId}", '$addressId')}?vehicleSize=$vehicleSize&serviceType=$serviceType&serviceId=$serviceId',
+        options: Options(
+            headers: headers
+        )
     );
 
     if (response.statusCode == 200) {
@@ -779,6 +809,104 @@ static Future<UserProfileResponse> editProfile(User user) async {
           response.data as Map<String, dynamic>);
     }
     throw Exception('Failed to edit profile.');
+  }
+
+
+  static Future<ServicesResponse> oneTimeServices() async{
+    var storage = await LocalStorage.getInstance();
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+    final dio = ApiClient().dio;
+
+    final response = await dio.get(
+      SlugUrl.oneTimeServices,
+      options: Options(
+        headers: headers,
+
+      ),
+    );
+    if (response.statusCode == 200) {
+      return ServicesResponse.fromJson(
+          (response.data) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+  }
+
+  static Future<SlotResponse> slots(int id) async{
+    var storage = await LocalStorage.getInstance();
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+    final dio = ApiClient().dio;
+
+    final response = await dio.get(
+      SlugUrl.slots.replaceAll("{addressId}", id.toString()),
+      options: Options(
+        headers: headers,
+
+      ),
+    );
+    if (response.statusCode == 200) {
+      return SlotResponse.fromJson(
+          (response.data) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
+  }
+
+  static Future<OneTimeBookingResponse> bookOneTimeService(OneTimeBookingRequest bookingRequest) async {
+    String url = '${Constraints.baseUrl}${SlugUrl.authRefresh}';
+    var storage = await LocalStorage.getInstance();
+    final dio = ApiClient().dio;
+    final response = await dio.post(SlugUrl.bookSlot,
+        data: jsonEncode(bookingRequest),
+      options: Options(
+      headers: {
+      'Authorization': '${storage.getToken()}'
+      }
+    ));
+
+    if (kDebugMode) {
+      print("Add Address : $response");
+      print("statusCode: ${response.statusCode}");
+      print("Url: $url");
+    }
+    if (response.statusCode == 200) {
+      return OneTimeBookingResponse.fromJson(
+          response.data as Map<String, dynamic>);
+    }
+    throw Exception('Failed to edit profile.');
+  }
+
+
+  static Future<OneTimeServiceVehicleResponse> oneTimeServiceVehicles() async{
+    var storage = await LocalStorage.getInstance();
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+    final dio = ApiClient().dio;
+
+    final response = await dio.get(
+      SlugUrl.oneTimeBookedVehicles,
+      options: Options(
+        headers: headers,
+
+      ),
+    );
+    if (response.statusCode == 200) {
+      return OneTimeServiceVehicleResponse.fromJson(
+          (response.data) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
   }
 /////Add Address////
 

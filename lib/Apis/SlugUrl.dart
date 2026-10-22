@@ -4,6 +4,7 @@ class SlugUrl {
   static String profile = "user/profile";
   static String getVehicles = "vehicle/{vehicleType}/get";
   static String getServices = "service/{vehicleType}/{addressId}/get";
+  static String getOneTimeServices = "service/one-time/{vehicleType}/{addressId}/get";
   static String getAddresses = "address/get";
   static String getAddressesByVehicleId = "address/{VehicleId}/get";
   static String getBrands = "master/brands/get";
@@ -30,5 +31,9 @@ class SlugUrl {
   static String createRazorpayOrder= "razorpay/create-order";
   static String verifyRazorpayOrder= "razorpay/verify-payment";
   static String checkFirstOrExpireSubscription= "subscription/{addressId}/{vehicleId}/checkActiveOrExpire";
+  static String oneTimeServices= "service/one-time";
+  static String slots = "master/{addressId}/slots";
+  static String bookSlot = "subscription/one-time";
+  static String oneTimeBookedVehicles = "subscription/one-time/vehicle";
 
 }

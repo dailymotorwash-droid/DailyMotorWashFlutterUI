@@ -25,15 +25,20 @@ import 'package:dmw/utils/custom_colors.dart';
 import 'package:dmw/utils/custom_enums.dart';
 import 'package:dmw/utils/custom_text_styles.dart';
 import 'package:dmw/utils/local_storage.dart';
+import 'package:dmw/views/select_plan_screen.dart/one_time_booking_schedule_widget.dart';
 import 'package:dmw/views/select_plan_screen.dart/select_plan_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
+import '../models/service.dart';
+
 class AddVehicleAndAddressScreen extends StatefulWidget {
   final VehicleType vehicleType;
+  final bool isSubscription;
+  final Service? selectedService;
 
-  const AddVehicleAndAddressScreen({super.key, required this.vehicleType});
+  const AddVehicleAndAddressScreen({super.key, required this.vehicleType, required this.isSubscription, this.selectedService});
 
   @override
   State<AddVehicleAndAddressScreen> createState() =>
@@ -153,12 +158,22 @@ class _AddVehicleAndAddressScreenState
         Address address = Address(
             masterAddressId:
                 addressWatch.addresses[addressWatch.selectedAddressIndex!].masterAddressId,
-            id: addressWatch.addresses[addressWatch.selectedAddressIndex!].id);
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    SelectPlanScreen(vehicle: res.vehicle, address: address)));
+            id: addressWatch.addresses[addressWatch.selectedAddressIndex!].id,serviceStartDate: addressWatch.addresses[addressWatch.selectedAddressIndex!].serviceStartDate);
+        if(widget.isSubscription) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      SelectPlanScreen(
+                          vehicle: res.vehicle, address: address)));
+        }else{
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      OneTimeBookingScheduleWidget(
+                          vehicle: res.vehicle, address: address,selectedService: widget.selectedService!,)));
+        }
       }
       CommonUtils.toastMessage(res.message);
       return;

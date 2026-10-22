@@ -16,31 +16,116 @@ class ReferFriendWidget extends StatelessWidget {
   Widget build(BuildContext context){
     CommonUtils.init(context);
     return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      height: 94,
       decoration: BoxDecoration(
-        color: AppColors.darkBackground,
-        borderRadius: BorderRadius.circular(12),
+        color: const Color(0xFF141724),
+        borderRadius: BorderRadius.circular(14),
       ),
-      child: Column(
+      child: Stack(
         children: [
-          const Text('REFER A FRIEND', style: AppTextStyles.whiteFont20Bold),
-          // const SizedBox(height: 8),
-          Image.asset('assets/images/referral.png', height: 200, width: 300),
-          // const SizedBox(height: 8),
-          const Text('Get ₹100 Voucher', style: AppTextStyles.primaryFont20Regular),
-          // const SizedBox(height: 8),
-          ElevatedButton(
-            onPressed: () {
-              getReferralLink();
-            }, 
-            style: AppButtonStyles.primaryButtonStyle,
-            child: const Text('Refer Now', style: AppTextStyles.whiteFont12Bold,),
-          )
-          
+          Positioned(
+            right: 12,
+            top: 24,
+            child: Icon(
+              Icons.auto_awesome,
+              color: Colors.white.withOpacity(0.2),
+              size: 26,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              children: [
+                // Illustration / Icon Box
+                Container(
+                  width: 90,
+                  height: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white10,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(
+                    Icons.handshake,
+                    color: Color(0xFFF6C85F),
+                    size: 34,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                // Text & Call to Action Button
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'REFER A FRIEND',
+                          style: AppTextStyles.whiteFont12Bold
+                      ),
+                      const SizedBox(height: 2),
+                      const Text(
+                        'Get ₹100 Voucher',
+                          style: AppTextStyles.primaryFont12Regular
+                      ),
+                      const SizedBox(height: 5),
+                      // Clickable Button with InkWell ripple effect
+                      Material(
+                        color: const Color(0xFFE55D5D),
+                        borderRadius: BorderRadius.circular(6),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(6),
+                          onTap: () => {getReferralLink()},
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 12,
+                              vertical: 4,
+                            ),
+                            child: Text(
+                              'Refer Now',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
+
+    // return Container(
+    //   width: double.infinity,
+    //   padding: const EdgeInsets.all(16),
+    //   decoration: BoxDecoration(
+    //     color: AppColors.darkBackground,
+    //     borderRadius: BorderRadius.circular(12),
+    //   ),
+    //   child: Column(
+    //     children: [
+    //       const Text('REFER A FRIEND', style: AppTextStyles.whiteFont20Bold),
+    //       // const SizedBox(height: 8),
+    //       Image.asset('assets/images/referral.png', height: 200, width: 300),
+    //       // const SizedBox(height: 8),
+    //       const Text('Get ₹100 Voucher', style: AppTextStyles.primaryFont20Regular),
+    //       // const SizedBox(height: 8),
+    //       ElevatedButton(
+    //         onPressed: () {
+    //           getReferralLink();
+    //         },
+    //         style: AppButtonStyles.primaryButtonStyle,
+    //         child: const Text('Refer Now', style: AppTextStyles.whiteFont12Bold,),
+    //       )
+    //
+    //     ],
+    //   ),
+    // );
   }
 
   Future<void> getReferralLink() async{
@@ -67,3 +152,5 @@ class ReferFriendWidget extends StatelessWidget {
     );
   }
 }
+
+

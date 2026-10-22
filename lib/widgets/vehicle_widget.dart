@@ -1,5 +1,6 @@
 import 'package:dmw/ApiResponse/Response.dart';
 import 'package:dmw/Apis/RestServiceImp.dart';
+import 'package:dmw/models/service.dart';
 import 'package:dmw/models/vehicle.dart';
 import 'package:dmw/providers/subscription_vehicle_provider.dart';
 import 'package:dmw/providers/vehicle_provider.dart';
@@ -19,12 +20,13 @@ class VehicleWidget extends StatefulWidget {
   final Vehicle vehicle;
   final bool isClickable;
   final ColorTheme colorTheme;
-
+  final bool isSubscription;
+  final Service? selectedService;
   const VehicleWidget({ 
     super.key,
     this.isClickable = true,
     this.colorTheme = ColorTheme.light,
-    required this.vehicle, required this.isEditable,
+    required this.vehicle, required this.isEditable, required this.isSubscription, this.selectedService,
   });
 
   @override
@@ -194,7 +196,7 @@ class _VehicleWidgetState extends State<VehicleWidget> {
                 top: Radius.circular(28),
               ),
             ),
-            child: VehicleAddressBottomSheet(vehicle: widget.vehicle));
+            child: VehicleAddressBottomSheet(vehicle: widget.vehicle,isSubscription: widget.isSubscription,serviceItem: widget.selectedService,));
       },
     );
   }
