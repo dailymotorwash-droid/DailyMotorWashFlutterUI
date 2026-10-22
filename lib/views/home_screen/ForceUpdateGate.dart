@@ -29,6 +29,7 @@ class _ForceUpdateGateState extends State<ForceUpdateGate>
   bool _required = false;
   bool _checkFailed = false;
   bool _updating = false;
+  bool _checkingPolicy = false;
 
   @override
   void initState() {
@@ -43,10 +44,25 @@ class _ForceUpdateGateState extends State<ForceUpdateGate>
     super.dispose();
   }
 
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed && !_updating) {
-      _checkPolicy();
+  // @override
+  // void didChangeAppLifecycleState(AppLifecycleState state) {
+  //   if (state == AppLifecycleState.resumed &&
+  //       !_updating &&
+  //       !_checkingPolicy) {
+  //     _checkPolicySafely();
+  //   }
+  // }
+  Future<void> _checkPolicySafely() async {
+    if (_checkingPolicy) return;
+
+    _checkingPolicy = true;
+
+    try {
+      await _checkPolicy();
+    } catch (e) {
+      debugPrint('App version policy check failed: $e');
+    } finally {
+      _checkingPolicy = false;
     }
   }
 
