@@ -1,5 +1,6 @@
 
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:dio/dio.dart' hide Response;
 import 'package:dmw/ApiResponse/address_response.dart';
@@ -28,10 +29,12 @@ import 'package:dmw/models/vehicle.dart';
 import 'package:dmw/models/vehicle_and_address.dart';
 import 'package:dmw/utils/local_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../ApiResponse/LoginResponse.dart';
 import '../ApiResponse/Response.dart';
 import '../ApiResponse/add_vehicle_and_address_response.dart';
+import '../models/AppVersionPolicy.dart';
 import 'ApiClient.dart';
 import 'Constraints.dart';
 
@@ -908,6 +911,57 @@ static Future<UserProfileResponse> editProfile(User user) async {
     }
     throw Exception('Failed to Fetch Vehicles');
   }
+  static Future<AppVersionPolicy> fetchPolicy() async {
+    Map<String, String> headers = {
+      'Accept': 'application/json', // Adding Authorization Token
+    };
+    final dio = ApiClient().dio;
+    final platform = Platform.isIOS ? 'ios' : 'android';
+
+    final response = await dio.get(
+      '${SlugUrl.appVersionPolicy}?platform=$platform',
+      options: Options(
+        headers: headers,
+
+      ));
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Version API returned ${response.statusCode}',
+      );
+    }
+
+    if (response.data is Map<String, dynamic>) {
+      return AppVersionPolicy.fromJson(response.data);
+    }
+
+    throw FormatException(
+      'Expected a JSON object but received ${response.data.runtimeType}',
+    );
+
+
+  }
+
+  static Future<int> getInstalledVersionCode() async {
+    final info = await PackageInfo.fromPlatform();
+    return int.tryParse(info.buildNumber) ?? 0;
+  }
+
+
+  static bool requiresUpdate(
+      int installedVersionCode,
+      AppVersionPolicy policy,
+      ) {
+    if (installedVersionCode <= 0) {
+      return true;
+    }
+
+    return policy.forceUpdate;
+    // return installedVersionCode <= 0 || installedVersionCode <
+    //     policy.minimumSupportedVersionCode ||
+    //     policy.forceUpdate;
+  }
+
 /////Add Address////
 
   // static Future<AddressResponse> AddAddressService(

@@ -35,5 +35,6 @@ class SlugUrl {
   static String slots = "master/{addressId}/slots";
   static String bookSlot = "subscription/one-time";
   static String oneTimeBookedVehicles = "subscription/one-time/vehicle";
+  static String appVersionPolicy = "master/app-version-policy";
 
 }

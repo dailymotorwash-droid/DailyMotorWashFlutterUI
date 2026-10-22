@@ -710,7 +710,7 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
 
   void openCheckout(double amount, String id) async {
     final options = {
-      'key': 'rzp_test_SVjbFWBpXVoyC0',
+      'key': 'rzp_live_ShK7walg82j14u',
       'amount': amount * 100,
       'name': 'Daily Motor Wash',
       'description': 'One-Time Service: ${_serviceItem.serviceName}',
