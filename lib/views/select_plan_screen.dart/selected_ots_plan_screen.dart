@@ -696,10 +696,10 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
     vehicleRead.setIsLoading(true);
 
     double amount = (plan.rate - plan.discount).toDouble();
-    final points = userWatch.user?.points ?? 0;
-    if (points > 0) {
-      amount = (amount - points).clamp(0, double.infinity);
-    }
+    // final points = userWatch.user?.points ?? 0;
+    // if (points > 0) {
+    //   amount = (amount - points).clamp(0, double.infinity);
+    // }
 
     final Map<String, dynamic> data = {
       "amount": amount,
@@ -772,7 +772,7 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
     final bookingRequest = OneTimeBookingRequest(
       vehicleId: (_vehicle.id ?? '').toString(),
       serviceId: _serviceItem.id,
-      rateId: widget.serviceItem.id,
+      rateId: watch.planes.first.id,
       rate: read.planes[0].rate.toDouble(),
       discount: read.planes[0].discount.toDouble(),
       bookingDate: widget.selectedSlotDate,
