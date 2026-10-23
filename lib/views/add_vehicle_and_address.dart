@@ -154,20 +154,20 @@ class _AddVehicleAndAddressScreenState
       VehicleResponse res = await RestServiceImp.addVehicle(vehicle!);
       if (res.isSuccess) {
         vehicleRead.addVehicle(res.vehicle);
-        Navigator.pop(context);
+        // Navigator.pop(context);
         Address address = Address(
             masterAddressId:
                 addressWatch.addresses[addressWatch.selectedAddressIndex!].masterAddressId,
             id: addressWatch.addresses[addressWatch.selectedAddressIndex!].id,serviceStartDate: addressWatch.addresses[addressWatch.selectedAddressIndex!].serviceStartDate);
         if(widget.isSubscription) {
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       SelectPlanScreen(
                           vehicle: res.vehicle, address: address)));
         }else{
-          Navigator.push(
+          Navigator.pushReplacement(
               context,
               MaterialPageRoute(
                   builder: (context) =>
@@ -217,12 +217,27 @@ class _AddVehicleAndAddressScreenState
             LocalStorage.setLastName(lastName!);
           }
           vehicleRead.addVehicle(res.data.vehicle!);
-          Navigator.pop(context);
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => SelectPlanScreen(
-                      vehicle: res.data.vehicle!, address: res.data.address!)));
+          // Navigator.pop(context);
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) => SelectPlanScreen(
+          //             vehicle: res.data.vehicle!, address: res.data.address!)));
+          if(widget.isSubscription) {
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        SelectPlanScreen(
+                            vehicle: res.data.vehicle!, address: res.data.address!)));
+          }else{
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        OneTimeBookingScheduleWidget(
+                          vehicle: res.data.vehicle!, address: res.data.address!,selectedService: widget.selectedService!,)));
+          }
         }else {
           CommonUtils.toastMessage(res.message);
         }
