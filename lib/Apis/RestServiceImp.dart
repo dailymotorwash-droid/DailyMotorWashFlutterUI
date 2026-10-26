@@ -1,9 +1,9 @@
-
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart' hide Response;
 import 'package:dmw/ApiResponse/address_response.dart';
+import 'package:dmw/ApiResponse/banner_response.dart';
 import 'package:dmw/ApiResponse/brand_response.dart';
 import 'package:dmw/ApiResponse/one_time_booking_response.dart';
 import 'package:dmw/ApiResponse/one_time_service_vehicle_response.dart';
@@ -39,33 +39,33 @@ import 'ApiClient.dart';
 import 'Constraints.dart';
 
 class RestServiceImp {
-
   static Future<Response> otpSend(String phoneNumber) async {
     final dio = ApiClient().dio;
 
     final response = await dio.post(SlugUrl.sendOtp,
         data: jsonEncode({'phone': phoneNumber}));
     if (response.statusCode == 200) {
-      return Response.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return Response.fromJson((response.data) as Map<String, dynamic>);
     }
 
     throw Exception('Failed to LogIn');
   }
 
-  static Future<LogInResponse> auth(String phoneNumber,String otp,String? code) async {
+  static Future<LogInResponse> auth(
+      String phoneNumber, String otp, String? code) async {
     final dio = ApiClient().dio;
 
     final response = await dio.post(SlugUrl.login,
-        data: jsonEncode({'phone': phoneNumber,'otp':otp,"referralCode":code}));
+        data: jsonEncode(
+            {'phone': phoneNumber, 'otp': otp, "referralCode": code}));
 
     if (response.statusCode == 200) {
-      return LogInResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return LogInResponse.fromJson((response.data) as Map<String, dynamic>);
     }
 
     throw Exception('Failed to LogIn');
   }
+
   static Future<UserProfileResponse> getProfile() async {
     final dio = ApiClient().dio;
     var storage = await LocalStorage.getInstance();
@@ -79,37 +79,37 @@ class RestServiceImp {
     );
 
     if (response.statusCode == 200) {
-      return UserProfileResponse.fromJson(response.data as Map<String, dynamic>);
+      return UserProfileResponse.fromJson(
+          response.data as Map<String, dynamic>);
     }
     throw Exception('Failed to LogIn');
   }
 
-
   //////User Vehicles
-  static Future<VehicleResponse> getUserVehicles(String? token,String vehicleType) async {
+  static Future<VehicleResponse> getUserVehicles(
+      String? token, String vehicleType) async {
     debugPrint(token);
     // Prepare headers
     final dio = ApiClient().dio;
 
-      final response = await dio.get(
-        SlugUrl.getVehicles.replaceAll("{vehicleType}", vehicleType),
-        options: Options(
-          headers: {
-            'Authorization': token,
-          },
-        ),
-      );
-      if (response.statusCode == 200) {
-          return VehicleResponse.fromJson(
-              (response.data) as Map<String, dynamic>);
-        // Handle response if needed
-      }
-        throw Exception('Failed to Fetch Vehicles');
-
+    final response = await dio.get(
+      SlugUrl.getVehicles.replaceAll("{vehicleType}", vehicleType),
+      options: Options(
+        headers: {
+          'Authorization': token,
+        },
+      ),
+    );
+    if (response.statusCode == 200) {
+      return VehicleResponse.fromJson((response.data) as Map<String, dynamic>);
+      // Handle response if needed
+    }
+    throw Exception('Failed to Fetch Vehicles');
   }
 
   //////User Services
-  static Future<PlanResponse> getUserServices(String? token,String vehicleType,String vehicleSize,int addressId,String serviceType) async {
+  static Future<PlanResponse> getUserServices(String? token, String vehicleType,
+      String vehicleSize, int addressId, String serviceType) async {
     debugPrint(token);
     // Prepare headers
     Map<String, String> headers = {
@@ -118,23 +118,24 @@ class RestServiceImp {
     final dio = ApiClient().dio;
 
     final response = await dio.get(
-      '${SlugUrl.getServices.replaceAll("{vehicleType}", vehicleType).replaceAll("{addressId}", '$addressId')}?vehicleSize=$vehicleSize&serviceType=$serviceType',
-      options: Options(
-        headers: headers
-      )
-    );
+        '${SlugUrl.getServices.replaceAll("{vehicleType}", vehicleType).replaceAll("{addressId}", '$addressId')}?vehicleSize=$vehicleSize&serviceType=$serviceType',
+        options: Options(headers: headers));
 
     if (response.statusCode == 200) {
-      return PlanResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return PlanResponse.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
   //////One Time User Services
-  static Future<PlanResponse> getUserOneTimeServices(String? token,String vehicleType,String vehicleSize,int addressId,String serviceType,int serviceId) async {
+  static Future<PlanResponse> getUserOneTimeServices(
+      String? token,
+      String vehicleType,
+      String vehicleSize,
+      int addressId,
+      String serviceType,
+      int serviceId) async {
     debugPrint(token);
     // Prepare headers
     Map<String, String> headers = {
@@ -144,18 +145,13 @@ class RestServiceImp {
 
     final response = await dio.get(
         '${SlugUrl.getOneTimeServices.replaceAll("{vehicleType}", vehicleType).replaceAll("{addressId}", '$addressId')}?vehicleSize=$vehicleSize&serviceType=$serviceType&serviceId=$serviceId',
-        options: Options(
-            headers: headers
-        )
-    );
+        options: Options(headers: headers));
 
     if (response.statusCode == 200) {
-      return PlanResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return PlanResponse.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
   ////Get Address
@@ -166,45 +162,34 @@ class RestServiceImp {
       'Authorization': '${storage.getToken()}', // Adding Authorization Token
     };
     final dio = ApiClient().dio;
-    final response = await dio.get(
-      SlugUrl.getAddresses,
-      options: Options(
-        headers: headers
-      )
-    );
+    final response =
+        await dio.get(SlugUrl.getAddresses, options: Options(headers: headers));
     if (response.statusCode == 200) {
-      return AddressResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return AddressResponse.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
   ////Get Brands
-  static Future<BrandResponse> getBrands(String? token,bool isCar) async {
+  static Future<BrandResponse> getBrands(String? token, bool isCar) async {
     // Prepare headers
     Map<String, String> headers = {
       'Authorization': '$token', // Adding Authorization Token
     };
     final dio = ApiClient().dio;
-    final response = await dio.get(
-      '${SlugUrl.getBrands}?isCar=$isCar',
-      options: Options(
-        headers: headers
-      )
-    );
+    final response = await dio.get('${SlugUrl.getBrands}?isCar=$isCar',
+        options: Options(headers: headers));
     if (response.statusCode == 200) {
-      return BrandResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return BrandResponse.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
   ///Get Models
-  static Future<VehicleModelResponse> getModels(String? token,int brandId,String vehicleType) async {
+  static Future<VehicleModelResponse> getModels(
+      String? token, int brandId, String vehicleType) async {
     debugPrint(token);
     // Prepare headers
     Map<String, String> headers = {
@@ -213,11 +198,8 @@ class RestServiceImp {
     final dio = ApiClient().dio;
 
     final response = await dio.get(
-      '${SlugUrl.getModels.replaceAll("{brandId}", '$brandId')}?vehicleType=$vehicleType',
-      options: Options(
-        headers: headers
-      )
-    );
+        '${SlugUrl.getModels.replaceAll("{brandId}", '$brandId')}?vehicleType=$vehicleType',
+        options: Options(headers: headers));
 
     if (response.statusCode == 200) {
       return VehicleModelResponse.fromJson(
@@ -225,11 +207,11 @@ class RestServiceImp {
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
   ///Get Colors
-  static Future<VehicleColorResponse> getColors(String? token,int modelId) async {
+  static Future<VehicleColorResponse> getColors(
+      String? token, int modelId) async {
     debugPrint(token);
     // Prepare headers
     Map<String, String> headers = {
@@ -239,9 +221,7 @@ class RestServiceImp {
 
     final response = await dio.get(
       SlugUrl.getColors.replaceAll("{modelId}", '$modelId'),
-      options: Options(
-        headers: headers
-      ),
+      options: Options(headers: headers),
     );
 
     if (response.statusCode == 200) {
@@ -250,11 +230,11 @@ class RestServiceImp {
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
   ///Search Address
-  static Future<SearchAddressResponse> searchAddress(String? token,String q) async {
+  static Future<SearchAddressResponse> searchAddress(
+      String? token, String q) async {
     debugPrint(token);
     Map<String, String> headers = {
       'Authorization': '$token', // Adding Authorization Token
@@ -262,11 +242,8 @@ class RestServiceImp {
     final dio = ApiClient().dio;
     final response = await dio.get(
       '${SlugUrl.searchAddress}?q=$q',
-      options: Options(
-        headers: headers
-      ),
+      options: Options(headers: headers),
     );
-
 
     if (response.statusCode == 200) {
       return SearchAddressResponse.fromJson(
@@ -274,25 +251,21 @@ class RestServiceImp {
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
+
   // Add Vehicle
-  static Future<VehicleResponse> addVehicle(
-      Vehicle vehicle) async {
+  static Future<VehicleResponse> addVehicle(Vehicle vehicle) async {
     var storage = await LocalStorage.getInstance();
     final dio = ApiClient().dio;
 
     final response = await dio.post(SlugUrl.addVehicle,
-        options: Options(
-          headers: {'Authorization': {storage.getToken()}}
-        ),
-
+        options: Options(headers: {
+          'Authorization': {storage.getToken()}
+        }),
         data: jsonEncode(vehicle.toJson()));
 
-
     if (response.statusCode == 200) {
-      return VehicleResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return VehicleResponse.fromJson((response.data) as Map<String, dynamic>);
     }
     throw Exception('Failed to LogIn');
   }
@@ -305,11 +278,7 @@ class RestServiceImp {
     final dio = ApiClient().dio;
 
     final response = await dio.post(SlugUrl.addVehicleAndAddress,
-        options: Options(
-          headers: {
-            'Authorization': storage.getToken()
-          }
-        ),
+        options: Options(headers: {'Authorization': storage.getToken()}),
         data: jsonEncode(vehicle.toJson()));
     if (kDebugMode) {
       print("OTPVerification : $response");
@@ -332,12 +301,7 @@ class RestServiceImp {
     final dio = ApiClient().dio;
 
     final response = await dio.post(SlugUrl.subscribe,
-
-        options: Options(
-          headers: {
-            'Authorization': storage.getToken()
-          }
-        ),
+        options: Options(headers: {'Authorization': storage.getToken()}),
         data: jsonEncode(subscription.toJson()));
     if (kDebugMode) {
       print("OTPVerification : $response");
@@ -353,9 +317,11 @@ class RestServiceImp {
   }
 
   ///Subscriptions
-  static Future<SubscriptionVehicleResponse> getSubscriptionWithVehicles() async {
+  static Future<SubscriptionVehicleResponse>
+      getSubscriptionWithVehicles() async {
     var storage = await LocalStorage.getInstance();
-    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.subscriptionWithVehicle}';
+    final String apiUrl =
+        '${Constraints.baseUrl}${SlugUrl.subscriptionWithVehicle}';
     debugPrint(storage.getToken());
     // Prepare headers
     Map<String, String> headers = {
@@ -363,12 +329,8 @@ class RestServiceImp {
     };
     final dio = ApiClient().dio;
 
-    final response = await dio.get(
-      SlugUrl.subscriptionWithVehicle,
-      options: Options(
-        headers: headers
-      )
-    );
+    final response = await dio.get(SlugUrl.subscriptionWithVehicle,
+        options: Options(headers: headers));
 
     if (kDebugMode) {
       print("auth : $response");
@@ -381,19 +343,16 @@ class RestServiceImp {
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
-static Future<UserProfileResponse> editProfile(User user) async {
+
+  static Future<UserProfileResponse> editProfile(User user) async {
     var storage = await LocalStorage.getInstance();
     final dio = ApiClient().dio;
 
     final response = await dio.put(SlugUrl.updateUser,
         options: Options(
-          headers: {
-            'Authorization': '${storage.getToken()}'
-          },
+          headers: {'Authorization': '${storage.getToken()}'},
         ),
-
         data: jsonEncode(user.toJson()));
 
     if (response.statusCode == 200) {
@@ -402,7 +361,6 @@ static Future<UserProfileResponse> editProfile(User user) async {
     }
     throw Exception('Failed to edit profile.');
   }
-
 
   ///Get All Vehicles
   static Future<VehicleResponse> getAllVehicles() async {
@@ -418,17 +376,14 @@ static Future<UserProfileResponse> editProfile(User user) async {
       SlugUrl.getAllVehicles,
       options: Options(
         headers: headers,
-
       ),
     );
 
     if (response.statusCode == 200) {
-      return VehicleResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return VehicleResponse.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
   ///Update Vehicle
@@ -441,24 +396,18 @@ static Future<UserProfileResponse> editProfile(User user) async {
     };
     final dio = ApiClient().dio;
 
-    final response = await dio.put(
-        SlugUrl.updateVehicle,
-      options: Options(
-        headers: headers,
-
-      ), data: jsonEncode(vehicle.toJson())
-
-    );
+    final response = await dio.put(SlugUrl.updateVehicle,
+        options: Options(
+          headers: headers,
+        ),
+        data: jsonEncode(vehicle.toJson()));
 
     if (response.statusCode == 200) {
-      return VehicleResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return VehicleResponse.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
-
 
   ///Get Brand By Name
   static Future<BrandResponse> getBrandByName(String name) async {
@@ -474,17 +423,14 @@ static Future<UserProfileResponse> editProfile(User user) async {
       SlugUrl.getBrandByName.replaceAll("{brand}", name),
       options: Options(
         headers: headers,
-
       ),
     );
 
     if (response.statusCode == 200) {
-      return BrandResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return BrandResponse.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
   ///Get Model By Name
@@ -500,7 +446,6 @@ static Future<UserProfileResponse> editProfile(User user) async {
       '${SlugUrl.getModelByName}?model=$name',
       options: Options(
         headers: headers,
-
       ),
     );
 
@@ -510,7 +455,6 @@ static Future<UserProfileResponse> editProfile(User user) async {
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
   ///Get Color By Name
@@ -527,7 +471,6 @@ static Future<UserProfileResponse> editProfile(User user) async {
       '${SlugUrl.getColorByName}?color=$name',
       options: Options(
         headers: headers,
-
       ),
     );
 
@@ -537,10 +480,10 @@ static Future<UserProfileResponse> editProfile(User user) async {
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
-  static Future<AddressResponse> getUserAddressesByVehicleId(String vehicleId) async {
+  static Future<AddressResponse> getUserAddressesByVehicleId(
+      String vehicleId) async {
     var storage = await LocalStorage.getInstance();
     // Prepare headers
     Map<String, String> headers = {
@@ -552,59 +495,45 @@ static Future<UserProfileResponse> editProfile(User user) async {
       SlugUrl.getAddressesByVehicleId.replaceAll("{VehicleId}", vehicleId),
       options: Options(
         headers: headers,
-
       ),
     );
     if (response.statusCode == 200) {
-      return AddressResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return AddressResponse.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
   }
 
   static Future<AddressResponse> addUserAddress(Address add) async {
-
     var storage = await LocalStorage.getInstance();
     final dio = ApiClient().dio;
 
     final response = await dio.post(SlugUrl.addAddress,
-
         options: Options(
-          headers: {
-            'Authorization': '${storage.getToken()}'
-          },
+          headers: {'Authorization': '${storage.getToken()}'},
         ),
         data: jsonEncode(add.toJson()));
 
     if (response.statusCode == 200) {
-      return AddressResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return AddressResponse.fromJson((response.data) as Map<String, dynamic>);
     }
     throw Exception('Failed to edit profile.');
-
   }
 
   static Future<AddressResponse> updateUserAddress(Address add) async {
-
     var storage = await LocalStorage.getInstance();
     final dio = ApiClient().dio;
 
     final response = await dio.put(SlugUrl.updateAddress,
-
         options: Options(
-          headers: {
-            'Authorization': '${storage.getToken()}'
-          },
+          headers: {'Authorization': '${storage.getToken()}'},
         ),
         data: jsonEncode(add.toJson()));
 
     if (response.statusCode == 200) {
-      return AddressResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return AddressResponse.fromJson((response.data) as Map<String, dynamic>);
     }
     throw Exception('Failed to edit profile.');
-
   }
 
   ///Transactions
@@ -617,13 +546,10 @@ static Future<UserProfileResponse> editProfile(User user) async {
     };
     final dio = ApiClient().dio;
 
-    final response = await dio.get(
-      SlugUrl.getTransactions,
-      options: Options(
-        headers: headers,
-
-      )
-    );
+    final response = await dio.get(SlugUrl.getTransactions,
+        options: Options(
+          headers: headers,
+        ));
 
     // if (kDebugMode) {
     //   print("auth : ${response}");
@@ -636,11 +562,10 @@ static Future<UserProfileResponse> editProfile(User user) async {
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
-
-  static Future<SubscriptionResponse> checkFirstOrExpireSubscription(String addressId,String vehicleId) async {
+  static Future<SubscriptionResponse> checkFirstOrExpireSubscription(
+      String addressId, String vehicleId) async {
     var storage = await LocalStorage.getInstance();
     // Prepare headers
     Map<String, String> headers = {
@@ -649,12 +574,12 @@ static Future<UserProfileResponse> editProfile(User user) async {
     final dio = ApiClient().dio;
 
     final response = await dio.get(
-      SlugUrl.checkFirstOrExpireSubscription.replaceAll("{addressId}", addressId).replaceAll("{vehicleId}", vehicleId),
-      options: Options(
-        headers: headers,
-
-      )
-    );
+        SlugUrl.checkFirstOrExpireSubscription
+            .replaceAll("{addressId}", addressId)
+            .replaceAll("{vehicleId}", vehicleId),
+        options: Options(
+          headers: headers,
+        ));
 
     if (response.statusCode == 200) {
       return SubscriptionResponse.fromJson(
@@ -664,25 +589,20 @@ static Future<UserProfileResponse> editProfile(User user) async {
     throw Exception('Failed to Fetch Vehicles');
   }
 
-
-  static Future<RazorpayResponse> createRazorpayOrder(Map<String,dynamic> data) async {
-
+  static Future<RazorpayResponse> createRazorpayOrder(
+      Map<String, dynamic> data) async {
     var storage = await LocalStorage.getInstance();
     final dio = ApiClient().dio;
     final response = await dio.post(SlugUrl.createRazorpayOrder,
         options: Options(
-          headers: {
-            'Authorization': '${storage.getToken()}'
-          },
+          headers: {'Authorization': '${storage.getToken()}'},
         ),
-
         data: jsonEncode(data));
     if (response.statusCode == 200) {
       return RazorpayResponse.fromJson(
           jsonDecode(response.data) as Map<String, dynamic>);
     }
     throw Exception('Failed to edit profile.');
-
   }
 
   static Future<Response> verifyPayment(Map<String, dynamic> data) async {
@@ -691,23 +611,19 @@ static Future<UserProfileResponse> editProfile(User user) async {
 
     final response = await dio.post(SlugUrl.verifyRazorpayOrder,
         options: Options(
-          headers: {
-            'Authorization': '${storage.getToken()}'
-          },
+          headers: {'Authorization': '${storage.getToken()}'},
         ),
-
         data: jsonEncode(data));
 
     if (response.statusCode == 200) {
-      return Response.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return Response.fromJson((response.data) as Map<String, dynamic>);
     }
     throw Exception('Failed to edit profile.');
   }
 
   static Future<ReferralCodeResponse> getReferralLink() async {
     var storage = await LocalStorage.getInstance();
-    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.getReferral}';
+    final String apiUrl = '${Constraints.baseUrl}${SlugUrl.getReferral}';
     // Prepare headers
 
     Map<String, String> headers = {
@@ -730,12 +646,12 @@ static Future<UserProfileResponse> editProfile(User user) async {
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
   static Future<Response> deleteVehicle(String? id) async {
     var storage = await LocalStorage.getInstance();
-    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.deleteVehicle.replaceAll("{id}", id!)}';
+    final String apiUrl =
+        '${Constraints.baseUrl}${SlugUrl.deleteVehicle.replaceAll("{id}", id!)}';
     // Prepare headers
     Map<String, String> headers = {
       'Authorization': '${storage.getToken()}', // Adding Authorization Token
@@ -744,9 +660,7 @@ static Future<UserProfileResponse> editProfile(User user) async {
 
     final response = await dio.delete(
       SlugUrl.deleteVehicle.replaceAll("{id}", id),
-      options: Options(
-        headers: headers
-      ),
+      options: Options(headers: headers),
     );
 
     if (kDebugMode) {
@@ -755,18 +669,17 @@ static Future<UserProfileResponse> editProfile(User user) async {
       print("Url: $apiUrl");
     }
     if (response.statusCode == 200) {
-      return Response.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return Response.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
-
-  static Future<UserProfileResponse> checkReferralCode(String referralCode) async {
+  static Future<UserProfileResponse> checkReferralCode(
+      String referralCode) async {
     var storage = await LocalStorage.getInstance();
-    final String apiUrl ='${Constraints.baseUrl}${SlugUrl.checkReferral.replaceAll('{referralCode}', referralCode)}';
+    final String apiUrl =
+        '${Constraints.baseUrl}${SlugUrl.checkReferral.replaceAll('{referralCode}', referralCode)}';
     // Prepare headers
     Map<String, String> headers = {
       'Authorization': '${storage.getToken()}', // Adding Authorization Token
@@ -775,9 +688,7 @@ static Future<UserProfileResponse> editProfile(User user) async {
 
     final response = await dio.get(
       SlugUrl.checkReferral.replaceAll('{referralCode}', referralCode),
-      options: Options(
-        headers: headers
-      ),
+      options: Options(headers: headers),
     );
 
     if (kDebugMode) {
@@ -791,16 +702,18 @@ static Future<UserProfileResponse> editProfile(User user) async {
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
-
   }
 
-  static Future<UserProfileResponse> refreshToken() async{
+  static Future<UserProfileResponse> refreshToken() async {
     String url = '${Constraints.baseUrl}${SlugUrl.authRefresh}';
     var storage = await LocalStorage.getInstance();
-    User data  = User(phone: storage.getPhone()!,token: storage.getToken(),id: storage.getUserId());
+    User data = User(
+        phone: storage.getPhone()!,
+        token: storage.getToken(),
+        id: storage.getUserId());
     final dio = ApiClient().dio;
-    final response = await dio.post(SlugUrl.authRefresh,
-        data: jsonEncode(data));
+    final response =
+        await dio.post(SlugUrl.authRefresh, data: jsonEncode(data));
 
     if (kDebugMode) {
       print("Add Address : $response");
@@ -814,8 +727,7 @@ static Future<UserProfileResponse> editProfile(User user) async {
     throw Exception('Failed to edit profile.');
   }
 
-
-  static Future<ServicesResponse> oneTimeServices() async{
+  static Future<ServicesResponse> oneTimeServices() async {
     var storage = await LocalStorage.getInstance();
     debugPrint(storage.getToken());
     // Prepare headers
@@ -828,18 +740,16 @@ static Future<UserProfileResponse> editProfile(User user) async {
       SlugUrl.oneTimeServices,
       options: Options(
         headers: headers,
-
       ),
     );
     if (response.statusCode == 200) {
-      return ServicesResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return ServicesResponse.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
   }
 
-  static Future<SlotResponse> slots(int id) async{
+  static Future<SlotResponse> slots(int id) async {
     var storage = await LocalStorage.getInstance();
     debugPrint(storage.getToken());
     // Prepare headers
@@ -852,28 +762,23 @@ static Future<UserProfileResponse> editProfile(User user) async {
       SlugUrl.slots.replaceAll("{addressId}", id.toString()),
       options: Options(
         headers: headers,
-
       ),
     );
     if (response.statusCode == 200) {
-      return SlotResponse.fromJson(
-          (response.data) as Map<String, dynamic>);
+      return SlotResponse.fromJson((response.data) as Map<String, dynamic>);
       // Handle response if needed
     }
     throw Exception('Failed to Fetch Vehicles');
   }
 
-  static Future<OneTimeBookingResponse> bookOneTimeService(OneTimeBookingRequest bookingRequest) async {
+  static Future<OneTimeBookingResponse> bookOneTimeService(
+      OneTimeBookingRequest bookingRequest) async {
     String url = '${Constraints.baseUrl}${SlugUrl.authRefresh}';
     var storage = await LocalStorage.getInstance();
     final dio = ApiClient().dio;
     final response = await dio.post(SlugUrl.bookSlot,
         data: jsonEncode(bookingRequest),
-      options: Options(
-      headers: {
-      'Authorization': '${storage.getToken()}'
-      }
-    ));
+        options: Options(headers: {'Authorization': '${storage.getToken()}'}));
 
     if (kDebugMode) {
       print("Add Address : $response");
@@ -887,8 +792,7 @@ static Future<UserProfileResponse> editProfile(User user) async {
     throw Exception('Failed to edit profile.');
   }
 
-
-  static Future<OneTimeServiceVehicleResponse> oneTimeServiceVehicles() async{
+  static Future<OneTimeServiceVehicleResponse> oneTimeServiceVehicles() async {
     var storage = await LocalStorage.getInstance();
     debugPrint(storage.getToken());
     // Prepare headers
@@ -901,7 +805,6 @@ static Future<UserProfileResponse> editProfile(User user) async {
       SlugUrl.oneTimeBookedVehicles,
       options: Options(
         headers: headers,
-
       ),
     );
     if (response.statusCode == 200) {
@@ -911,6 +814,7 @@ static Future<UserProfileResponse> editProfile(User user) async {
     }
     throw Exception('Failed to Fetch Vehicles');
   }
+
   static Future<AppVersionPolicy> fetchPolicy() async {
     Map<String, String> headers = {
       'Accept': 'application/json', // Adding Authorization Token
@@ -918,12 +822,11 @@ static Future<UserProfileResponse> editProfile(User user) async {
     final dio = ApiClient().dio;
     final platform = Platform.isIOS ? 'ios' : 'android';
 
-    final response = await dio.get(
-      '${SlugUrl.appVersionPolicy}?platform=$platform',
-      options: Options(
-        headers: headers,
-
-      ));
+    final response =
+        await dio.get('${SlugUrl.appVersionPolicy}?platform=$platform',
+            options: Options(
+              headers: headers,
+            ));
 
     if (response.statusCode != 200) {
       throw Exception(
@@ -938,8 +841,6 @@ static Future<UserProfileResponse> editProfile(User user) async {
     throw FormatException(
       'Expected a JSON object but received ${response.data.runtimeType}',
     );
-
-
   }
 
   static Future<int> getInstalledVersionCode() async {
@@ -947,122 +848,156 @@ static Future<UserProfileResponse> editProfile(User user) async {
     return int.tryParse(info.buildNumber) ?? 0;
   }
 
-
   static bool requiresUpdate(
-      int installedVersionCode,
-      AppVersionPolicy policy,
-      ) {
+    int installedVersionCode,
+    AppVersionPolicy policy,
+  ) {
+    debugPrint('Installed Version:$installedVersionCode');
+
     if (installedVersionCode <= 0) {
-      return true;
+      return false;
     }
 
-    return policy.forceUpdate;
-    // return installedVersionCode <= 0 || installedVersionCode <
-    //     policy.minimumSupportedVersionCode ||
-    //     policy.forceUpdate;
+    // Already on the latest version or a newer version.
+    if (installedVersionCode >= policy.latestVersionCode) {
+      return false;
+    }
+
+    // Force update only if the installed version is below
+    // the minimum supported version.
+    return policy.forceUpdate &&
+        installedVersionCode < policy.minimumSupportedVersionCode;
+  }
+
+  static Future<BannerResponse> getBanners() async {
+
+    var storage = await LocalStorage.getInstance();
+    debugPrint(storage.getToken());
+    // Prepare headers
+    Map<String, String> headers = {
+      'Authorization': '${storage.getToken()}', // Adding Authorization Token
+    };
+    final dio = ApiClient().dio;
+
+    final response =
+    await dio.get('${SlugUrl.banners}?activeOnly=TRUE',
+        options: Options(
+          headers: headers,
+        ));
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Version API returned ${response.statusCode}',
+      );
+    }
+
+    if (response.data is Map<String, dynamic>) {
+      return BannerResponse.fromJson(response.data);
+    }
+
+    throw FormatException(
+      'Expected a JSON object but received ${response.data.runtimeType}',
+    );
   }
 
 /////Add Address////
 
-  // static Future<AddressResponse> AddAddressService(
-  //     String area,
-  //     String city,
-  //     String firstName,
-  //     String email,
-  //     String lastName,
-  //     String landmark,
-  //     String phoneNumber,
-  //     String token,
-  //     String pinCode,
-  //     String state,
-  //     String streetAddress,
-  //     String type) async
-  // {
-  //   String url = '${Constraints.baseUrl}address/add';
-  //
-  //   final response = await http.post(Uri.parse(url),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': '$token'
-  //       },
-  //       body: jsonEncode({
-  //         "area": area,
-  //         "city": city,
-  //         "dialCode": "+91",
-  //         "email": email,
-  //         "firstName": firstName,
-  //         "landmark": landmark,
-  //         "lastName": lastName,
-  //         "phoneNumber": phoneNumber,
-  //         "pinCode": pinCode,
-  //         "state": state,
-  //         "streetAddress": streetAddress,
-  //         "type": type
-  //       }));
-  //
-  //   if (kDebugMode) {
-  //     print("Add Address : ${response.body}");
-  //     print("statusCode: ${response.statusCode}");
-  //     print("Url: $url");
-  //   }
-  //   if (response.statusCode == 200) {
-  //     return AddressResponse.fromJson(
-  //         jsonDecode(response.body) as Map<String, dynamic>);
-  //   }
-  //   throw Exception('Failed to add address');
-  // }
-  // static Future<AddressResponse> AddAddressService
-  //     (
-  //     // String area,
-  //     // String city,
-  //     // String firstName,
-  //     // String email,
-  //     // String lastName,
-  //     // String landmark,
-  //     // String phoneNumber,
-  //     String token,
-  //     // String pinCode,
-  //     // String state,
-  //     // String streetAddress,
-  //     // String type,
-  //     Map<String, dynamic> addressInfo) async
-  // {
-  //   String url = '${Constraints.baseUrl}address/add';
-  //
-  //   final response = await http.post(Uri.parse(url),
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         'Authorization': '$token'
-  //       },
-  //       body: jsonEncode(
-  //           //     {
-  //           //   "area": area,
-  //           //   "city": city,
-  //           //   "dialCode": "+91",
-  //           //   "email": email,
-  //           //   "firstName": firstName,
-  //           //   "landmark": landmark,
-  //           //   "lastName": lastName,
-  //           //   "phoneNumber": phoneNumber,
-  //           //   "pinCode": pinCode,
-  //           //   "state": state,
-  //           //   "streetAddress": streetAddress,
-  //           //   "type": type
-  //           // }
-  //           addressInfo));
-  //
-  //   if (kDebugMode) {
-  //     print("Add Address : ${response.body}");
-  //     print("statusCode: ${response.statusCode}");
-  //     print("Url: $url");
-  //   }
-  //   if (response.statusCode == 200) {
-  //     return AddressResponse.fromJson(
-  //         jsonDecode(response.body) as Map<String, dynamic>);
-  //   }
-  //   throw Exception('Failed to add address');
-  // }
-
-
-
+// static Future<AddressResponse> AddAddressService(
+//     String area,
+//     String city,
+//     String firstName,
+//     String email,
+//     String lastName,
+//     String landmark,
+//     String phoneNumber,
+//     String token,
+//     String pinCode,
+//     String state,
+//     String streetAddress,
+//     String type) async
+// {
+//   String url = '${Constraints.baseUrl}address/add';
+//
+//   final response = await http.post(Uri.parse(url),
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': '$token'
+//       },
+//       body: jsonEncode({
+//         "area": area,
+//         "city": city,
+//         "dialCode": "+91",
+//         "email": email,
+//         "firstName": firstName,
+//         "landmark": landmark,
+//         "lastName": lastName,
+//         "phoneNumber": phoneNumber,
+//         "pinCode": pinCode,
+//         "state": state,
+//         "streetAddress": streetAddress,
+//         "type": type
+//       }));
+//
+//   if (kDebugMode) {
+//     print("Add Address : ${response.body}");
+//     print("statusCode: ${response.statusCode}");
+//     print("Url: $url");
+//   }
+//   if (response.statusCode == 200) {
+//     return AddressResponse.fromJson(
+//         jsonDecode(response.body) as Map<String, dynamic>);
+//   }
+//   throw Exception('Failed to add address');
+// }
+// static Future<AddressResponse> AddAddressService
+//     (
+//     // String area,
+//     // String city,
+//     // String firstName,
+//     // String email,
+//     // String lastName,
+//     // String landmark,
+//     // String phoneNumber,
+//     String token,
+//     // String pinCode,
+//     // String state,
+//     // String streetAddress,
+//     // String type,
+//     Map<String, dynamic> addressInfo) async
+// {
+//   String url = '${Constraints.baseUrl}address/add';
+//
+//   final response = await http.post(Uri.parse(url),
+//       headers: {
+//         'Content-Type': 'application/json',
+//         'Authorization': '$token'
+//       },
+//       body: jsonEncode(
+//           //     {
+//           //   "area": area,
+//           //   "city": city,
+//           //   "dialCode": "+91",
+//           //   "email": email,
+//           //   "firstName": firstName,
+//           //   "landmark": landmark,
+//           //   "lastName": lastName,
+//           //   "phoneNumber": phoneNumber,
+//           //   "pinCode": pinCode,
+//           //   "state": state,
+//           //   "streetAddress": streetAddress,
+//           //   "type": type
+//           // }
+//           addressInfo));
+//
+//   if (kDebugMode) {
+//     print("Add Address : ${response.body}");
+//     print("statusCode: ${response.statusCode}");
+//     print("Url: $url");
+//   }
+//   if (response.statusCode == 200) {
+//     return AddressResponse.fromJson(
+//         jsonDecode(response.body) as Map<String, dynamic>);
+//   }
+//   throw Exception('Failed to add address');
+// }
 }
