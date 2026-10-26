@@ -36,5 +36,6 @@ class SlugUrl {
   static String bookSlot = "subscription/one-time";
   static String oneTimeBookedVehicles = "subscription/one-time/vehicle";
   static String appVersionPolicy = "master/app-version-policy";
+  static String banners = "master/banners/get";
 
 }

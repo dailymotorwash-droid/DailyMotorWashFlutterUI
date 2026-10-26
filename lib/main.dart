@@ -1,5 +1,6 @@
 import 'package:dmw/providers/ScheduleProvider.dart';
 import 'package:dmw/providers/address_provider.dart';
+import 'package:dmw/providers/banner_provider.dart';
 import 'package:dmw/providers/brand_provider.dart';
 import 'package:dmw/providers/home_screen_provider.dart';
 import 'package:dmw/providers/one_time_service_provider.dart';
@@ -54,6 +55,7 @@ void main() async{
         ChangeNotifierProvider(create: (_) => SubscriptionVehicleProvider()),
         ChangeNotifierProvider(create: (_) => TransactionProvider()),
         ChangeNotifierProvider(create: (_) => ScheduleProvider()),
+        ChangeNotifierProvider(create: (_) => BannerProvider()),
       ],
       child: MainApp(),
     )
