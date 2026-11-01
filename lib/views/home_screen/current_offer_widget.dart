@@ -9,7 +9,9 @@ import '../../models/banner_model.dart';
 
 class CurrentOfferWidget extends StatefulWidget{
 
-  const CurrentOfferWidget({ super.key });
+  final double bannerHeight;
+
+  const CurrentOfferWidget({ super.key, this.bannerHeight = 180.0 });
 
   @override
   State<CurrentOfferWidget> createState() => _CurrentOfferWidgetState();
@@ -54,7 +56,7 @@ class _CurrentOfferWidgetState extends State<CurrentOfferWidget> {
     final List<BannerModel> banners = bannerWatch.banners;
     if (bannerWatch.isLoading) {
       return Container(
-        height: 145.0,
+        height: widget.bannerHeight,
         margin: const EdgeInsets.symmetric(horizontal: 16),
         decoration: BoxDecoration(
           color: const Color(0xFF1E1E1E),
@@ -73,7 +75,7 @@ class _CurrentOfferWidgetState extends State<CurrentOfferWidget> {
       mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox(
-          height: 145.0,
+          height: widget.bannerHeight,
           child: PageView.builder(
             controller: _pageController,
             itemCount: banners.length,
