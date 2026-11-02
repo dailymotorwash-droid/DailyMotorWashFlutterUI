@@ -13,27 +13,29 @@ class BannerProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> fetchBanners() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners();
+  Future<void> fetchBanners({bool forceRefresh = false}) async {
+    // Only display full loading state if banners have not yet loaded or on forced refresh
+    if (_banners.isEmpty || forceRefresh) {
+      _isLoading = true;
+      _errorMessage = null;
+      notifyListeners();
+    }
 
     try {
       final BannerResponse res = await RestServiceImp.getBanners();
       debugPrint('Banner API Success: ${res.isSuccess}');
 
-      if (res.isSuccess && res.data != null) {
+      if (res.isSuccess) {
         _banners = res.data.where((b) => b.isActive).toList();
         debugPrint('Fetched ${_banners.length} active banners');
       } else {
-        _errorMessage = res.message ?? 'Failed to load banners';
+        _errorMessage = res.message;
       }
     } catch (e, stack) {
       debugPrint('Error inside fetchBanners: $e');
       debugPrint('$stack');
       _errorMessage = e.toString();
     } finally {
-      // THIS IS CRUCIAL: loader MUST stop regardless of success or failure
       _isLoading = false;
       notifyListeners();
     }

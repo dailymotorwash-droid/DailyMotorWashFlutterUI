@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dmw/providers/ScheduleProvider.dart';
 import 'package:dmw/utils/common_utils.dart';
 import 'package:dmw/utils/custom_button_styles.dart';
@@ -122,10 +123,19 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
             child: SizedBox(
               width: 55,
               height: 55,
-              child: Image.network(
-                item.image,
+              child: CachedNetworkImage(
+                imageUrl: item.image,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
+                placeholder: (_, __) => Container(
+                  color: selectedItemBgColor,
+                  alignment: Alignment.center,
+                  child: const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 1.8),
+                  ),
+                ),
+                errorWidget: (_, __, ___) => Container(
                   color: selectedItemBgColor,
                   child: const Icon(
                     Icons.directions_car,
@@ -391,7 +401,7 @@ class _OneTimeBookingScheduleState extends State<OneTimeBookingScheduleWidget> {
                 children: [
                   TextSpan(text: 'You are saving '),
                   TextSpan(
-                    text: '₹347 ',
+                    text: 'â‚¹347 ',
                     style: TextStyle(fontWeight: FontWeight.bold, color: primaryActiveRed),
                   ),
                   TextSpan(text: 'using '),

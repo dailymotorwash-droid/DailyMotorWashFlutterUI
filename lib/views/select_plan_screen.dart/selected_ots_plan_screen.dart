@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'dart:core';
 import 'dart:ui';
 
@@ -139,7 +140,7 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
                 : Row(
               children: [
                 Text(
-                  '₹${currentTotal.toInt()}',
+                  'â‚¹${currentTotal.toInt()}',
                   style: AppTextStyles.whiteFont16Bold,
                 ),
                 const Spacer(),
@@ -258,7 +259,7 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
   //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
   //             children: [
   //               const Text("Service Price", style: AppTextStyles.blackFont16Regular),
-  //               Text("₹${plan.rate}", style: AppTextStyles.blackFont16Bold),
+  //               Text("â‚¹${plan.rate}", style: AppTextStyles.blackFont16Bold),
   //             ],
   //           ),
   //           if (plan.discount > 0) ...[
@@ -267,7 +268,7 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
   //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
   //               children: [
   //                 const Text("Discount", style: TextStyle(color: Colors.green, fontSize: 14)),
-  //                 Text("-₹${plan.discount}", style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+  //                 Text("-â‚¹${plan.discount}", style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
   //               ],
   //             ),
   //           ],
@@ -312,10 +313,19 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
                 child: SizedBox(
                   width: 65,
                   height: 65,
-                  child: Image.network(
-                    _serviceItem.image,
+                  child: CachedNetworkImage(
+                    imageUrl: _serviceItem.image,
                     fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
+                    placeholder: (_, __) => Container(
+                      color: const Color(0xFFE8F0F6),
+                      alignment: Alignment.center,
+                      child: const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 1.8),
+                      ),
+                    ),
+                    errorWidget: (_, __, ___) => Container(
                       color: const Color(0xFFE8F0F6),
                       child: const Icon(
                         Icons.directions_car,
@@ -397,7 +407,7 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
             //     children: [
             //       const Text("Service Rate", style: TextStyle(fontSize: 14, color: Color(0xFF757575))),
             //       Text(
-            //         "₹${baseRate.toStringAsFixed(0)}",
+            //         "â‚¹${baseRate.toStringAsFixed(0)}",
             //         style: const TextStyle(
             //           fontSize: 14,
             //           color: Color(0xFF9E9E9E),
@@ -420,7 +430,7 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text("Service Rate", style: AppTextStyles.blackFont16Regular),
-                  Text("₹${rate.toStringAsFixed(0)}", style: AppTextStyles.blackFont16Bold),
+                  Text("â‚¹${rate.toStringAsFixed(0)}", style: AppTextStyles.blackFont16Bold),
                 ],
               ),
               const SizedBox(height: 6),
@@ -429,7 +439,7 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
                 children: [
                   const Text("Discount", style: TextStyle(color: Colors.green, fontSize: 14)),
                   Text(
-                    "-₹${discount.toStringAsFixed(0)}",
+                    "-â‚¹${discount.toStringAsFixed(0)}",
                     style: const TextStyle(
                       color: Colors.green,
                       fontWeight: FontWeight.bold,
@@ -455,7 +465,7 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
                   ),
                 ),
                 Text(
-                  "₹${finalAmount.toStringAsFixed(0)}",
+                  "â‚¹${finalAmount.toStringAsFixed(0)}",
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -610,7 +620,7 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
                             const Divider(),
                             PriceRowWidget(
                               title: '${_serviceItem.serviceName} - Wash',
-                              value: '₹${plan.rate}',
+                              value: 'â‚¹${plan.rate}',
                             ),
                             if(plan.discount>0)...[
                               PriceRowWidget(
@@ -620,12 +630,12 @@ class _SelectedOtsPlanScreenState extends State<SelectedOtsPlanScreen> {
                             ],
                             // PriceRowWidget(
                             //   title: 'Points',
-                            //   value: '₹$userPoints',
+                            //   value: 'â‚¹$userPoints',
                             // ),
                             const Divider(),
                             PriceRowWidget(
                               title: 'Total',
-                              value: '₹$totalPayable',
+                              value: 'â‚¹$totalPayable',
                               isBold: true,
                             ),
                           ],
