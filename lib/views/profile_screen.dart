@@ -236,6 +236,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   // Borderless TextField
                   TextField(
                     controller: _firstNameController,
+                    inputFormatters: [LengthLimitingTextInputFormatter(48)],
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                     cursorColor: Colors.white70,
                     onChanged: (v) {},
@@ -292,6 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                   TextField(
                     controller: _lastNameController,
+                    inputFormatters: [LengthLimitingTextInputFormatter(48)],
                     onChanged: (v) {},
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                     cursorColor: Colors.white70,

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:dmw/utils/custom_button_styles.dart';
 import 'package:dmw/utils/custom_colors.dart';
 import 'package:dmw/utils/custom_enums.dart';
@@ -105,6 +106,7 @@ class _AddVehicleScreenState extends State<AddVehicleScreen> {
                 hintText: 'Enter Vehicle Name (optional)',
                 helperText: 'Example: My Car, Friend\'s Car',
                 controller: _vehicleNameController,
+                inputFormatters: [LengthLimitingTextInputFormatter(48)],
                 onChanged: (value) {}
               ),
             ),
