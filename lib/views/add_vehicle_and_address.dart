@@ -684,6 +684,7 @@ class _AddVehicleAndAddressScreenState
                   ),
                   TextField(
                     controller: _firstNameController,
+                    inputFormatters: [LengthLimitingTextInputFormatter(48)],
                     onChanged: (v) {},
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                     cursorColor: Colors.white70,
@@ -746,6 +747,7 @@ class _AddVehicleAndAddressScreenState
                   ),
                   TextField(
                     controller: _lastNameController,
+                    inputFormatters: [LengthLimitingTextInputFormatter(48)],
                     onChanged: (v) {},
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                     cursorColor: Colors.white70,

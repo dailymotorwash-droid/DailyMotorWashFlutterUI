@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/service.dart';
@@ -15,15 +16,20 @@ class ServiceCardWidget extends StatelessWidget {
     required this.item,
     this.isFullWidth = false,
   });
+
   void _navigateToBooking(BuildContext context) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        // builder: (_) => OneTimeBookingScheduleWidget(selectedService: item),
-        builder: (_) => SavedVehiclesScreen(vehicleType: VehicleType.car,isSubscription: false,selectedService: item,)
+        builder: (_) => SavedVehiclesScreen(
+          vehicleType: VehicleType.car,
+          isSubscription: false,
+          selectedService: item,
+        ),
       ),
     );
   }
+
   @override
   Widget build(BuildContext context) {
     if (isFullWidth) {
@@ -41,10 +47,19 @@ class ServiceCardWidget extends StatelessWidget {
               child: SizedBox(
                 width: 90,
                 height: double.infinity,
-                child: Image.network(
-                  item.image,
+                child: CachedNetworkImage(
+                  imageUrl: item.image,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(
+                  placeholder: (_, __) => Container(
+                    color: const Color(0xFFF0F0F0),
+                    alignment: Alignment.center,
+                    child: const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) => const Icon(
                     Icons.directions_car_filled,
                     size: 45,
                     color: Color(0xFF9E9E9E),
@@ -121,10 +136,19 @@ class ServiceCardWidget extends StatelessWidget {
             child: Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  item.image,
+                child: CachedNetworkImage(
+                  imageUrl: item.image,
                   fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const Icon(
+                  placeholder: (_, __) => Container(
+                    color: const Color(0xFFF0F0F0),
+                    alignment: Alignment.center,
+                    child: const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                  errorWidget: (_, __, ___) => const Icon(
                     Icons.directions_car_filled,
                     size: 52,
                     color: Color(0xFF9E9E9E),

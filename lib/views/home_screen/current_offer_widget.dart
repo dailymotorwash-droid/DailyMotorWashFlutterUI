@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dmw/providers/banner_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -7,26 +8,23 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/banner_model.dart';
 
-class CurrentOfferWidget extends StatefulWidget{
-
+class CurrentOfferWidget extends StatefulWidget {
   final double bannerHeight;
 
-  const CurrentOfferWidget({ super.key, this.bannerHeight = 180.0 });
+  const CurrentOfferWidget({super.key, this.bannerHeight = 180.0});
 
   @override
   State<CurrentOfferWidget> createState() => _CurrentOfferWidgetState();
-
 }
 
 class _CurrentOfferWidgetState extends State<CurrentOfferWidget> {
-
-  late BannerProvider read,watch;
+  late BannerProvider read, watch;
   late final PageController _pageController;
   Timer? _autoScrollTimer;
   int _currentIndex = 0;
+
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _pageController = PageController();
     read = context.read<BannerProvider>();
@@ -35,6 +33,7 @@ class _CurrentOfferWidgetState extends State<CurrentOfferWidget> {
       context.read<BannerProvider>().fetchBanners();
     });
   }
+
   void _startAutoScroll(int totalCount) {
     if (totalCount <= 1 || _autoScrollTimer != null) return;
 
@@ -50,11 +49,14 @@ class _CurrentOfferWidgetState extends State<CurrentOfferWidget> {
       }
     });
   }
+
   @override
-  Widget build(BuildContext context){
+  Widget build(BuildContext context) {
     final bannerWatch = context.watch<BannerProvider>();
     final List<BannerModel> banners = bannerWatch.banners;
-    if (bannerWatch.isLoading) {
+
+    // Only show loader if we have NO cached/existing banners yet
+    if (bannerWatch.isLoading && banners.isEmpty) {
       return Container(
         height: widget.bannerHeight,
         margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -66,6 +68,7 @@ class _CurrentOfferWidgetState extends State<CurrentOfferWidget> {
         child: const CircularProgressIndicator(strokeWidth: 2.5),
       );
     }
+
     if (banners.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -101,7 +104,9 @@ class _CurrentOfferWidgetState extends State<CurrentOfferWidget> {
                 height: 5,
                 width: isSelected ? 16 : 5,
                 decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xFFE53935) : const Color(0xFFBDBDBD),
+                  color: isSelected
+                      ? const Color(0xFFE53935)
+                      : const Color(0xFFBDBDBD),
                   borderRadius: BorderRadius.circular(4),
                 ),
               );
@@ -110,46 +115,6 @@ class _CurrentOfferWidgetState extends State<CurrentOfferWidget> {
         ],
       ],
     );
-
-    //   Container(
-    //   width: double.infinity,
-    //   padding: const EdgeInsets.all(16),
-    //   decoration: BoxDecoration(
-    //     color: AppColors.darkBackground,
-    //     borderRadius: BorderRadius.circular(12)
-    //   ),
-    //   child: Column(
-    //     children: [
-    //       Row(
-    //         mainAxisAlignment: MainAxisAlignment.center,
-    //         children: [
-    //           Image.asset('assets/images/logo.png', height: 100, width: 100,),
-    //           const SizedBox(width: 12),
-    //           const Expanded(
-    //             child: CustomRichText(
-    //               arrayLength: 2,
-    //               callBacksInOrder: const [null, null],
-    //               textsInOrder: [
-    //                 'Get Complete Car Wash at your Doorstep\n\n',
-    //                'Full Exterior Body Wash - Internal Cleaning - Polishing'
-    //               ],
-    //               textStylesInOrder: [AppTextStyles.whiteFont12Bold, AppTextStyles.whiteFont12Regular]
-    //             ),
-    //           )
-    //         ],
-    //       ),
-    //       const SizedBox(height: 4),
-    //       ElevatedButton(
-    //         onPressed: () {
-    //
-    //         },
-    //         style: AppButtonStyles.primaryButtonStyle,
-    //         // child: const Text('Book Now', style: AppTextStyles.whiteFont16Bold)
-    //         child: const Text('Coming Soon', style: AppTextStyles.whiteFont16Bold)
-    //       )
-    //     ],
-    //   ),
-    // );
   }
 
   Widget _buildBannerCard(BannerModel banner) {
@@ -175,11 +140,19 @@ class _CurrentOfferWidgetState extends State<CurrentOfferWidget> {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              Image.network(
-                banner.imageUrl,
+              CachedNetworkImage(
+                imageUrl: banner.imageUrl,
                 fit: BoxFit.cover,
-                cacheWidth: 1080,
-                errorBuilder: (context, error, stackTrace) => Container(
+                placeholder: (context, url) => Container(
+                  color: const Color(0xFF1E1E1E),
+                  alignment: Alignment.center,
+                  child: const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
                   color: const Color(0xFF2C2C2C),
                   alignment: Alignment.center,
                   child: const Icon(
@@ -189,35 +162,6 @@ class _CurrentOfferWidgetState extends State<CurrentOfferWidget> {
                   ),
                 ),
               ),
-              // if (banner.title != null && banner.title!.isNotEmpty)
-              //   Positioned(
-              //     left: 0,
-              //     right: 0,
-              //     bottom: 0,
-              //     child: Container(
-              //       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              //       decoration: BoxDecoration(
-              //         gradient: LinearGradient(
-              //           colors: [
-              //             Colors.black.withOpacity(0.75),
-              //             Colors.transparent,
-              //           ],
-              //           begin: Alignment.bottomCenter,
-              //           end: Alignment.topCenter,
-              //         ),
-              //       ),
-              //       child: Text(
-              //         banner.title!,
-              //         maxLines: 1,
-              //         overflow: TextOverflow.ellipsis,
-              //         style: const TextStyle(
-              //           color: Colors.white,
-              //           fontSize: 14,
-              //           fontWeight: FontWeight.w700,
-              //         ),
-              //       ),
-              //     ),
-              //   ),
             ],
           ),
         ),
